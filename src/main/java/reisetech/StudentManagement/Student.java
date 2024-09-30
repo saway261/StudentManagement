@@ -1,6 +1,6 @@
-package reisetech.ClientManagement;
+package reisetech.StudentManagement;
 
-public class Client {
+public class Student {
 
   private String name;
   private int age;

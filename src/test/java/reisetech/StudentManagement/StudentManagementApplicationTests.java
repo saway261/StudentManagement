@@ -1,13 +1,13 @@
-package reisetech.ClientManagement;
+package reisetech.StudentManagement;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ClientManagementApplicationTests {
+class StudentManagementApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+  @Test
+  void contextLoads() {
+  }
 
 }
