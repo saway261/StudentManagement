@@ -14,6 +14,9 @@ public class Student {
   private String telephone;
   private int age;
   private String gender;
+  private String remark;
+  private boolean isDeleted;
+  //上2項目をDBに追加する
 
 
 }
