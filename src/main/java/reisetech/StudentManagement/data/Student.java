@@ -2,7 +2,7 @@ package reisetech.StudentManagement.data;
 
 import lombok.Getter;
 
-@Getter//rombokが勝手に作ってくれる
+@Getter//lombokが勝手に作ってくれる
 public class Student {
 
   private String studentId;
