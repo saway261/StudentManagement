@@ -13,10 +13,15 @@ public class StudentService {
 
   private StudentRepository repository;
   private Student student;
+  private StudentsCourses studentsCourses;
 
   @Autowired
   public StudentService(StudentRepository repository) {
     this.repository = repository;
+  }
+
+  public List<Student> selectAllStudentList() {
+    return repository.search();
   }
 
   public List<Student> serchStudentList() {
@@ -27,6 +32,10 @@ public class StudentService {
         .collect(Collectors.toList());
 
     return filteredStudents;
+  }
+
+  public List<StudentsCourses> selectAllStudentsCourseList() {
+    return repository.searchStudentsCourses();
   }
 
   public List<StudentsCourses> searchStudentsCourseList() {
