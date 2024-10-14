@@ -52,17 +52,6 @@ public class StudentService {
 
   public void registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
-    String studentId = student.getStudentId();
-    String fullname = student.getFullname();
-    String furigana = student.getFurigana();
-    String nickname = student.getNickname();
-    String email = student.getEmail();
-    String city = student.getCity();
-    String telephone = student.getTelephone();
-    int age = student.getAge();
-    String gender = student.getGender();
-    String remark = student.getRemark();
-    repository.registerStudent(studentId, fullname, furigana, nickname, email, city, telephone, age,
-        gender, remark);
+    repository.registerStudent(student);
   }
 }
