@@ -1,14 +1,12 @@
 package reisetech.StudentManagement.controller;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reisetech.StudentManagement.data.Student;
-import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.service.StudentService;
 
-@RestController
+@Controller
 public class StudentController {
 
   private StudentService service;
@@ -18,13 +16,11 @@ public class StudentController {
     this.service = service;
   }
 
-  @GetMapping("/studentList")
-  public List<Student> getStudentList() {
-    return service.serchStudentList();
+  @GetMapping("/allStudentAndCourseList")
+  public String getAllStudentAndCourseList(Model model) {
+    model.addAttribute("studentList", service.selectAllStudentList());
+    model.addAttribute("courseList", service.selectAllStudentsCourseList());
+    return "studentAndCourseList";
   }
 
-  @GetMapping("/courseList")
-  public List<StudentsCourses> getStudentsCourseList() {
-    return service.searchStudentsCourseList();
-  }
 }
