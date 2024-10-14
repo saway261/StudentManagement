@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reisetech.StudentManagement.data.Student;
 import reisetech.StudentManagement.data.StudentsCourses;
+import reisetech.StudentManagement.domain.StudentDetail;
 import reisetech.StudentManagement.repository.StudentRepository;
 
 @Service
@@ -47,5 +48,21 @@ public class StudentService {
 
     return filteredStudentsCourses;
 
+  }
+
+  public void registerStudent(StudentDetail studentDetail) {
+    Student student = studentDetail.getStudent();
+    String studentId = student.getStudentId();
+    String fullname = student.getFullname();
+    String furigana = student.getFurigana();
+    String nickname = student.getNickname();
+    String email = student.getEmail();
+    String city = student.getCity();
+    String telephone = student.getTelephone();
+    int age = student.getAge();
+    String gender = student.getGender();
+    String remark = student.getRemark();
+    repository.registerStudent(studentId, fullname, furigana, nickname, email, city, telephone, age,
+        gender, remark);
   }
 }

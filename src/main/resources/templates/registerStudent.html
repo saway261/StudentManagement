@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>受講生登録</title>
+</head>
+<body>
+<h1>受講生登録</h1>
+
+<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="studentId">受講生ID</label>
+    <input type="text" id="studentId" th:field="*{student.studentId}" required/>
+  </div>
+  <div>
+    <label for="fullname">フルネーム</label>
+    <input type="text" id="fullname" th:field="*{student.fullname}" required/>
+  </div>
+  <div>
+    <label for="furigana">ふりがな</label>
+    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+  </div>
+  <div>
+    <label for="nickname">ニックネーム</label>
+    <input type="text" id="nickname" th:field="*{student.nickname}" required/>
+  </div>
+  <div>
+    <label for="email">Emailアドレス</label>
+    <input type="text" id="email" th:field="*{student.email}" required/>
+  </div>
+  <div>
+    <label for="city">地域</label>
+    <input type="text" id="city" th:field="*{student.city}" required/>
+  </div>
+  <div>
+    <label for="telephone">電話番号</label>
+    <input type="text" id="telephone" th:field="*{student.telephone}" required/>
+  </div>
+  <div>
+    <label for="age">年齢</label>
+    <input type="number" id="age" th:field="*{student.age}" required/>
+  </div>
+  <div>
+    <label for="gender">性別(男・女・その他)</label>
+    <input type="text" id="gender" th:field="*{student.gender}" required/>
+  </div>
+  <div>
+    <label for="remark">備考</label>
+    <input type="text" id="remark" th:field="*{student.remark}" required/>
+  </div>
+
+  <div>
+    <button type="submit">登録</button>
+  </div>
+</form>
+
+</body>
+</html>

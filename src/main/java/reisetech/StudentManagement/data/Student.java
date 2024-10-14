@@ -1,7 +1,9 @@
 package reisetech.StudentManagement.data;
 
 import lombok.Getter;
+import lombok.Setter;
 
+@Setter
 @Getter//lombokが勝手に作ってくれる
 public class Student {
 
@@ -16,7 +18,5 @@ public class Student {
   private String gender;
   private String remark;
   private boolean isDeleted;
-  //上2項目をDBに追加する
-
 
 }
