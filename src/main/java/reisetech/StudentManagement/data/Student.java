@@ -9,7 +9,7 @@ public class Student {
 
   private String studentId;
   private String fullname;
-  private String furigana;
+  private String kanaName;
   private String nickname;
   private String email;
   private String city;

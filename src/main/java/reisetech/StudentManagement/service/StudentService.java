@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reisetech.StudentManagement.data.Student;
 import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.domain.StudentDetail;
@@ -43,15 +44,23 @@ public class StudentService {
     List<StudentsCourses> allStudentsCourses = repository.searchStudentsCourses();
 
     List<StudentsCourses> filteredStudentsCourses = allStudentsCourses.stream()
-        .filter(courses -> courses.getCourse().equals("Java"))
+        .filter(courses -> courses.getCourseName().equals("Java"))
         .collect(Collectors.toList());
 
     return filteredStudentsCourses;
 
   }
 
+  @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける
   public void registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
     repository.registerStudent(student);
+  }
+
+  @Transactional
+  public void registerCourse(StudentDetail studentDetail) {
+    StudentsCourses courses = studentDetail.getStudentsCourses();
+    courses.setStudentId(studentDetail.getStudent().getStudentId());
+    repository.registerCourse(courses);
   }
 }

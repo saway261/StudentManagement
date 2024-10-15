@@ -8,16 +8,12 @@
 
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
   <div>
-    <label for="studentId">受講生ID</label>
-    <input type="text" id="studentId" th:field="*{student.studentId}" required/>
-  </div>
-  <div>
     <label for="fullname">フルネーム</label>
     <input type="text" id="fullname" th:field="*{student.fullname}" required/>
   </div>
   <div>
-    <label for="furigana">ふりがな</label>
-    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+    <label for="kanaName">ふりがな</label>
+    <input type="text" id="kanaName" th:field="*{student.kanaName}" required/>
   </div>
   <div>
     <label for="nickname">ニックネーム</label>
@@ -25,7 +21,7 @@
   </div>
   <div>
     <label for="email">Emailアドレス</label>
-    <input type="text" id="email" th:field="*{student.email}" required/>
+    <input type="email" id="email" th:field="*{student.email}" required/>
   </div>
   <div>
     <label for="city">地域</label>
@@ -33,7 +29,7 @@
   </div>
   <div>
     <label for="telephone">電話番号</label>
-    <input type="text" id="telephone" th:field="*{student.telephone}" required/>
+    <input type="tel" id="telephone" th:field="*{student.telephone}" required/>
   </div>
   <div>
     <label for="age">年齢</label>
@@ -45,7 +41,19 @@
   </div>
   <div>
     <label for="remark">備考</label>
-    <input type="text" id="remark" th:field="*{student.remark}" required/>
+    <input type="text" id="remark" th:field="*{student.remark}">
+  </div>
+  <div>
+    <label for="course">コース</label>
+    <input type="text" id="course" th:field="*{studentsCourses.courseName}" required/>
+  </div>
+  <div>
+    <label for="courseStartAt">受講開始日</label>
+    <input type="date" id="courseStartAt" th:field="*{studentsCourses.courseStartAt}" required/>
+  </div>
+  <div>
+    <label for="courseEndAt">受講終了予定日</label>
+    <input type="date" id="courseEndAt" th:field="*{studentsCourses.courseEndAt}">
   </div>
 
   <div>
