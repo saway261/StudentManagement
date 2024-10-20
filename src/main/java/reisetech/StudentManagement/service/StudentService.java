@@ -1,5 +1,6 @@
 package reisetech.StudentManagement.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,14 @@ public class StudentService {
 
   @Transactional
   public void registerCourse(StudentDetail studentDetail) {
-    StudentsCourses courses = studentDetail.getStudentsCourses();
-    courses.setStudentId(studentDetail.getStudent().getStudentId());
-    repository.registerCourse(courses);
+    List<StudentsCourses> courses = studentDetail.getStudentsCourses();
+    String studentId = studentDetail.getStudent().getStudentId();
+    LocalDate today = LocalDate.now();
+    for (StudentsCourses course : courses) {
+      course.setStudentId(studentId);
+      course.setCourseStartAt(today);
+      course.setCourseEndAt(today.plusMonths(6));
+      repository.registerCourse(course);
+    }
   }
 }

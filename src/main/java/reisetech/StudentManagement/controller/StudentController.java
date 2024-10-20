@@ -1,5 +1,6 @@
 package reisetech.StudentManagement.controller;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import reisetech.StudentManagement.data.Student;
+import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.domain.StudentDetail;
 import reisetech.StudentManagement.service.StudentService;
 
@@ -31,7 +32,7 @@ public class StudentController {
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(new Student());
+    studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
     model.addAttribute("studentDetail", studentDetail);
     return "registerStudent";
   }
