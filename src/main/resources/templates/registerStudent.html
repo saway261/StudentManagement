@@ -17,7 +17,7 @@
   </div>
   <div>
     <label for="nickname">ニックネーム</label>
-    <input type="text" id="nickname" th:field="*{student.nickname}" />
+    <input type="text" id="nickname" th:field="*{student.nickname}"/>
   </div>
   <div>
     <label for="email">Emailアドレス</label>
@@ -25,20 +25,24 @@
   </div>
   <div>
     <label for="city">地域</label>
-    <input type="text" id="city" th:field="*{student.city}" />
+    <input type="text" id="city" th:field="*{student.city}"/>
   </div>
   <div>
     <label for="telephone">電話番号</label>
-    <input type="tel" id="telephone" th:field="*{student.telephone}" />
+    <input type="tel" id="telephone" th:field="*{student.telephone}"/>
   </div>
   <div>
     <label for="age">年齢</label>
     <input type="number" id="age" th:field="*{student.age}"/>
   </div>
   <div>
-    <label>性別<input type="radio" name="gender">男</label><!-- TODO:ここに入れるの変じゃない？ -->
-    <label><input type="radio" name="gender">女</label>
-    <label><input type="radio" name="gender">その他</label>
+    <label for="gender_male">性別</label>
+    <input type="radio" id="gender_male" name="gender" value="男" th:field="*{student.gender}"/>男
+    <label for="gender_female"></label>
+    <input type="radio" id="gender_female" name="gender" value="女" th:field="*{student.gender}"/>女
+    <label for="gender_other"></label>
+    <input type="radio" id="gender_other" name="gender" value="その他"
+           th:field="*{student.gender}"/>その他
   </div>
   <div>
     <label for="remark">備考</label>
@@ -50,7 +54,6 @@
     <input type="text" id="courseName" th:id="studentsCourses.__${stat.index}__.courseName"
            th:field="*{studentsCourses[__${stat.index}__].courseName}" required/>
   </div>
-  <div>
   <div>
     <button type="submit">登録</button>
   </div>
