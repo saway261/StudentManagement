@@ -9,15 +9,15 @@
 <form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
   <div>
     <label for="fullname">フルネーム</label>
-    <input type="text" id="fullname" th:field="*{student.fullname}" required/>
+    <input type="text" maxlength="20" id="fullname" th:field="*{student.fullname}" required/>
   </div>
   <div>
     <label for="kanaName">ふりがな</label>
-    <input type="text" id="kanaName" th:field="*{student.kanaName}" required/>
+    <input type="text" maxlength="20" id="kanaName" th:field="*{student.kanaName}" required/>
   </div>
   <div>
     <label for="nickname">ニックネーム</label>
-    <input type="text" id="nickname" th:field="*{student.nickname}"/>
+    <input type="text" maxlength="20" id="nickname" th:field="*{student.nickname}"/>
   </div>
   <div>
     <label for="email">Emailアドレス</label>
@@ -25,7 +25,7 @@
   </div>
   <div>
     <label for="city">地域</label>
-    <input type="text" id="city" th:field="*{student.city}"/>
+    <input type="text" maxlength="15" id="city" th:field="*{student.city}"/>
   </div>
   <div>
     <label for="telephone">電話番号</label>
@@ -51,7 +51,8 @@
   <div th:each="course, stat : *{studentsCourses}">
     <label for="courseName"
            th:for="studentsCourses.__${stat.index}__.courseName">受講コース名</label>
-    <input type="text" id="courseName" th:id="studentsCourses.__${stat.index}__.courseName"
+    <input type="text" maxlength="10" id="courseName"
+           th:id="studentsCourses.__${stat.index}__.courseName"
            th:field="*{studentsCourses[__${stat.index}__].courseName}" required/>
   </div>
   <div>
