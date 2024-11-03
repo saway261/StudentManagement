@@ -70,4 +70,17 @@ public class StudentService {
       repository.registerCourse(course);
     }
   }
+
+  @Transactional
+  public StudentDetail searchStudentDetail(String studentId) {
+    StudentDetail studentDetail = new StudentDetail();
+
+    Student student = repository.searchStudentByStudentId(studentId);
+    List<StudentsCourses> courses = repository.searchCoursesByStudentId(studentId);
+
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(courses);
+
+    return studentDetail;
+  }
 }

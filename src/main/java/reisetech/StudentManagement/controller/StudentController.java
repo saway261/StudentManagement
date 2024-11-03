@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.domain.StudentDetail;
@@ -45,6 +46,14 @@ public class StudentController {
     service.registerStudent(studentDetail);
     service.registerCourse(studentDetail);
     return "redirect:/allStudentAndCourseList";
+  }
+
+  @GetMapping("/displayStudent/{studentId}")
+  public String searchStudentById(@PathVariable String studentId, Model model) {
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail = service.searchStudentDetail(studentId);
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
   }
 
 }

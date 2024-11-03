@@ -17,6 +17,12 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentsCourses> searchStudentsCourses();
 
+  @Select("SELECT * FROM students WHERE student_id=#{studentId}")
+  Student searchStudentByStudentId(String studentId);
+
+  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
+  List<StudentsCourses> searchCoursesByStudentId(String studentId);
+
   @Insert(
       "INSERT INTO students (fullname, kana_name, nickname, email, city, telephone, age, gender, remark, is_deleted) "
           + "VALUES (#{fullname}, #{kanaName}, #{nickname},"
