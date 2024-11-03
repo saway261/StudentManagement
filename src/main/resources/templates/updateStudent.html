@@ -29,7 +29,8 @@
   </div>
   <div>
     <label for="telephone">電話番号</label>
-    <input type="tel" pattern="\d{2,4}-\d{2,4}-\d{4}" placeholder="例: 03-1234-5678" id="telephone" th:field="*{student.telephone}"/>
+    <input type="tel" pattern="\d{2,4}-\d{2,4}-\d{4}" placeholder="例: 03-1234-5678" id="telephone"
+           th:field="*{student.telephone}"/>
   </div>
   <div>
     <label for="age">年齢</label>
@@ -50,23 +51,33 @@
   </div>
   <div>
     <label for="isDeleted_false">ステータス</label>
-    <input type="radio" id="isDeleted_false" name="isDeleted" value=0 th:field="*{student.isDeleted}"/>在籍
+    <input type="radio" id="isDeleted_false" name="isDeleted" value=0
+           th:field="*{student.isDeleted}"/>在籍
     <label for="isDeleted_true"></label>
-    <input type="radio" id="isDeleted_true" name="isDeleted" value=1 th:field="*{student.isDeleted}"/>退会済み
+    <input type="radio" id="isDeleted_true" name="isDeleted" value=1
+           th:field="*{student.isDeleted}"/>退会済み
   </div>
-  <div th:each="course, stat : *{studentsCourses}">
-    <label for="courseName"
-           th:for="studentsCourses.__${stat.index}__.courseName">受講コース名</label>
-    <select id="courseName"
-            th:id="studentsCourses.__${stat.index}__.courseName"
-            th:field="*{studentsCourses[__${stat.index}__].courseName}" required/>
-    <option value="" disabled selected>選択してください</option>
-    <option value="Java">Java</option>
-    <option value="AWS">AWS</option>
-    <option value="デザイン">デザイン</option>
-    <option value="Webマーケ">Webマーケ</option>
-    <option value="WordPress">WordPress</option>
-    </select>
+
+  <h2>受講生のコース情報</h2>
+
+  <div th:each="course, iterStat : ${studentDetail.studentsCourses}">
+    <h3>コース [[${iterStat.index + 1}]]</h3>
+
+    <div>
+      <label for="courseName">コース名</label>
+      <input type="text" id="courseName"
+             th:field="*{studentsCourses[__${iterStat.index}__].courseName}" required/>
+    </div>
+    <div>
+      <label for="courseStartAt">開始日</label>
+      <input type="text" id="courseStartAt"
+             th:field="*{studentsCourses[__${iterStat.index}__].courseStartAt}" required/>
+    </div>
+    <div>
+      <label for="courseEndAt">終了日</label>
+      <input type="text" id="courseEndAt"
+             th:field="*{studentsCourses[__${iterStat.index}__].courseEndAt}"/>
+    </div>
   </div>
   <div>
     <button type="submit">更新</button>
