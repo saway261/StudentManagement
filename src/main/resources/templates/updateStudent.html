@@ -48,6 +48,12 @@
     <label for="remark">備考</label>
     <input type="text" id="remark" th:field="*{student.remark}">
   </div>
+  <div>
+    <label for="isDeleted_false">ステータス</label>
+    <input type="radio" id="isDeleted_false" name="isDeleted" value=0 th:field="*{student.isDeleted}"/>在籍
+    <label for="isDeleted_true"></label>
+    <input type="radio" id="isDeleted_true" name="isDeleted" value=1 th:field="*{student.isDeleted}"/>退会済み
+  </div>
   <div th:each="course, stat : *{studentsCourses}">
     <label for="courseName"
            th:for="studentsCourses.__${stat.index}__.courseName">受講コース名</label>
