@@ -34,6 +34,9 @@ public class StudentController {
   public String getStudent(@PathVariable int studentId, Model model) {
     StudentDetail studentDetail = service.searchStudentDetail(studentId);
     model.addAttribute("studentDetail", studentDetail);
+    StudentsCourses studentsCourses = new StudentsCourses();
+    studentsCourses.setStudentId(studentId);
+    model.addAttribute("additionalCourse", studentsCourses);
     return "updateStudent";
   }
 
