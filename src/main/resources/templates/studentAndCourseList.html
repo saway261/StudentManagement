@@ -24,7 +24,7 @@
   <tr th:each="student : ${studentList}">
     <td th:text="${student.studentId}">202407-00001</td>
     <td>
-      <a th:href="@{/displayStudent/{studentId}(studentId=${student.studentId})}"
+      <a th:href="@{/student/{studentId}(studentId=${student.studentId})}"
          th:text="${student.fullname}">服部次郎</a>
     </td>
     <td th:text="${student.kanaName}">はっとりじろう</td>

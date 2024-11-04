@@ -13,11 +13,16 @@ import reisetech.StudentManagement.data.StudentsCourses;
 public interface StudentRepository {
 
   @Select("SELECT * FROM students")
-  List<Student> search();
+  List<Student> searchStudentList();
 
   @Select("SELECT * FROM students_courses")
-  List<StudentsCourses> searchStudentsCourses();
+  List<StudentsCourses> searchStudentsCourseList();
 
+  @Select("SELECT * FROM students WHERE student_id=#{studentId}")
+  Student searchStudentByStudentId(int studentId);
+
+  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
+  List<StudentsCourses> searchCoursesByStudentId(int studentId);
 
   @Insert(
       "INSERT INTO students (fullname, kana_name, nickname, email, city, telephone, age, gender, remark, is_deleted) "
@@ -32,12 +37,6 @@ public interface StudentRepository {
   @Options(useGeneratedKeys = true, keyProperty = "courseId")
   void registerCourse(StudentsCourses courses);
 
-
-  @Select("SELECT * FROM students WHERE student_id=#{studentId}")
-  Student searchStudentByStudentId(String studentId);
-
-  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
-  List<StudentsCourses> searchCoursesByStudentId(String studentId);
 
   @Update("UPDATE students SET "
       + "fullname=#{fullname}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, city=#{city},"

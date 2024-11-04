@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>受講生更新</title>
+  <title>受講生詳細</title>
 </head>
 <body>
-<h1>受講生更新</h1>
+<h1>受講生詳細</h1>
 <h2>受講生プロフィール更新</h2>
 
 <form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
@@ -89,8 +89,8 @@
     </div>
 
     <div>
-      <label for="courseStartAt">開始日</label>
-      <input type="text" id="courseStartAt"
+      <p>開始日　[[${course.courseStartAt}]]</p>
+      <input type="hidden"
              th:field="*{studentsCourses[__${iterStat.index}__].courseStartAt}" required/>
     </div>
     <div>
@@ -103,6 +103,32 @@
     <button type="submit">更新</button>
     <button type="button" onclick="window.location.href='/allStudentAndCourseList'">キャンセル
     </button>
+  </div>
+</form>
+
+<h2>受講生のコース追加登録</h2>
+
+<form th:action="@{/addCourse}" th:object="${additionalCourse}" method="post">
+  <div>
+    <input type="hidden" th:field="*{studentId}"/>
+  </div>
+  <div>
+    <label for="additionalCourseName">受講コース名</label>
+    <select id="additionalCourseName" th:field="*{courseName}" required>
+      <option value="" disabled selected>選択してください</option>
+      <option value="Java">Java</option>
+      <option value="AWS">AWS</option>
+      <option value="デザイン">デザイン</option>
+      <option value="Webマーケ">Webマーケ</option>
+      <option value="WordPress">WordPress</option>
+    </select>
+  </div>
+  <div>
+    <label for="additionalCourseStartAt">開始日</label>
+    <input type="date" id="additionalCourseStartAt" th:field="*{courseStartAt}" required/>
+  </div>
+  <div>
+    <button type="submit">追加</button>
   </div>
 </form>
 

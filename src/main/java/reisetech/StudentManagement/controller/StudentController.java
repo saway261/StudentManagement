@@ -30,6 +30,16 @@ public class StudentController {
     return "studentAndCourseList";
   }
 
+  @GetMapping("/student/{studentId}")
+  public String getStudent(@PathVariable int studentId, Model model) {
+    StudentDetail studentDetail = service.searchStudentDetail(studentId);
+    model.addAttribute("studentDetail", studentDetail);
+    StudentsCourses studentsCourses = new StudentsCourses();
+    studentsCourses.setStudentId(studentId);
+    model.addAttribute("additionalCourse", studentsCourses);
+    return "updateStudent";
+  }
+
   @GetMapping("/newStudent")
   public String newStudent(Model model) {
     StudentDetail studentDetail = new StudentDetail();
@@ -48,14 +58,6 @@ public class StudentController {
     return "redirect:/allStudentAndCourseList";
   }
 
-  @GetMapping("/displayStudent/{studentId}")
-  public String searchStudentById(@PathVariable String studentId, Model model) {
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail = service.searchStudentDetail(studentId);
-    model.addAttribute("studentDetail", studentDetail);
-    return "updateStudent";
-  }
-
   @PostMapping("/updateStudent")
   public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
@@ -63,6 +65,16 @@ public class StudentController {
     }
     service.updateStudent(studentDetail);
     service.updateCourses(studentDetail);
+    return "redirect:/allStudentAndCourseList";
+  }
+
+  @PostMapping("/addCourse")
+  public String addCourse(@ModelAttribute StudentsCourses additionalCourse,
+      BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.addCourse(additionalCourse);
     return "redirect:/allStudentAndCourseList";
   }
 

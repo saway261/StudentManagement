@@ -24,11 +24,11 @@ public class StudentService {
   }
 
   public List<Student> selectAllStudentList() {
-    return repository.search();
+    return repository.searchStudentList();
   }
 
   public List<Student> serchStudentList() {
-    List<Student> allStudents = repository.search();
+    List<Student> allStudents = repository.searchStudentList();
 
     List<Student> filteredStudents = allStudents.stream()
         .filter(student -> student.getAge() >= 30)
@@ -38,11 +38,11 @@ public class StudentService {
   }
 
   public List<StudentsCourses> selectAllStudentsCourseList() {
-    return repository.searchStudentsCourses();
+    return repository.searchStudentsCourseList();
   }
 
   public List<StudentsCourses> searchStudentsCourseList() {
-    List<StudentsCourses> allStudentsCourses = repository.searchStudentsCourses();
+    List<StudentsCourses> allStudentsCourses = repository.searchStudentsCourseList();
 
     List<StudentsCourses> filteredStudentsCourses = allStudentsCourses.stream()
         .filter(courses -> courses.getCourseName().equals("Java"))
@@ -72,7 +72,7 @@ public class StudentService {
   }
 
   @Transactional
-  public StudentDetail searchStudentDetail(String studentId) {
+  public StudentDetail searchStudentDetail(int studentId) {
     StudentDetail studentDetail = new StudentDetail();
 
     Student student = repository.searchStudentByStudentId(studentId);
@@ -95,6 +95,12 @@ public class StudentService {
     for (StudentsCourses course : courses) {
       repository.updateCourse(course);
     }
+  }
+
+  @Transactional
+  public void addCourse(StudentsCourses additionalCourse) {
+    additionalCourse.setCourseEndAt(additionalCourse.getCourseStartAt().plusMonths(6));
+    repository.registerCourse(additionalCourse);
   }
 
 }
