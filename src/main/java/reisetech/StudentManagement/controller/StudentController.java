@@ -25,8 +25,8 @@ public class StudentController {
 
   @GetMapping("/allStudentAndCourseList")
   public String getAllStudentAndCourseList(Model model) {
-    model.addAttribute("studentList", service.selectAllStudentList());
-    model.addAttribute("courseList", service.selectAllStudentsCourseList());
+    model.addAttribute("studentList", service.selectActiveStudentList());
+    model.addAttribute("courseList", service.selectActiveCourseList());
     return "studentAndCourseList";
   }
 

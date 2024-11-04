@@ -22,12 +22,12 @@ public class StudentService {
     this.repository = repository;
   }
 
-  public List<Student> selectAllStudentList() {
-    return repository.searchStudentList();
+  public List<Student> selectActiveStudentList() {
+    return repository.searchActiveStudentList();
   }
 
-  public List<StudentsCourses> selectAllStudentsCourseList() {
-    return repository.searchStudentsCourseList();
+  public List<StudentsCourses> selectActiveCourseList() {
+    return repository.searchActiveCourseList();
   }
 
   @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける

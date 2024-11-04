@@ -12,11 +12,11 @@ import reisetech.StudentManagement.data.StudentsCourses;
 @Mapper
 public interface StudentRepository {
 
-  @Select("SELECT * FROM students")
-  List<Student> searchStudentList();
+  @Select("SELECT * FROM students WHERE is_deleted = 0")
+  List<Student> searchActiveStudentList();
 
-  @Select("SELECT * FROM students_courses")
-  List<StudentsCourses> searchStudentsCourseList();
+  @Select("SELECT * FROM students_courses WHERE is_deleted = 0")
+  List<StudentsCourses> searchActiveCourseList();
 
   @Select("SELECT * FROM students WHERE student_id=#{studentId}")
   Student searchStudentByStudentId(int studentId);
