@@ -13,4 +13,5 @@ public class StudentsCourses {
   private int studentId;
   private LocalDate courseStartAt;
   private LocalDate courseEndAt;
+  private int isDeleted;
 }

@@ -55,13 +55,12 @@
   </div>
   <div>
     <label for="isDeleted_false">ステータス</label>
-    <input type="radio" id="isDeleted_false" name="isDeleted" value=0
+    <input type="radio" id="isDeleted_false" name="isDeleted" value="0"
            th:field="*{student.isDeleted}"/>在籍
     <label for="isDeleted_true"></label>
-    <input type="radio" id="isDeleted_true" name="isDeleted" value=1
+    <input type="radio" id="isDeleted_true" name="isDeleted" value="1"
            th:field="*{student.isDeleted}"/>退会済み
   </div>
-
   <h2>受講生のコース情報</h2>
 
   <div th:each="course, iterStat : ${studentDetail.studentsCourses}">
@@ -105,32 +104,5 @@
     </button>
   </div>
 </form>
-
-<h2>受講生のコース追加登録</h2>
-
-<form th:action="@{/addCourse}" th:object="${additionalCourse}" method="post">
-  <div>
-    <input type="hidden" th:field="*{studentId}"/>
-  </div>
-  <div>
-    <label for="additionalCourseName">受講コース名</label>
-    <select id="additionalCourseName" th:field="*{courseName}" required>
-      <option value="" disabled selected>選択してください</option>
-      <option value="Java">Java</option>
-      <option value="AWS">AWS</option>
-      <option value="デザイン">デザイン</option>
-      <option value="Webマーケ">Webマーケ</option>
-      <option value="WordPress">WordPress</option>
-    </select>
-  </div>
-  <div>
-    <label for="additionalCourseStartAt">開始日</label>
-    <input type="date" id="additionalCourseStartAt" th:field="*{courseStartAt}" required/>
-  </div>
-  <div>
-    <button type="submit">追加</button>
-  </div>
-</form>
-
 </body>
 </html>
