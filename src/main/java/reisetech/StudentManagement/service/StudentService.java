@@ -2,7 +2,6 @@ package reisetech.StudentManagement.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,29 +26,8 @@ public class StudentService {
     return repository.searchStudentList();
   }
 
-  public List<Student> serchStudentList() {
-    List<Student> allStudents = repository.searchStudentList();
-
-    List<Student> filteredStudents = allStudents.stream()
-        .filter(student -> student.getAge() >= 30)
-        .collect(Collectors.toList());
-
-    return filteredStudents;
-  }
-
   public List<StudentsCourses> selectAllStudentsCourseList() {
     return repository.searchStudentsCourseList();
-  }
-
-  public List<StudentsCourses> searchStudentsCourseList() {
-    List<StudentsCourses> allStudentsCourses = repository.searchStudentsCourseList();
-
-    List<StudentsCourses> filteredStudentsCourses = allStudentsCourses.stream()
-        .filter(courses -> courses.getCourseName().equals("Java"))
-        .collect(Collectors.toList());
-
-    return filteredStudentsCourses;
-
   }
 
   @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける
