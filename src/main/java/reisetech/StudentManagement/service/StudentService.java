@@ -61,7 +61,7 @@ public class StudentService {
   @Transactional
   public void registerCourse(StudentDetail studentDetail) {
     List<StudentsCourses> courses = studentDetail.getStudentsCourses();
-    String studentId = studentDetail.getStudent().getStudentId();
+    int studentId = studentDetail.getStudent().getStudentId();
     LocalDate today = LocalDate.now();
     for (StudentsCourses course : courses) {
       course.setStudentId(studentId);
@@ -83,4 +83,18 @@ public class StudentService {
 
     return studentDetail;
   }
+
+  @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    repository.updateStudent(studentDetail.getStudent());
+  }
+
+  @Transactional
+  public void updateCourses(StudentDetail studentDetail) {
+    List<StudentsCourses> courses = studentDetail.getStudentsCourses();
+    for (StudentsCourses course : courses) {
+      repository.updateCourse(course);
+    }
+  }
+
 }

@@ -5,8 +5,12 @@
 </head>
 <body>
 <h1>受講生更新</h1>
+<h2>受講生プロフィール更新</h2>
 
 <form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <input type="hidden" th:field="*{student.studentId}"/>
+  </div>
   <div>
     <label for="fullname">フルネーム</label>
     <input type="text" maxlength="20" id="fullname" th:field="*{student.fullname}" required/>
@@ -64,10 +68,26 @@
     <h3>コース [[${iterStat.index + 1}]]</h3>
 
     <div>
-      <label for="courseName">コース名</label>
-      <input type="text" id="courseName"
-             th:field="*{studentsCourses[__${iterStat.index}__].courseName}" required/>
+      <input type="hidden" th:field="*{studentsCourses[__${iterStat.index}__].courseId}"/>
     </div>
+    <div>
+      <input type="hidden" th:field="*{studentsCourses[__${iterStat.index}__].studentId}"/>
+    </div>
+
+    <div>
+      <label for="courseName">受講コース名</label>
+      <select id="courseName" th:field="*{studentsCourses[__${iterStat.index}__].courseName}"
+              required>
+        <option value="Java" th:selected="${course.courseName == 'Java'}">Java</option>
+        <option value="AWS" th:selected="${course.courseName == 'AWS'}">AWS</option>
+        <option value="デザイン" th:selected="${course.courseName == 'デザイン'}">デザイン</option>
+        <option value="Webマーケ" th:selected="${course.courseName == 'Webマーケ'}">Webマーケ
+        </option>
+        <option value="WordPress" th:selected="${course.courseName == 'WordPress'}">WordPress
+        </option>
+      </select>
+    </div>
+
     <div>
       <label for="courseStartAt">開始日</label>
       <input type="text" id="courseStartAt"
@@ -81,6 +101,8 @@
   </div>
   <div>
     <button type="submit">更新</button>
+    <button type="button" onclick="window.location.href='/allStudentAndCourseList'">キャンセル
+    </button>
   </div>
 </form>
 
