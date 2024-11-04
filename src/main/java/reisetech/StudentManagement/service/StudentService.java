@@ -30,6 +30,10 @@ public class StudentService {
     return repository.searchActiveCourseList();
   }
 
+  public List<Student> selectInactiveStudentList() {
+    return repository.searchInactiveStudentList();
+  }
+
   @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける
   public void registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
@@ -79,6 +83,11 @@ public class StudentService {
   public void addCourse(StudentsCourses additionalCourse) {
     additionalCourse.setCourseEndAt(additionalCourse.getCourseStartAt().plusMonths(6));
     repository.registerCourse(additionalCourse);
+  }
+
+  @Transactional
+  public void switchStudent(Student student) {
+    repository.switchStudent(student.getStudentId(), student.getIsDeleted());
   }
 
 }

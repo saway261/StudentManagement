@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import reisetech.StudentManagement.data.Student;
 import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.domain.StudentDetail;
 import reisetech.StudentManagement.service.StudentService;
@@ -23,11 +24,33 @@ public class StudentController {
     this.service = service;
   }
 
-  @GetMapping("/allStudentAndCourseList")
-  public String getAllStudentAndCourseList(Model model) {
+  @GetMapping("/activeStudentAndCourseList")
+  public String getActiveStudentAndCourseList(Model model) {
     model.addAttribute("studentList", service.selectActiveStudentList());
     model.addAttribute("courseList", service.selectActiveCourseList());
     return "studentAndCourseList";
+  }
+
+  @GetMapping("/deletedStudentList")
+  public String getDeletedStudentList(Model model) {
+    model.addAttribute("studentList", service.selectInactiveStudentList());
+    return "deletedStudentList";
+  }
+
+  @GetMapping("/deletedStudent/{studentId}")
+  public String getDeletedStudent(@PathVariable int studentId, Model model) {
+    StudentDetail studentDetail = service.searchStudentDetail(studentId);
+    model.addAttribute("student", studentDetail.getStudent());
+    return "activateStudent";
+  }
+
+  @PostMapping("/activateStudent")
+  public String activateStudent(@ModelAttribute Student student, BindingResult result) {
+    if (result.hasErrors()) {
+      return "activateStudent";
+    }
+    service.switchStudent(student);
+    return "redirect:/activeStudentAndCourseList";
   }
 
   @GetMapping("/student/{studentId}")
@@ -55,7 +78,7 @@ public class StudentController {
     }
     service.registerStudent(studentDetail);
     service.registerCourse(studentDetail);
-    return "redirect:/allStudentAndCourseList";
+    return "redirect:/activeStudentAndCourseList";
   }
 
   @PostMapping("/updateStudent")
@@ -65,7 +88,7 @@ public class StudentController {
     }
     service.updateStudent(studentDetail);
     service.updateCourses(studentDetail);
-    return "redirect:/allStudentAndCourseList";
+    return "redirect:/activeStudentAndCourseList";
   }
 
   @PostMapping("/addCourse")
@@ -75,7 +98,7 @@ public class StudentController {
       return "updateStudent";
     }
     service.addCourse(additionalCourse);
-    return "redirect:/allStudentAndCourseList";
+    return "redirect:/activeStudentAndCourseList";
   }
 
 

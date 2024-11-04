@@ -18,6 +18,9 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses WHERE is_deleted = 0")
   List<StudentsCourses> searchActiveCourseList();
 
+  @Select("SELECT * FROM students WHERE is_deleted = 1")
+  List<Student> searchInactiveStudentList();
+
   @Select("SELECT * FROM students WHERE student_id=#{studentId}")
   Student searchStudentByStudentId(int studentId);
 
@@ -48,5 +51,9 @@ public interface StudentRepository {
       + "course_name=#{courseName}, course_start_at=#{courseStartAt}, course_end_at=#{courseEndAt}"
       + "WHERE course_id=#{courseId}")
   void updateCourse(StudentsCourses courses);
+
+  @Update("UPDATE students SET is_deleted=#{isDeleted} WHERE student_id=#{studentId}")
+  void switchStudent(int studentId, int isDeleted);
+
 
 }

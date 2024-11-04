@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>退会者リスト</title>
+</head>
+<body>
+<h3>退会者リスト</h3>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>受講生ID</th>
+      <th>名前</th>
+      <th>ふりがな</th>
+      <th>ニックネーム</th>
+      <th>メールアドレス</th>
+      <th>地域</th>
+      <th>電話番号</th>
+      <th>年齢</th>
+      <th>性別</th>
+      <th>備考</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="student : ${studentList}">
+      <td th:text="${student.studentId}">202407-00001</td>
+      <td>
+        <a th:href="@{/deletedStudent/{studentId}(studentId=${student.studentId})}"
+           th:text="${student.fullname}">服部次郎</a>
+      </td>
+      <td th:text="${student.kanaName}">はっとりじろう</td>
+      <td th:text="${student.nickname}">ハットリくん</td>
+      <td th:text="${student.email}">ninja@gamil.com</td>
+      <td th:text="${student.city}">滋賀県甲賀市</td>
+      <td th:text="${student.telephone}">090-1234-5678</td>
+      <td th:text="${student.age}">33</td>
+      <td th:text="${student.gender}">その他</td>
+      <td th:text="${student.remark}">特になし</td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+</body>
+</html>
