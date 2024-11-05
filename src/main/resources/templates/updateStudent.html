@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>受講生詳細</h1>
-<h2>受講生プロフィール更新</h2>
+<h2>受講生プロフィール情報</h2>
 
 <form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
   <div>
@@ -62,7 +62,7 @@
            th:field="*{student.isDeleted}"/>退会済み
   </div>
 
-  <h2>受講生のコース情報</h2>
+  <h2>受講生コース情報</h2>
 
   <div th:each="course, iterStat : ${studentDetail.studentsCourses}">
     <h3>コース [[${iterStat.index + 1}]]</h3>
@@ -101,7 +101,7 @@
   </div>
   <div>
     <button type="submit">更新</button>
-    <button type="button" onclick="window.location.href='/allStudentAndCourseList'">キャンセル
+    <button type="button" onclick="window.location.href='/presentStudentAndCourseList'">キャンセル
     </button>
   </div>
 </form>

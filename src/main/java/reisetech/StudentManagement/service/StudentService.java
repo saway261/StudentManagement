@@ -22,16 +22,26 @@ public class StudentService {
     this.repository = repository;
   }
 
-  public List<Student> selectActiveStudentList() {
-    return repository.searchActiveStudentList();
+  @Transactional
+  public StudentDetail searchStudentDetail(int studentId) {
+    StudentDetail studentDetail = new StudentDetail();
+    Student student = repository.searchStudentByStudentId(studentId);
+    List<StudentsCourses> courses = repository.searchCoursesByStudentId(studentId);
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(courses);
+    return studentDetail;
   }
 
-  public List<StudentsCourses> selectActiveCourseList() {
-    return repository.searchActiveCourseList();
+  public List<Student> selectPresentStudentList() {
+    return repository.searchPresentStudentList();
   }
 
-  public List<Student> selectInactiveStudentList() {
-    return repository.searchInactiveStudentList();
+  public List<StudentsCourses> selectPresentCourseList() {
+    return repository.searchPresentCourseList();
+  }
+
+  public List<Student> selectDeletedStudentList() {
+    return repository.searchDeletedStudentList();
   }
 
   @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける
@@ -51,19 +61,6 @@ public class StudentService {
       course.setCourseEndAt(today.plusMonths(6));
       repository.registerCourse(course);
     }
-  }
-
-  @Transactional
-  public StudentDetail searchStudentDetail(int studentId) {
-    StudentDetail studentDetail = new StudentDetail();
-
-    Student student = repository.searchStudentByStudentId(studentId);
-    List<StudentsCourses> courses = repository.searchCoursesByStudentId(studentId);
-
-    studentDetail.setStudent(student);
-    studentDetail.setStudentsCourses(courses);
-
-    return studentDetail;
   }
 
   @Transactional

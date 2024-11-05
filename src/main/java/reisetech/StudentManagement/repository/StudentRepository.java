@@ -13,13 +13,13 @@ import reisetech.StudentManagement.data.StudentsCourses;
 public interface StudentRepository {
 
   @Select("SELECT * FROM students WHERE is_deleted = 0")
-  List<Student> searchActiveStudentList();
+  List<Student> searchPresentStudentList();
 
   @Select("SELECT * FROM students_courses WHERE is_deleted = 0")
-  List<StudentsCourses> searchActiveCourseList();
+  List<StudentsCourses> searchPresentCourseList();
 
   @Select("SELECT * FROM students WHERE is_deleted = 1")
-  List<Student> searchInactiveStudentList();
+  List<Student> searchDeletedStudentList();
 
   @Select("SELECT * FROM students WHERE student_id=#{studentId}")
   Student searchStudentByStudentId(int studentId);
@@ -28,7 +28,8 @@ public interface StudentRepository {
   List<StudentsCourses> searchCoursesByStudentId(int studentId);
 
   @Insert(
-      "INSERT INTO students (fullname, kana_name, nickname, email, city, telephone, age, gender, remark, is_deleted) "
+      "INSERT INTO students (fullname, kana_name, nickname, email, city, telephone, "
+          + "age, gender, remark, is_deleted) "
           + "VALUES (#{fullname}, #{kanaName}, #{nickname},"
           + "#{email}, #{city}, #{telephone}, #{age}, #{gender}, #{remark}, false);")
   @Options(useGeneratedKeys = true, keyProperty = "studentId")
@@ -42,9 +43,9 @@ public interface StudentRepository {
 
 
   @Update("UPDATE students SET "
-      + "fullname=#{fullname}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, city=#{city},"
-      + " telephone=#{telephone}, age=#{age}, gender=#{gender}, remark=#{remark}, is_deleted=#{isDeleted} "
-      + "WHERE student_id=#{studentId}")
+      + "fullname=#{fullname}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, "
+      + "city=#{city}, telephone=#{telephone}, age=#{age}, gender=#{gender}, remark=#{remark}, "
+      + "is_deleted=#{isDeleted} WHERE student_id=#{studentId}")
   void updateStudent(Student student);
 
   @Update("UPDATE students_courses SET "
