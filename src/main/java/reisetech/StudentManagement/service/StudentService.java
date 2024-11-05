@@ -83,8 +83,8 @@ public class StudentService {
   }
 
   @Transactional
-  public void switchStudent(Student student) {
-    repository.switchStudent(student.getStudentId(), student.getIsDeleted());
+  public void switchStudentStatus(Student student) {
+    repository.switchStudentStatus(student.getStudentId(), student.getIsDeleted());
   }
 
 }

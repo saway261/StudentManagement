@@ -59,7 +59,7 @@ public class StudentController {
   public String getDeletedStudent(@PathVariable int studentId, Model model) {
     StudentDetail studentDetail = service.searchStudentDetail(studentId);
     model.addAttribute("student", studentDetail.getStudent());
-    return "activateStudent";
+    return "switchStudentStatus";
   }
 
   @PostMapping("/registerStudent")
@@ -92,12 +92,12 @@ public class StudentController {
     return "redirect:/presentStudentAndCourseList";
   }
 
-  @PostMapping("/activateStudent")
-  public String activateStudent(@ModelAttribute Student student, BindingResult result) {
+  @PostMapping("/switchStudentStatus")
+  public String switchStudentStatus(@ModelAttribute Student student, BindingResult result) {
     if (result.hasErrors()) {
-      return "activateStudent";
+      return "switchStudentStatus";
     }
-    service.switchStudent(student);
+    service.switchStudentStatus(student);
     return "redirect:/presentStudentAndCourseList";
 
   }
