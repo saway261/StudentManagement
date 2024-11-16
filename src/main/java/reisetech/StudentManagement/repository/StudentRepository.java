@@ -54,7 +54,7 @@ public interface StudentRepository {
   void updateCourse(StudentsCourses courses);
 
   @Update("UPDATE students SET is_deleted=#{isDeleted} WHERE student_id=#{studentId}")
-  void switchStudentStatus(int studentId, int isDeleted);
+  void switchStudentStatus(int studentId, boolean isDeleted);
 
 
 }

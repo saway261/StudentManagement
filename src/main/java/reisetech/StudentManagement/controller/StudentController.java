@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import reisetech.StudentManagement.data.Student;
 import reisetech.StudentManagement.data.StudentsCourses;
 import reisetech.StudentManagement.domain.StudentDetail;
@@ -24,14 +25,31 @@ public class StudentController {
     this.service = service;
   }
 
-  @GetMapping("/presentStudentAndCourseList")
-  public String getPresentStudentAndCourseList(Model model) {
-    model.addAttribute("studentList", service.selectPresentStudentList());
-    model.addAttribute("courseList", service.selectPresentCourseList());
-    return "studentAndCourseList";
+//  @GetMapping("/students")
+//  public String getPresentStudentAndCourseList(Model model) {
+//    model.addAttribute("studentList", service.selectPresentStudentList());
+//    model.addAttribute("courseList", service.selectPresentCourseList());
+//    return "studentAndCourseList";
+//  }
+
+  @GetMapping("/students")
+  public String getStudentList(
+      @RequestParam(name = "deleted", required = false, defaultValue = "false") boolean deleted,
+      Model model) {
+    if (deleted) {
+      // 退会者リスト
+      model.addAttribute("studentList", service.selectDeletedStudentList());
+      return "deletedStudentList"; // 退会者リスト用テンプレート
+    } else {
+      // 在籍学生リスト
+      model.addAttribute("studentList", service.selectPresentStudentList());
+      model.addAttribute("courseList", service.selectPresentCourseList());
+      return "studentAndCourseList"; // 在籍学生リスト用テンプレート
+    }
   }
 
-  @GetMapping("/newStudent")
+
+  @GetMapping("/students/new")
   public String newStudent(Model model) {
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudentsCourses(Arrays.asList(new StudentsCourses()));
@@ -39,66 +57,73 @@ public class StudentController {
     return "registerStudent";
   }
 
-  @GetMapping("/student/{studentId}")
+  @GetMapping("/students/{studentId}")
   public String getStudent(@PathVariable int studentId, Model model) {
     StudentDetail studentDetail = service.searchStudentDetail(studentId);
+    if (studentDetail.getStudent().isDeleted()) {
+      // 退会者の場合はエラーページか別の処理にリダイレクト
+      return "redirect:/students/deleted/{studentId}";
+    }
     model.addAttribute("studentDetail", studentDetail);
     StudentsCourses studentsCourses = new StudentsCourses();
     studentsCourses.setStudentId(studentId);
-    model.addAttribute("additionalCourse", studentsCourses);
+    model.addAttribute("newCourse", studentsCourses);
     return "updateStudent";
   }
 
-  @GetMapping("/deletedStudentList")
-  public String getDeletedStudentList(Model model) {
-    model.addAttribute("studentList", service.selectDeletedStudentList());
-    return "deletedStudentList";
-  }
+//  @GetMapping("/students?deleted=true")
+//  public String getDeletedStudentList(Model model) {
+//    model.addAttribute("studentList", service.selectDeletedStudentList());
+//    return "deletedStudentList";
+//  }
 
-  @GetMapping("/deletedStudent/{studentId}")
+  @GetMapping("/students/deleted/{studentId}")
   public String getDeletedStudent(@PathVariable int studentId, Model model) {
     StudentDetail studentDetail = service.searchStudentDetail(studentId);
+    if (!studentDetail.getStudent().isDeleted()) {
+      return "redirect:/students";
+    }
     model.addAttribute("student", studentDetail.getStudent());
     return "switchStudentStatus";
   }
 
-  @PostMapping("/registerStudent")
+  @PostMapping("/students/new")
   public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
       return "registerStudent";
     }
     service.registerStudent(studentDetail);
     service.registerCourse(studentDetail);
-    return "redirect:/presentStudentAndCourseList";
+    return "redirect:/students";
   }
 
-  @PostMapping("/updateStudent")
+  @PostMapping("/students/update")
   public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
       return "updateStudent";
     }
     service.updateStudent(studentDetail);
     service.updateCourses(studentDetail);
-    return "redirect:/presentStudentAndCourseList";
+    return "redirect:/students";
   }
 
-  @PostMapping("/addCourse")
-  public String addCourse(@ModelAttribute StudentsCourses additionalCourse,
+  @PostMapping("/students/courses/new")
+  public String addCourse(@ModelAttribute StudentsCourses newCourse,
       BindingResult result) {
     if (result.hasErrors()) {
       return "updateStudent";
     }
-    service.addCourse(additionalCourse);
-    return "redirect:/presentStudentAndCourseList";
+    service.addCourse(newCourse);
+    return "redirect:/students";
   }
 
-  @PostMapping("/switchStudentStatus")
+  @PostMapping("/students/switch-status")
   public String switchStudentStatus(@ModelAttribute Student student, BindingResult result) {
     if (result.hasErrors()) {
       return "switchStudentStatus";
     }
     service.switchStudentStatus(student);
-    return "redirect:/presentStudentAndCourseList";
+    return "redirect:/students";
 
   }
 }

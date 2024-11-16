@@ -6,7 +6,7 @@
 <body>
 <h1>退会者ステータス変更</h1>
 
-<form th:action="@{/switchStudentStatus}" th:object="${student}" method="post">
+<form th:action="@{/students/switch-status}" th:object="${student}" method="post">
   <div>
     <input type="hidden" th:field="*{studentId}"/>
   </div>
@@ -22,11 +22,11 @@
   </div>
   <div>
     <label for="isDeleted_false">ステータス</label>
-    <input type="radio" id="isDeleted_false" name="isDeleted" value="0"
-           th:field="*{isDeleted}"/>在籍
+    <input type="radio" id="isDeleted_false" name="deleted" value="false"
+           th:field="*{Deleted}"/>在籍
     <label for="isDeleted_true"></label>
-    <input type="radio" id="isDeleted_true" name="isDeleted" value="1"
-           th:field="*{isDeleted}"/>退会済み
+    <input type="radio" id="isDeleted_true" name="deleted" value="true"
+           th:field="*{Deleted}"/>退会済み
   </div>
     <button type="submit">更新</button>
   </div>

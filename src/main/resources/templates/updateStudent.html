@@ -7,7 +7,8 @@
 <h1>受講生詳細</h1>
 <h2>受講生プロフィール情報</h2>
 
-<form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+<form th:object="${studentDetail}"
+      th:action="@{/students/update}" method="post">
   <div>
     <input type="hidden" th:field="*{student.studentId}"/>
   </div>
@@ -55,11 +56,11 @@
   </div>
   <div>
     <label for="isDeleted_false">ステータス</label>
-    <input type="radio" id="isDeleted_false" name="isDeleted" value="0"
-           th:field="*{student.isDeleted}"/>在籍
+    <input type="radio" id="isDeleted_false" name="deleted" value="false"
+           th:field="*{student.deleted}"/>在籍
     <label for="isDeleted_true"></label>
-    <input type="radio" id="isDeleted_true" name="isDeleted" value="1"
-           th:field="*{student.isDeleted}"/>退会済み
+    <input type="radio" id="isDeleted_true" name="deleted" value="true"
+           th:field="*{student.deleted}"/>退会済み
   </div>
 
   <h2>受講生コース情報</h2>
@@ -101,20 +102,20 @@
   </div>
   <div>
     <button type="submit">更新</button>
-    <button type="button" onclick="window.location.href='/presentStudentAndCourseList'">キャンセル
+    <button type="button" onclick="window.location.href='/students'">キャンセル
     </button>
   </div>
 </form>
 
 <h2>受講生のコース追加登録</h2>
 
-<form th:action="@{/addCourse}" th:object="${additionalCourse}" method="post">
+<form th:action="@{/students/courses/new}" th:object="${newCourse}" method="post">
   <div>
     <input type="hidden" th:field="*{studentId}"/>
   </div>
   <div>
-    <label for="additionalCourseName">受講コース名</label>
-    <select id="additionalCourseName" th:field="*{courseName}" required>
+    <label for="newCourseName">受講コース名</label>
+    <select id="newCourseName" th:field="*{courseName}" required>
       <option value="" disabled selected>選択してください</option>
       <option value="Java">Java</option>
       <option value="AWS">AWS</option>
@@ -124,8 +125,8 @@
     </select>
   </div>
   <div>
-    <label for="additionalCourseStartAt">開始日</label>
-    <input type="date" id="additionalCourseStartAt" th:field="*{courseStartAt}" required/>
+    <label for="newCourseStartAt">開始日</label>
+    <input type="date" id="newCourseStartAt" th:field="*{courseStartAt}" required/>
   </div>
   <div>
     <button type="submit">追加</button>
