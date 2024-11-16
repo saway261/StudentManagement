@@ -2,7 +2,6 @@ package reisetech.StudentManagement.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,33 +22,26 @@ public class StudentService {
     this.repository = repository;
   }
 
-  public List<Student> selectAllStudentList() {
-    return repository.search();
+  @Transactional
+  public StudentDetail searchStudentDetail(int studentId) {
+    StudentDetail studentDetail = new StudentDetail();
+    Student student = repository.searchStudentByStudentId(studentId);
+    List<StudentsCourses> courses = repository.searchCoursesByStudentId(studentId);
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(courses);
+    return studentDetail;
   }
 
-  public List<Student> serchStudentList() {
-    List<Student> allStudents = repository.search();
-
-    List<Student> filteredStudents = allStudents.stream()
-        .filter(student -> student.getAge() >= 30)
-        .collect(Collectors.toList());
-
-    return filteredStudents;
+  public List<Student> selectPresentStudentList() {
+    return repository.searchPresentStudentList();
   }
 
-  public List<StudentsCourses> selectAllStudentsCourseList() {
-    return repository.searchStudentsCourses();
+  public List<StudentsCourses> selectPresentCourseList() {
+    return repository.searchPresentCourseList();
   }
 
-  public List<StudentsCourses> searchStudentsCourseList() {
-    List<StudentsCourses> allStudentsCourses = repository.searchStudentsCourses();
-
-    List<StudentsCourses> filteredStudentsCourses = allStudentsCourses.stream()
-        .filter(courses -> courses.getCourseName().equals("Java"))
-        .collect(Collectors.toList());
-
-    return filteredStudentsCourses;
-
+  public List<Student> selectDeletedStudentList() {
+    return repository.searchDeletedStudentList();
   }
 
   @Transactional//サービス層の登録・更新・削除をするメソッドに必ずつける
@@ -61,7 +53,7 @@ public class StudentService {
   @Transactional
   public void registerCourse(StudentDetail studentDetail) {
     List<StudentsCourses> courses = studentDetail.getStudentsCourses();
-    String studentId = studentDetail.getStudent().getStudentId();
+    int studentId = studentDetail.getStudent().getStudentId();
     LocalDate today = LocalDate.now();
     for (StudentsCourses course : courses) {
       course.setStudentId(studentId);
@@ -70,4 +62,29 @@ public class StudentService {
       repository.registerCourse(course);
     }
   }
+
+  @Transactional
+  public void updateStudent(StudentDetail studentDetail) {
+    repository.updateStudent(studentDetail.getStudent());
+  }
+
+  @Transactional
+  public void updateCourses(StudentDetail studentDetail) {
+    List<StudentsCourses> courses = studentDetail.getStudentsCourses();
+    for (StudentsCourses course : courses) {
+      repository.updateCourse(course);
+    }
+  }
+
+  @Transactional
+  public void addCourse(StudentsCourses additionalCourse) {
+    additionalCourse.setCourseEndAt(additionalCourse.getCourseStartAt().plusMonths(6));
+    repository.registerCourse(additionalCourse);
+  }
+
+  @Transactional
+  public void switchStudentStatus(Student student) {
+    repository.switchStudentStatus(student.getStudentId(), student.isDeleted());
+  }
+
 }

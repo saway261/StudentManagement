@@ -6,7 +6,7 @@
 <body>
 <h1>受講生登録</h1>
 
-<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
+<form th:action="@{/students/new}" th:object="${studentDetail}" method="post">
   <div>
     <label for="fullname">フルネーム</label>
     <input type="text" maxlength="20" id="fullname" th:field="*{student.fullname}" required/>

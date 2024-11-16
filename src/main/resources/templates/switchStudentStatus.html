@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>退会者ステータス変更</title>
+</head>
+<body>
+<h1>退会者ステータス変更</h1>
+
+<form th:action="@{/students/switch-status}" th:object="${student}" method="post">
+  <div>
+    <input type="hidden" th:field="*{studentId}"/>
+  </div>
+  <div>
+    <p>フルネーム　　：　[[${student.fullname}]]</p>
+    <p>ふりがな　　　：　[[${student.kanaName}]]</p>
+    <p>ニックネーム　：　[[${student.nickname}]]</p>
+    <p>Emailアドレス：　[[${student.email}]]</p>
+    <p>地域　　　　　：　[[${student.city}]]</p>
+    <p>電話番号　　　：　[[${student.telephone}]]</p>
+    <p>年齢　　　　　：　[[${student.age}]]</p>
+    <p>性別：　[[${student.gender}]]</p>
+  </div>
+  <div>
+    <label for="isDeleted_false">ステータス</label>
+    <input type="radio" id="isDeleted_false" name="deleted" value="false"
+           th:field="*{Deleted}"/>在籍
+    <label for="isDeleted_true"></label>
+    <input type="radio" id="isDeleted_true" name="deleted" value="true"
+           th:field="*{Deleted}"/>退会済み
+  </div>
+  <div>
+    <button type="submit">更新</button>
+  </div>
+</form>
+</body>
+</html>
