@@ -25,12 +25,7 @@ public class StudentController {
     this.service = service;
   }
 
-//  @GetMapping("/students")
-//  public String getPresentStudentAndCourseList(Model model) {
-//    model.addAttribute("studentList", service.selectPresentStudentList());
-//    model.addAttribute("courseList", service.selectPresentCourseList());
-//    return "studentAndCourseList";
-//  }
+  //GETリクエスト
 
   @GetMapping("/students")
   public String getStudentList(
@@ -39,15 +34,14 @@ public class StudentController {
     if (deleted) {
       // 退会者リスト
       model.addAttribute("studentList", service.selectDeletedStudentList());
-      return "deletedStudentList"; // 退会者リスト用テンプレート
+      return "deletedStudentList";
     } else {
       // 在籍学生リスト
       model.addAttribute("studentList", service.selectPresentStudentList());
       model.addAttribute("courseList", service.selectPresentCourseList());
-      return "studentAndCourseList"; // 在籍学生リスト用テンプレート
+      return "studentAndCourseList";
     }
   }
-
 
   @GetMapping("/students/new")
   public String newStudent(Model model) {
@@ -61,7 +55,6 @@ public class StudentController {
   public String getStudent(@PathVariable int studentId, Model model) {
     StudentDetail studentDetail = service.searchStudentDetail(studentId);
     if (studentDetail.getStudent().isDeleted()) {
-      // 退会者の場合はエラーページか別の処理にリダイレクト
       return "redirect:/students/deleted/{studentId}";
     }
     model.addAttribute("studentDetail", studentDetail);
@@ -70,12 +63,6 @@ public class StudentController {
     model.addAttribute("newCourse", studentsCourses);
     return "updateStudent";
   }
-
-//  @GetMapping("/students?deleted=true")
-//  public String getDeletedStudentList(Model model) {
-//    model.addAttribute("studentList", service.selectDeletedStudentList());
-//    return "deletedStudentList";
-//  }
 
   @GetMapping("/students/deleted/{studentId}")
   public String getDeletedStudent(@PathVariable int studentId, Model model) {
@@ -86,6 +73,8 @@ public class StudentController {
     model.addAttribute("student", studentDetail.getStudent());
     return "switchStudentStatus";
   }
+
+  //POSTリクエスト
 
   @PostMapping("/students/new")
   public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
