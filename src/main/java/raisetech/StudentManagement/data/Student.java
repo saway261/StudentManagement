@@ -13,9 +13,10 @@ public class Student {
   private String nickname;
   private String email;
   private String area;
+  private String telephone;
   private int age;
   private String sex;
-  private String remarlk;
+  private String remark;
   private boolean isDeleted;
 
 }
