@@ -35,7 +35,7 @@ public class StudentConverter {
     return studentDetails;
   }
 
-  private List<StudentCourse> getStudentLinkedCourses(Student student,
+  public List<StudentCourse> getStudentLinkedCourses(Student student,
       List<StudentCourse> courses) {
     List<StudentCourse> studentLinkedCourses = courses.stream()
         .filter(course -> student.getStudentId() == course.getStudentId())
@@ -43,4 +43,5 @@ public class StudentConverter {
 
     return studentLinkedCourses;
   }
+
 }
