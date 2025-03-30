@@ -55,12 +55,8 @@
     <input type="text" id="remark" th:field="*{student.remark}">
   </div>
   <div>
-    <label for="isDeleted_false">ステータス</label>
-    <input type="radio" id="isDeleted_false" name="deleted" value="false"
-           th:field="*{student.deleted}"/>在籍
-    <label for="isDeleted_true"></label>
-    <input type="radio" id="isDeleted_true" name="deleted" value="true"
-           th:field="*{student.deleted}"/>退会済み
+    <label for="isDeleted">キャンセル</label>
+    <input type="checkbox" id="isDeleted" name="isDeleted" checked th:field="*{student.deleted}"/>
   </div>
 
   <h2>受講生コース情報</h2>

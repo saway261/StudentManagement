@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,16 +21,24 @@ public class StudentService {
   }
 
   public List<Student> searchStudentList() {
-    return repository.searchStudentList();
+    return repository.searchActiveStudentList();
   }
 
   public List<StudentCourse> searchCourseList() {
-    return repository.searchCourseList();
+    return repository.searchActiveCourseList();
   }
 
   public StudentDetail searchStudent(int studentId) {
     Student student = repository.serchStudent(studentId);
-    List<StudentCourse> courses = repository.searchCourses(studentId);
+
+    List<StudentCourse> courses = new ArrayList<>();
+    if (repository.searchCourses(studentId).isEmpty()) {
+      StudentCourse course = new StudentCourse();
+      course.setCourseName("未登録");
+      courses.add(course);
+    } else {
+      courses = repository.searchCourses(studentId);
+    }
 
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);

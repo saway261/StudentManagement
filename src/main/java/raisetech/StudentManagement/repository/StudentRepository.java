@@ -13,13 +13,21 @@ import raisetech.StudentManagement.data.StudentCourse;
 public interface StudentRepository {
 
   @Select("SELECT * FROM students")
-  List<Student> searchStudentList();
+  List<Student> searchAllStudentList();
+
+  @Select("SELECT * FROM students WHERE is_deleted = 0")
+  List<Student> searchActiveStudentList();
 
   @Select("SELECT * FROM students WHERE student_id=#{studentId}")
   Student serchStudent(int studentId);
 
-  @Select("SELECT * FROM students_courses")
-  List<StudentCourse> searchCourseList();
+  @Select("SELECT sc.* FROM students_courses sc "
+      + "JOIN students s ON sc.student_id = s.student_id "
+      + "WHERE s.is_deleted = 0")
+  List<StudentCourse> searchActiveCourseList();
+
+  @Select("SELECT * FROM students_courses WHERE ")
+  List<StudentCourse> searchAllCourseList();
 
   @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
   List<StudentCourse> searchCourses(int studentId);
@@ -47,4 +55,6 @@ public interface StudentRepository {
       + "course_name=#{courseName}, course_end_at=#{courseEndAt} "
       + "WHERE course_id=#{courseId}")
   void updateCourse(StudentCourse course);
+
+
 }
