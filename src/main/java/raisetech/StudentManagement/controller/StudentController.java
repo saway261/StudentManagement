@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.domain.StudentDetail;
@@ -19,26 +19,20 @@ import raisetech.StudentManagement.service.StudentService;
 public class StudentController {
 
   private StudentService service;
-  private StudentConverter converter;
 
   @Autowired
-  public StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
-  @GetMapping("/studentList")
+  @GetMapping("/studentAndCourseList")
   public String getStudentDetails(Model model) {
     List<Student> students = service.searchStudentList();
-    List<StudentCourse> courses = service.searchStudentCourseList();
+    List<StudentCourse> courses = service.searchCourseList();
 
-    model.addAttribute("studentList", converter.convertStudentDetails(students, courses));
-    return "studentList";
-  }
-
-  @GetMapping("/studentCourseList")
-  public List<StudentCourse> getStudentCourseList() {
-    return service.searchStudentCourseList();
+    model.addAttribute("studentList", students);
+    model.addAttribute("courseList", courses);
+    return "studentAndCourseList";
   }
 
   @GetMapping("/newStudent")
@@ -52,12 +46,27 @@ public class StudentController {
   @PostMapping("/registerStudent")
   public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
-      System.out.println(result.toString());
       return "registerStudent";
     }
     service.registerStudent(studentDetail);
-    return "redirect:/studentList";
+    return "redirect:/studentAndCourseList";
   }
 
-  //TODO:更新処理
+  @GetMapping("/student/{studentId}")
+  public String viewStudent(@PathVariable("studentId") int studentId, Model model) {
+    StudentDetail studentDetail = service.searchStudent(studentId);
+    model.addAttribute("studentDetail", studentDetail);
+    return "updateStudent";
+  }
+
+  @PostMapping("/updateStudent")
+  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
+    if (result.hasErrors()) {
+      return "updateStudent";
+    }
+    service.updateStudent(studentDetail);
+    return "redirect:/studentAndCourseList";
+  }
+
+  //TODO:論理削除の実装
 }
