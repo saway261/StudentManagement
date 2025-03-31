@@ -36,7 +36,9 @@
     <td th:text="${student.age}">33</td>
     <td th:text="${student.sex}">その他</td>
     <td th:text="${student.remark}">特になし</td>
-    <td th:text="${student.isDeleted}">false</td>
+    <td>
+      <input type="checkbox" th:checked="${student.isDeleted}"/>
+    </td>
   </tr>
   </tbody>
 </table>

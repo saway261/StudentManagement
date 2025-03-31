@@ -27,8 +27,8 @@ public class StudentController {
 
   @GetMapping("/studentAndCourseList")
   public String getStudentDetails(Model model) {
-    List<Student> students = service.searchStudentList();
-    List<StudentCourse> courses = service.searchCourseList();
+    List<Student> students = service.searchActiveStudentList();
+    List<StudentCourse> courses = service.searchActiveCourseList();
 
     model.addAttribute("studentList", students);
     model.addAttribute("courseList", courses);

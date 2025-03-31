@@ -26,7 +26,7 @@ public interface StudentRepository {
       + "WHERE s.is_deleted = 0")
   List<StudentCourse> searchActiveCourseList();
 
-  @Select("SELECT * FROM students_courses WHERE ")
+  @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchAllCourseList();
 
   @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")

@@ -20,16 +20,17 @@ public class StudentService {
     this.repository = repository;
   }
 
-  public List<Student> searchStudentList() {
-    return repository.searchActiveStudentList();
-  }
+  public List<Student> searchActiveStudentList() {
+    return repository.searchAllStudentList();
+  }//TODO:Activeに戻す
 
-  public List<StudentCourse> searchCourseList() {
-    return repository.searchActiveCourseList();
-  }
+  public List<StudentCourse> searchActiveCourseList() {
+    return repository.searchAllCourseList();
+  }//TODO:Activeに戻す
 
   public StudentDetail searchStudent(int studentId) {
-    Student student = repository.serchStudent(studentId);
+    Student student = repository.serchStudent(
+        studentId);//全件（キャンセルの有無にかかわらず）からstudentIdに一致するレコードをとってくる
 
     List<StudentCourse> courses = new ArrayList<>();
     if (repository.searchCourses(studentId).isEmpty()) {
