@@ -25,14 +25,14 @@ public class StudentController {
     this.service = service;
   }
 
-  @GetMapping("/studentAndCourseList")
+  @GetMapping("/studentList")
   public String getStudentDetails(Model model) {
     List<Student> students = service.searchActiveStudentList();
     List<StudentCourse> courses = service.searchActiveCourseList();
 
     model.addAttribute("studentList", students);
     model.addAttribute("courseList", courses);
-    return "studentAndCourseList";
+    return "studentList";
   }
 
   @GetMapping("/newStudent")
@@ -49,7 +49,7 @@ public class StudentController {
       return "registerStudent";
     }
     service.registerStudent(studentDetail);
-    return "redirect:/studentAndCourseList";
+    return "redirect:/studentList";
   }
 
   @GetMapping("/student/{studentId}")
@@ -65,7 +65,7 @@ public class StudentController {
       return "updateStudent";
     }
     service.updateStudent(studentDetail);
-    return "redirect:/studentAndCourseList";
+    return "redirect:/studentList";
   }
 
   //TODO:論理削除の実装

@@ -42,30 +42,6 @@
   </tr>
   </tbody>
 </table>
-
-<br> <!-- 空行 -->
-
-<h3>コース一覧</h3>
-<table border="1">
-  <thead>
-  <tr>
-    <th>コースID</th>
-    <th>コース名</th>
-    <th>受講生ID</th>
-    <th>受講開始日</th>
-    <th>受講修了予定日</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="studentCourses : ${courseList}">
-    <td th:text="${studentCourses.courseId}">00007</td>
-    <td th:text="${studentCourses.courseName}">Java</td>
-    <td th:text="${studentCourses.studentId}">202408-00002</td>
-    <td th:text="${studentCourses.courseStartAt}">2024-09-23</td>
-    <td th:text="${studentCourses.courseEndAt}">2025-03-23</td>
-  </tr>
-  </tbody>
-</table>
 </body>
 </html>
 
