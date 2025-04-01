@@ -3,36 +3,34 @@ package raisetech.StudentManagement.controller;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import raisetech.StudentManagement.data.Student;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-@Controller
+@RestController
 public class StudentController {
 
   private StudentService service;
+  private StudentConverter converter;
 
   @Autowired
-  public StudentController(StudentService service) {
+  public StudentController(StudentService service, StudentConverter converter) {
     this.service = service;
+    this.converter = converter;
   }
 
   @GetMapping("/studentList")
-  public String getStudentDetails(Model model) {
-    List<Student> students = service.searchActiveStudentList();
-    List<StudentCourse> courses = service.searchActiveCourseList();
-
-    model.addAttribute("studentList", students);
-    model.addAttribute("courseList", courses);
-    return "studentList";
+  public List<StudentDetail> getStudentDetails() {
+    return converter.convertStudentDetails(service.searchActiveStudentList());
   }
 
   @GetMapping("/newStudent")
@@ -52,21 +50,9 @@ public class StudentController {
     return "redirect:/studentList";
   }
 
-  @GetMapping("/student/{studentId}")
-  public String viewStudent(@PathVariable("studentId") int studentId, Model model) {
-    StudentDetail studentDetail = service.searchStudent(studentId);
-    model.addAttribute("studentDetail", studentDetail);
-    return "updateStudent";
-  }
-
   @PostMapping("/updateStudent")
-  public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
-    if (result.hasErrors()) {
-      return "updateStudent";
-    }
+  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
-    return "redirect:/studentList";
-  }
-
-  //TODO:論理削除の実装
+    return ResponseEntity.ok("更新成功！");
+  }//バリデーションをつけたいときは、Exception Handlerというものを使う
 }

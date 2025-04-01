@@ -21,12 +21,12 @@ public class StudentService {
   }
 
   public List<Student> searchActiveStudentList() {
-    return repository.searchAllStudentList();
-  }//TODO:Activeに戻す
+    return repository.searchActiveStudentList();
+  }
 
   public List<StudentCourse> searchActiveCourseList() {
-    return repository.searchAllCourseList();
-  }//TODO:Activeに戻す
+    return repository.searchActiveCourseList();
+  }
 
   public StudentDetail searchStudent(int studentId) {
     Student student = repository.serchStudent(
