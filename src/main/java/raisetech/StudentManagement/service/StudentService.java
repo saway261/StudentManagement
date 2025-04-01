@@ -49,7 +49,7 @@ public class StudentService {
 
 
   @Transactional
-  public void registerStudent(StudentDetail studentDetail) {
+  public StudentDetail registerStudent(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentsCourses();
 
@@ -57,6 +57,7 @@ public class StudentService {
     for (StudentCourse course : courseList) {
       repository.registerCourse(complementCourse(student, course));
     }
+    return studentDetail;
   }
 
   public StudentCourse complementCourse(Student student, StudentCourse course) {
