@@ -1,6 +1,5 @@
 package raisetech.StudentManagement.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,41 +8,42 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
+import raisetech.StudentManagement.service.converter.converter.StudentConverter;
 
+/**
+ * 受講生情報を取り扱うサービスです。受講生の検索や登録・更新処理を行います。
+ */
 @Service
 public class StudentService {
 
   private StudentRepository repository;
+  private StudentConverter converter;
 
   @Autowired
-  public StudentService(StudentRepository repository) {
+  public StudentService(StudentRepository repository, StudentConverter converter) {
     this.repository = repository;
+    this.converter = converter;
   }
 
-  public List<Student> searchActiveStudentList() {
-    return repository.searchActiveStudentList();
+  /**
+   * 受講生一覧（キャンセル除く）検索です。 全件検索を行うので、条件指定は行いません。
+   *
+   * @return 受講生一覧（キャンセル除く全件）
+   */
+  public List<StudentDetail> searchActiveStudentDetailList() {
+    List<Student> students = repository.searchActiveStudentList();
+    return converter.convertToStudentDetailList(students);
   }
 
-  public List<StudentCourse> searchActiveCourseList() {
-    return repository.searchActiveCourseList();
-  }
-
-  public StudentDetail searchStudent(int studentId) {
-    Student student = repository.serchStudent(
-        studentId);//全件（キャンセルの有無にかかわらず）からstudentIdに一致するレコードをとってくる
-
-    List<StudentCourse> courses = new ArrayList<>();
-    if (repository.searchCourses(studentId).isEmpty()) {
-      StudentCourse course = new StudentCourse();
-      course.setCourseName("未登録");
-      courses.add(course);
-    } else {
-      courses = repository.searchCourses(studentId);
-    }
-
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentsCourses(courses);
+  /**
+   * 受講生検索です。 IDに基づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して受講生詳細を返します。
+   *
+   * @param studentId 受講生ID
+   * @return　受講生詳細
+   */
+  public StudentDetail searchstudentDetail(int studentId) {
+    Student student = repository.serchStudent(studentId);
+    StudentDetail studentDetail = converter.convertToStudentDetail(student);
     return studentDetail;
   }
 
@@ -55,20 +55,9 @@ public class StudentService {
 
     repository.registerStudent(studentDetail.getStudent());
     for (StudentCourse course : courseList) {
-      repository.registerCourse(complementCourse(student, course));
+      repository.registerCourse(converter.complementCourse(student, course));
     }
     return studentDetail;
-  }
-
-  public StudentCourse complementCourse(Student student, StudentCourse course) {
-    StudentCourse studentCourse = course; // returnする（DBにInsertする)StudentCourseインスタンスを生成し、引数course(viewから受け取ったもの)を代入
-
-    //studentIDに引数studentのstudentIdをsetする
-    studentCourse.setStudentId(student.getStudentId());
-    //courseEndAtにcourseStartAtの半年後の値をsetする
-    studentCourse.setCourseEndAt(course.getCourseStartAt().plusMonths(6));
-
-    return studentCourse;
   }
 
   @Transactional
