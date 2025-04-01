@@ -16,14 +16,6 @@ import raisetech.StudentManagement.data.StudentCourse;
 public interface StudentRepository {
 
   /**
-   * 受講生の全件検索を行います。
-   *
-   * @return 受講生一覧
-   */
-  @Select("SELECT * FROM students")
-  List<Student> searchAllStudentList();
-
-  /**
    * アクティブ受講生の全件検索を行います。
    *
    * @return アクティブ受講生一覧
@@ -59,7 +51,7 @@ public interface StudentRepository {
   List<StudentCourse> searchActiveCourseList();
 
   /**
-   * 受講生IDに紐づく受講生コース情報を検索します・
+   * 受講生IDに紐づく受講生コース情報を検索します
    *
    * @param studentId 受講生ID
    * @return 受講生IDに紐づく受講生コース情報(複数)
@@ -67,6 +59,11 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
   List<StudentCourse> searchCourses(int studentId);
 
+  /**
+   * 受講生を新規登録します。IDに関しては自動採番を行う。
+   *
+   * @param student 新規受講生
+   */
   @Insert("INSERT INTO students(fullname, kana_name, nickname, email, area,"
       + " telephone, age, sex, remark, is_deleted) "
       + "VALUES (#{fullname}, #{kanaName}, #{nickname}, #{email}, #{area},"
@@ -74,11 +71,21 @@ public interface StudentRepository {
   @Options(useGeneratedKeys = true, keyProperty = "studentId")
   void registerStudent(Student student);
 
+  /**
+   * 受講生コースを新規登録します。コースIDに関しては自動裁判を行う。
+   *
+   * @param course 新規受講生コース
+   */
   @Insert("INSERT INTO students_courses(course_name, student_id, course_start_at, course_end_at) "
       + "VALUES (#{courseName}, #{studentId}, #{courseStartAt}, #{courseEndAt});")
   @Options(useGeneratedKeys = true, keyProperty = "courseId")
   void registerCourse(StudentCourse course);
 
+  /**
+   * 受講生IDから受講生を検索し、一致した受講生の情報を更新します。論理削除も行います。
+   *
+   * @param student 更新後の受講生
+   */
   @Update("UPDATE students SET "
       + "fullname=#{fullname}, kana_name=#{kanaName}, nickname=#{nickname}, "
       + "email=#{email}, area=#{area}, telephone=#{telephone}, age=#{age}, "
@@ -86,6 +93,11 @@ public interface StudentRepository {
       + "WHERE student_id=#{studentId}")
   void updateStudent(Student student);
 
+  /**
+   * コースIDから受講生コースを検索し、一致した受講生コースのコース名やコース終了予定日を更新します。
+   *
+   * @param course 更新後の受講生コース
+   */
   @Update("UPDATE students_courses SET "
       + "course_name=#{courseName}, course_end_at=#{courseEndAt} "
       + "WHERE course_id=#{courseId}")

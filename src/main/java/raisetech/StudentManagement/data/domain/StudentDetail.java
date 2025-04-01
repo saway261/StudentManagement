@@ -3,6 +3,7 @@ package raisetech.StudentManagement.data.domain;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
@@ -11,13 +12,14 @@ import raisetech.StudentManagement.data.StudentCourse;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class StudentDetail {
 
   private Student student;
-  private List<StudentCourse> studentsCourses;
+  private List<StudentCourse> studentCourseList;
 
   public StudentDetail(Student student) {
     this.student = student;
-    this.studentsCourses.add(new StudentCourse(student.getStudentId()));
+    this.studentCourseList.add(new StudentCourse("未登録", student.getStudentId()));
   }
 }

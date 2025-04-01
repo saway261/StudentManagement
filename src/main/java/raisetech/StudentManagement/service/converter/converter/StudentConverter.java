@@ -22,35 +22,44 @@ public class StudentConverter {
     this.repository = repository;
   }
 
+  /**
+   * Serviceから渡された単一の受講生に対して、紐づく受講生コースを取得して単一の受講生詳細へ変換を行います。
+   *
+   * @param student 受講生
+   * @return 受講生に紐づけられた受講生詳細
+   */
   public StudentDetail convertToStudentDetail(Student student) {
-    List<StudentCourse> courses = new ArrayList<>();
-
-    //受講生IDに紐づくコースがない場合は、「未登録」としたコースのインスタンスを生成し、受講生詳細に変換する
-    if (repository.searchCourses(student.getStudentId()).isEmpty()) {
-      StudentCourse course = new StudentCourse(student.getStudentId());
-      courses.add(course);
-    } else {
-      courses = repository.searchCourses(student.getStudentId());
-    }
-
+    List<StudentCourse> courses = repository.searchCourses(student.getStudentId());
     StudentDetail studentDetail = new StudentDetail(student, courses);
     return studentDetail;
   }
 
-  public List<StudentDetail> convertToStudentDetailList(List<Student> students) {
+  /**
+   * Serviceから渡された受講生リストに対して、それぞれに紐づく受講生コースを取得して受講生詳細へ変換し、受講生詳細のリストとして返します。
+   *
+   * @param studentList 受講生リスト
+   * @return 受講生詳細リスト
+   */
+  public List<StudentDetail> convertToStudentDetailList(List<Student> studentList) {
     List<StudentDetail> studentDetailList = new ArrayList<>();
 
-    for (Student student : students) {
+    for (Student student : studentList) {
       studentDetailList.add(convertToStudentDetail(student));
     }
 
     return studentDetailList;
   }
 
+  /**
+   * 登録処理を行う受講生コースに対して、受講生ID、コース開始日、コース終了予定日を補完して返します。
+   *
+   * @param student 登録する受講生
+   * @param course  登録する受講生コース
+   * @return 受講生ID、コース開始日、コース終了予定日が補完された受講生コース
+   */
   public StudentCourse complementCourse(Student student, StudentCourse course) {
-    StudentCourse responsetCourse = new StudentCourse(course.getCourseName(),
-        student.getStudentId(),
-        course.getCourseStartAt());
+    StudentCourse responsetCourse = new StudentCourse(
+        course.getCourseName(), student.getStudentId());
     return responsetCourse;
   }
 
