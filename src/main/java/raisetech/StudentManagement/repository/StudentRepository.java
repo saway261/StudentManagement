@@ -4,7 +4,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
@@ -20,7 +19,6 @@ public interface StudentRepository {
    *
    * @return アクティブ受講生一覧
    */
-  @Select("SELECT * FROM students WHERE is_deleted = 0")
   List<Student> searchActiveStudentList();
 
   /**
@@ -29,26 +27,7 @@ public interface StudentRepository {
    * @param studentId 受講生ID
    * @return 受講生
    */
-  @Select("SELECT * FROM students WHERE student_id=#{studentId}")
-  Student serchStudent(int studentId);
-
-  /**
-   * 受講生コースの全件検索を行います。
-   *
-   * @return 受講生コース一覧
-   */
-  @Select("SELECT * FROM students_courses")
-  List<StudentCourse> searchAllCourseList();
-
-  /**
-   * アクティブ受講生の受講生IDに紐づいたコース情報の全件検索を行います。
-   *
-   * @return アクティブ受講生のコース一覧
-   */
-  @Select("SELECT sc.* FROM students_courses sc "
-      + "JOIN students s ON sc.student_id = s.student_id "
-      + "WHERE s.is_deleted = 0")
-  List<StudentCourse> searchActiveCourseList();
+  Student searchStudent(int studentId);
 
   /**
    * 受講生IDに紐づく受講生コース情報を検索します
@@ -56,7 +35,6 @@ public interface StudentRepository {
    * @param studentId 受講生ID
    * @return 受講生IDに紐づく受講生コース情報(複数)
    */
-  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
   List<StudentCourse> searchCourses(int studentId);
 
   /**

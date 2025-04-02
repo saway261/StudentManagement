@@ -43,7 +43,7 @@ public class StudentService {
    * @return 受講生詳細
    */
   public StudentDetail searchstudentDetail(int studentId) {
-    Student student = repository.serchStudent(studentId);
+    Student student = repository.searchStudent(studentId);
     StudentDetail studentDetail = converter.convertToStudentDetail(student);
     return studentDetail;
   }
