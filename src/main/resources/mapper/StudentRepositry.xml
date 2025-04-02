@@ -18,4 +18,19 @@
     SELECT * FROM students_courses WHERE student_id = #{studentId}
   </select>
 
+  <!-- 受講生の新規登録-->
+  <insert id="registerStudent" parameterType="raisetech.StudentManagement.data.Student"
+    useGeneratedKeys="true" keyProperty="studentId">
+    INSERT INTO students (fullname, kana_name, nickname, email, area, telephone, age, sex, remark,
+    is_deleted) VALUES (#{fullname}, #{kanaName}, #{nickname}, #{email}, #{area}, #{telephone},
+    #{age}, #{sex}, #{remark}, false)
+  </insert>
+
+  <!-- 受講生コースの新規登録-->
+  <insert id="registerCourse" parameterType="raisetech.StudentManagement.data.StudentCourse"
+    useGeneratedKeys="true" keyProperty="courseId">
+    INSERT INTO students_courses(course_name, student_id, course_start_at, course_end_at) VALUES
+    (#{courseName}, #{studentId}, #{courseStartAt}, #{courseEndAt})
+  </insert>
+
 </mapper>
