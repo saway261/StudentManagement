@@ -3,6 +3,7 @@ package raisetech.StudentManagement.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import raisetech.StudentManagement.service.converter.converter.StudentConverter;
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるContorollerです。
  */
+@Validated
 @RestController
 public class StudentController {
 
