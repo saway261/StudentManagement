@@ -1,5 +1,7 @@
 package raisetech.StudentManagement.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.domain.StudentDetail;
+import raisetech.StudentManagement.data.domain.validation.OnCreate;
+import raisetech.StudentManagement.data.domain.validation.OnUpdate;
 import raisetech.StudentManagement.service.StudentService;
-import raisetech.StudentManagement.service.converter.converter.StudentConverter;
+import raisetech.StudentManagement.service.converter.StudentConverter;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるContorollerです。
@@ -47,7 +51,7 @@ public class StudentController {
    * @return 受講生詳細
    */
   @GetMapping("/student/{studentId}")
-  public StudentDetail viewStudentDetail(@PathVariable("studentId") int studentId) {
+  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
     return service.searchstudentDetail(studentId);
   }
 
@@ -58,7 +62,9 @@ public class StudentController {
    * @return 実行結果
    */
   @PostMapping("/registerStudent")
-  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail) {
+  @Validated(OnCreate.class)
+  public ResponseEntity<StudentDetail> registerStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
   }
@@ -70,7 +76,9 @@ public class StudentController {
    * @return 実行結果
    */
   @PutMapping("/updateStudent")
-  public ResponseEntity<StudentDetail> updateStudent(@RequestBody StudentDetail studentDetail) {
+  @Validated(OnUpdate.class)
+  public ResponseEntity<StudentDetail> updateStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
   }//バリデーションをつけたいときは、Exception Handlerというものを使う

@@ -8,7 +8,7 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
-import raisetech.StudentManagement.service.converter.converter.StudentConverter;
+import raisetech.StudentManagement.service.converter.StudentConverter;
 
 /**
  * 受講生情報を取り扱うServiceです。受講生の検索や登録・更新処理を行います。
