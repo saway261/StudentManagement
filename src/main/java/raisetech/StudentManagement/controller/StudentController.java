@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.data.domain.validation.OnCreate;
 import raisetech.StudentManagement.data.domain.validation.OnUpdate;
+import raisetech.StudentManagement.exception.InvalidAccessException;
 import raisetech.StudentManagement.service.StudentService;
 
 /**
- * 受講生の検索や登録、更新などを行うREST APIとして実行されるContorollerです。
+ * 受講生の検索や登録、更新などを行うREST APIとして実行されるControllerです。
  */
 @Validated
 @RestController
@@ -50,6 +51,12 @@ public class StudentController {
   @GetMapping("/student/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
     return service.searchstudentDetail(studentId);
+  }
+
+  @GetMapping("/studentAndCourses")
+  public ResponseEntity<StudentDetail> pastGetStudentDetails() throws InvalidAccessException {
+    throw new InvalidAccessException(
+        "現在無効なURLです。受講生一覧を見るには /studentList にアクセスしてください。");
   }
 
   /**
