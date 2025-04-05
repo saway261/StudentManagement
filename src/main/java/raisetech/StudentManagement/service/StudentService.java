@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,6 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
-import raisetech.StudentManagement.service.converter.StudentConverter;
 
 /**
  * 受講生情報を取り扱うServiceです。受講生の検索や登録・更新処理を行います。
@@ -17,12 +17,10 @@ import raisetech.StudentManagement.service.converter.StudentConverter;
 public class StudentService {
 
   private StudentRepository repository;
-  private StudentConverter converter;
 
   @Autowired
-  public StudentService(StudentRepository repository, StudentConverter converter) {
+  public StudentService(StudentRepository repository) {
     this.repository = repository;
-    this.converter = converter;
   }
 
   /**
@@ -31,8 +29,24 @@ public class StudentService {
    * @return アクティブ受講生詳細一覧
    */
   public List<StudentDetail> searchActiveStudentDetailList() {
-    List<Student> students = repository.searchActiveStudentList();
-    return converter.convertToStudentDetailList(students);
+    List<StudentDetail> activeStudentDetailList = new ArrayList<>();
+    List<Student> activeStudents = repository.searchActiveStudentList();
+
+    for (Student student : activeStudents) {
+      activeStudentDetailList.add(searchstudentDetail(student.getStudentId()));
+    }
+
+    return activeStudentDetailList;
+  }
+
+  /**
+   * 受講生コース検索です。 引数として渡された受講生IDと一致する受講生コースを取得します。 アクティブ・非アクティブにかかわらず、すべての受講生から検索します。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生コース(複数)
+   */
+  public List<StudentCourse> searchCourses(int studentId) {
+    return repository.searchCourses(studentId);
   }
 
   /**
@@ -44,12 +58,14 @@ public class StudentService {
    */
   public StudentDetail searchstudentDetail(int studentId) {
     Student student = repository.searchStudent(studentId);
-    StudentDetail studentDetail = converter.convertToStudentDetail(student);
+    List<StudentCourse> courses = repository.searchCourses(studentId);
+    StudentDetail studentDetail = new StudentDetail(student, courses);
     return studentDetail;
   }
 
   /**
    * 受講生詳細の登録を行います。受講生と受講生コースを個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了予定日を設定します。
+   * コース開始日にはリクエストが実行された日付、コース終了日にはコース開始日の6か月後の日付が設定されます。
    *
    * @param studentDetail 受講生詳細
    * @return 実行結果
@@ -61,7 +77,7 @@ public class StudentService {
 
     repository.registerStudent(studentDetail.getStudent());
     for (StudentCourse course : courseList) {
-      repository.registerCourse(converter.complementCourse(student, course));
+      repository.registerCourse(new StudentCourse(course.getCourseName(), student.getStudentId()));
     }
     return studentDetail;
   }
