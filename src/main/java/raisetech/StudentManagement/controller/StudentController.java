@@ -16,7 +16,6 @@ import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.data.domain.validation.OnCreate;
 import raisetech.StudentManagement.data.domain.validation.OnUpdate;
 import raisetech.StudentManagement.service.StudentService;
-import raisetech.StudentManagement.service.converter.StudentConverter;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるContorollerです。
@@ -26,12 +25,10 @@ import raisetech.StudentManagement.service.converter.StudentConverter;
 public class StudentController {
 
   private StudentService service;
-  private StudentConverter converter;
 
   @Autowired
-  public StudentController(StudentService service, StudentConverter converter) {
+  public StudentController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
   /**
