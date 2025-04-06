@@ -50,9 +50,6 @@ public class StudentController {
    * @return 受講生詳細
    */
   @GetMapping("/students/{studentId}")
-  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
-    return service.searchstudentDetail(studentId);
-  @GetMapping("/student/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
       throws NotExistIdException {
     if (service.isExistStudentId(studentId)) {
