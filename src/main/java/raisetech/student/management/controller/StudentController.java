@@ -36,7 +36,7 @@ public class StudentController {
    *
    * @return アクティブ受講生詳細一覧
    */
-  @GetMapping("/student/search/list")
+  @GetMapping("/students")
   public List<StudentDetail> getActiveStudentDetailList() {
     return service.searchActiveStudentDetailList();
   }
@@ -47,7 +47,7 @@ public class StudentController {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  @GetMapping("/student/search/{studentId}")
+  @GetMapping("/students/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
     return service.searchstudentDetail(studentId);
   }
@@ -58,7 +58,7 @@ public class StudentController {
    * @param studentDetail 受講生詳細
    * @return 実行結果
    */
-  @PostMapping("/student/register")
+  @PostMapping("/students")
   @Validated(OnCreate.class)
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -72,7 +72,7 @@ public class StudentController {
    * @param studentDetail
    * @return 実行結果
    */
-  @PutMapping("/student/update")
+  @PutMapping("/students")
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetail> updateStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
