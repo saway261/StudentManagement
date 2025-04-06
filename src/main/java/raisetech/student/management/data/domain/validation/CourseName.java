@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.data.domain.validation;
+package raisetech.student.management.data.domain.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -9,12 +9,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = PhoneNumberValidator.class)
+@Constraint(validatedBy = CourseNameValidator.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PhoneNumber {
+public @interface CourseName {
 
-  String message() default "電話番号の形式が不正です（例: 090-1234-5678）";
+  String message() default "コース名は「Javaコース」, 「AWSコース」,「デザインコース」,「Webマーケティングコース」,「フロントエンドコース」のいずれかを入力してください";
 
   Class<?>[] groups() default {};
 

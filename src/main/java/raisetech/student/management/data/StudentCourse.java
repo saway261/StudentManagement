@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.data;
+package raisetech.student.management.data;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import raisetech.StudentManagement.data.domain.validation.CourseName;
-import raisetech.StudentManagement.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.domain.validation.CourseName;
+import raisetech.student.management.data.domain.validation.OnUpdate;
 
 @Getter
 @Setter

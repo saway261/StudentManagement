@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.data.domain;
+package raisetech.student.management.data.domain;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,8 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 
 //空のStudentDetailインスタンスは生成できない。
 @Getter

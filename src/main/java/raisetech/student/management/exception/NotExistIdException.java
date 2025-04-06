@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.exception;
+package raisetech.student.management.exception;
 
 public class NotExistIdException extends Exception {
 
