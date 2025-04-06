@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.data;
+package raisetech.student.management.data;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -9,8 +9,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import raisetech.StudentManagement.data.domain.validation.OnUpdate;
-import raisetech.StudentManagement.data.domain.validation.PhoneNumber;
+import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.domain.validation.PhoneNumber;
 
 @Getter
 @Setter

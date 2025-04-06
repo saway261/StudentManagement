@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.data.domain.validation;
+package raisetech.student.management.data.domain.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

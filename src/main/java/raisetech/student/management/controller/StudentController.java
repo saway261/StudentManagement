@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.controller;
+package raisetech.student.management.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.StudentManagement.data.domain.StudentDetail;
-import raisetech.StudentManagement.data.domain.validation.OnCreate;
-import raisetech.StudentManagement.data.domain.validation.OnUpdate;
-import raisetech.StudentManagement.service.StudentService;
+import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.domain.validation.OnCreate;
+import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.service.StudentService;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるContorollerです。
