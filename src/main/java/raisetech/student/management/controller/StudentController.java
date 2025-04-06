@@ -38,7 +38,7 @@ public class StudentController {
    *
    * @return アクティブ受講生詳細一覧
    */
-  @GetMapping("/studentList")
+  @GetMapping("/students")
   public List<StudentDetail> getActiveStudentDetailList() {
     return service.searchActiveStudentDetailList();
   }
@@ -49,6 +49,9 @@ public class StudentController {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
+  @GetMapping("/students/{studentId}")
+  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
+    return service.searchstudentDetail(studentId);
   @GetMapping("/student/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
       throws NotExistIdException {
@@ -71,7 +74,7 @@ public class StudentController {
    * @param studentDetail 受講生詳細
    * @return 実行結果
    */
-  @PostMapping("/registerStudent")
+  @PostMapping("/students")
   @Validated(OnCreate.class)
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -86,7 +89,7 @@ public class StudentController {
    * @param studentDetail
    * @return 実行結果
    */
-  @PutMapping("/updateStudent")
+  @PutMapping("/students")
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetail> updateStudent(
       @RequestBody @Valid StudentDetail studentDetail) throws NotExistIdException {
