@@ -2,6 +2,7 @@ package raisetech.StudentManagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,18 +41,8 @@ public class StudentService {
   }
 
   /**
-   * 受講生コース検索です。 引数として渡された受講生IDと一致する受講生コースを取得します。 アクティブ・非アクティブにかかわらず、すべての受講生から検索します。
-   *
-   * @param studentId 受講生ID
-   * @return 受講生コース(複数)
-   */
-  public List<StudentCourse> searchCourses(int studentId) {
-    return repository.searchCourses(studentId);
-  }
-
-  /**
    * 受講生検索です。 IDに基づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して受講生詳細を返します。
-   * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。
+   * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。該当する受講生IDが登録されていない場合は例外を投げます。
    *
    * @param studentId 受講生ID
    * @return 受講生詳細
@@ -95,6 +86,41 @@ public class StudentService {
       repository.updateCourse(studentCourse);
     }
     return studentDetail;
+  }
+
+  /**
+   * 引数で渡された受講生IDが受講生テーブルに存在するかを判定します。
+   *
+   * @param studentId 受講生ID
+   * @return 存在する場合はtrue
+   */
+  public boolean isExistStudentId(int studentId) {
+    for (int existId : repository.searchStudentIdList()) {
+      if (existId == studentId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * 引数で渡された受講生詳細のすべての受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
+   *
+   * @param studentDetail 受講生詳細
+   * @return すべての受講生コースIDが紐づいている場合はtrue
+   */
+  public boolean isLinkedCourseIdWithStudentId(StudentDetail studentDetail) {
+    int studentId = studentDetail.getStudent().getStudentId();
+    List<Integer> paramCourseIdList = studentDetail.getStudentCourseList().stream()
+        .map(StudentCourse::getCourseId).collect(Collectors.toList());
+    List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
+        studentId);
+
+    if (existCourseIdListLinkedStudentId.containsAll(paramCourseIdList)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 

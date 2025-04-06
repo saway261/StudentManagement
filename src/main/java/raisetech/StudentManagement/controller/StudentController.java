@@ -16,6 +16,7 @@ import raisetech.StudentManagement.data.domain.StudentDetail;
 import raisetech.StudentManagement.data.domain.validation.OnCreate;
 import raisetech.StudentManagement.data.domain.validation.OnUpdate;
 import raisetech.StudentManagement.exception.InvalidAccessException;
+import raisetech.StudentManagement.exception.NotExistIdException;
 import raisetech.StudentManagement.service.StudentService;
 
 /**
@@ -49,8 +50,13 @@ public class StudentController {
    * @return 受講生詳細
    */
   @GetMapping("/student/{studentId}")
-  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId) {
-    return service.searchstudentDetail(studentId);
+  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
+      throws NotExistIdException {
+    if (service.isExistStudentId(studentId)) {
+      return service.searchstudentDetail(studentId);
+    } else {
+      throw new NotExistIdException("この受講生IDは登録されていません");
+    }
   }
 
   @GetMapping("/studentAndCourses")
@@ -74,7 +80,8 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の更新を行います。 キャンセルフラグの更新もここで行います(論理削除)
+   * 受講生詳細の更新を行います。
+   * キャンセルフラグの更新もここで行います(論理削除)、受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合は例外を返します。
    *
    * @param studentDetail
    * @return 実行結果
@@ -82,8 +89,17 @@ public class StudentController {
   @PutMapping("/updateStudent")
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetail> updateStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
+      @RequestBody @Valid StudentDetail studentDetail) throws NotExistIdException {
+
+    if (!service.isExistStudentId(studentDetail.getStudent().getStudentId())) {
+      throw new NotExistIdException("この受講生IDは登録されていません");
+    }
+    if (!service.isLinkedCourseIdWithStudentId(studentDetail)) {
+      throw new NotExistIdException("受講生IDと紐づかないコースIDがあります");
+    }
+
     StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
-  }//バリデーションをつけたいときは、Exception Handlerというものを使う
+
+  }
 }

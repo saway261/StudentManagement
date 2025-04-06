@@ -13,4 +13,8 @@ public class ValidationExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
   }
 
+  @ExceptionHandler(NotExistIdException.class)
+  public ResponseEntity<String> handleNotExistIdException(NotExistIdException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
 }
