@@ -1,6 +1,7 @@
 package raisetech.student.management.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -55,6 +56,8 @@ public class StudentController {
   @Operation(
       summary = "受講生詳細検索",
       description = "アクティブ・非アクティブを問わず、受講生詳細の全件から受講生IDが一致する受講生の詳細を取得します。",
+      parameters = {
+          @Parameter(description = "検索したい受講生ID", required = true, schema = @Schema(type = "int"))},
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
               array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
@@ -87,6 +90,8 @@ public class StudentController {
   @Operation(
       summary = "受講生詳細登録",
       description = "受講生の登録を行います",
+      parameters = {
+          @Parameter(description = "登録したい受講生詳細", required = true, schema = @Schema(implementation = StudentDetail.class))},
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
               array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
@@ -101,16 +106,11 @@ public class StudentController {
     return ResponseEntity.ok(responseStudentDetail);
   }
 
-  /**
-   * 受講生詳細の更新を行います。
-   * キャンセルフラグの更新もここで行います(論理削除)、受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合は例外を返します。
-   *
-   * @param studentDetail
-   * @return 実行結果
-   */
   @Operation(
       summary = "受講生詳細更新",
       description = "受講生詳細の更新を行います。キャンセルフラグの更新(アクティブ⇔非アクティブ)もここで行います。受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合はエラーを返します。",
+      parameters = {
+          @Parameter(description = "更新したい受講生詳細", required = true, schema = @Schema(implementation = StudentDetail.class))},
       responses = {
           @ApiResponse(
               content = @Content(mediaType = "application/json",
