@@ -2,7 +2,6 @@ package raisetech.student.management.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,19 +103,15 @@ public class StudentService {
   }
 
   /**
-   * 引数で渡された受講生詳細のすべての受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
+   * 引数で渡された受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
    *
-   * @param studentDetail 受講生詳細
-   * @return すべての受講生コースIDが紐づいている場合はtrue
+   * @param courseId 受講生コースID
+   * @return 受講生コースIDが紐づいている場合はtrue
    */
-  public boolean isLinkedCourseIdWithStudentId(StudentDetail studentDetail) {
-    int studentId = studentDetail.getStudent().getStudentId();
-    List<Integer> paramCourseIdList = studentDetail.getStudentCourseList().stream()
-        .map(StudentCourse::getCourseId).collect(Collectors.toList());
+  public boolean isLinkedCourseIdWithStudentId(int studentId, int courseId) {
     List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
         studentId);
-
-    if (existCourseIdListLinkedStudentId.containsAll(paramCourseIdList)) {
+    if (existCourseIdListLinkedStudentId.contains(courseId)) {
       return true;
     } else {
       return false;
