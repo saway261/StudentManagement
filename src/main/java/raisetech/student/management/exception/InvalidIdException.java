@@ -1,14 +1,9 @@
 package raisetech.student.management.exception;
 
-import lombok.Getter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
-@Getter
-public class InvalidIdException extends Exception {
-
-  private String field;
-  private String message;
+public class InvalidIdException extends StudentManagementException {
 
   public InvalidIdException(int studentId) {
     this.field = "student.studentId：" + studentId;

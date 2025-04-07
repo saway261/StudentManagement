@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,13 +14,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class StudentManagementExceptionHandler {
 
   @ExceptionHandler(InvalidAccessException.class)
-  public ResponseEntity<String> handleInvalidAccessException(InvalidAccessException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  public ResponseEntity<ErrorResponseBody> handleInvalidAccessException(InvalidAccessException ex) {
+
+    ErrorResponseBody errorResponseBody =
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "page not exist", newErrorResponse(ex));
+    return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
-  @ExceptionHandler(NotExistIdException.class)
-  public ResponseEntity<String> handleNotExistIdException(NotExistIdException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  @ExceptionHandler(InvalidIdException.class)
+  public ResponseEntity<ErrorResponseBody> handleInvalidIdException(InvalidIdException ex) {
+
+    ErrorResponseBody errorResponseBody =
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "invalid id", newErrorResponse(ex));
+    return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,8 +37,8 @@ public class StudentManagementExceptionHandler {
         new ErrorResponseBody(HttpStatus.BAD_REQUEST, "validation error", newErrorResponse(ex));
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
-  
-  private List<Map<String, String>> newErrorResponse(BindException ex) {
+
+  private List<Map<String, String>> newErrorResponse(MethodArgumentNotValidException ex) {
 
     List<Map<String, String>> errors = new ArrayList<>();
     ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
@@ -42,6 +47,18 @@ public class StudentManagementExceptionHandler {
       error.put("message", fieldError.getDefaultMessage());
       errors.add(error);
     });
+    return errors;
+  }
+  
+  private List<Map<String, String>> newErrorResponse(StudentManagementException ex) {
+
+    List<Map<String, String>> errors = new ArrayList<>();
+    Map<String, String> error = new HashMap<>();
+
+    error.put("field", ex.getField());
+    error.put("message", ex.getMessage());
+    errors.add(error);
+
     return errors;
   }
 

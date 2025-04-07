@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.domain.validation.OnCreate;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.exception.InvalidAccessException;
-import raisetech.student.management.exception.NotExistIdException;
+import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.service.StudentService;
 
 /**
@@ -61,16 +62,15 @@ public class StudentController {
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
               array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
-          )
-      )}
+          ))}
   )
   @GetMapping("/students/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
-      throws NotExistIdException {
+      throws InvalidIdException {
     if (service.isExistStudentId(studentId)) {
       return service.searchstudentDetail(studentId);
     } else {
-      throw new NotExistIdException("この受講生IDは登録されていません");
+      throw new InvalidIdException(studentId);
     }
   }
 
@@ -83,8 +83,7 @@ public class StudentController {
   )
   @GetMapping("/studentAndCourses")
   public ResponseEntity<StudentDetail> pastGetStudentDetails() throws InvalidAccessException {
-    throw new InvalidAccessException(
-        "現在無効なURLです。受講生一覧を見るには /studentList にアクセスしてください。");
+    throw new InvalidAccessException();
   }
 
   @Operation(
@@ -123,13 +122,18 @@ public class StudentController {
   @PutMapping("/students")
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetail> updateStudent(
-      @RequestBody @Valid StudentDetail studentDetail) throws NotExistIdException {
+      @RequestBody @Valid StudentDetail studentDetail)
+      throws InvalidIdException {
 
-    if (!service.isExistStudentId(studentDetail.getStudent().getStudentId())) {
-      throw new NotExistIdException("この受講生IDは登録されていません");
+    int studentId = studentDetail.getStudent().getStudentId();
+
+    if (!service.isExistStudentId(studentId)) {
+      throw new InvalidIdException(studentDetail.getStudent());
     }
-    if (!service.isLinkedCourseIdWithStudentId(studentDetail)) {
-      throw new NotExistIdException("受講生IDと紐づかないコースIDがあります");
+    for (StudentCourse course : studentDetail.getStudentCourseList()) {
+      if (!service.isLinkedCourseIdWithStudentId(studentId, course.getCourseId())) {
+        throw new InvalidIdException(course);
+      }
     }
 
     StudentDetail responseStudentDetail = service.updateStudent(studentDetail);

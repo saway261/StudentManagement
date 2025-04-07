@@ -1,25 +1,10 @@
 package raisetech.student.management.exception;
 
-public class InvalidAccessException extends Exception {
+public class InvalidAccessException extends StudentManagementException {
 
   public InvalidAccessException() {
-    super();
+    this.field = "URL";
+    this.message = "現在無効なURLです。受講生一覧を見るには /studentList にアクセスしてください。";
   }
 
-  public InvalidAccessException(String message) {
-    super(message);
-  }
-
-  public InvalidAccessException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public InvalidAccessException(Throwable cause) {
-    super(cause);
-  }
-
-  protected InvalidAccessException(String message, Throwable cause, boolean enableSuppression,
-      boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
 }
