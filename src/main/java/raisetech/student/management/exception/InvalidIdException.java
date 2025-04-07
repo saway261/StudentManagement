@@ -3,6 +3,9 @@ package raisetech.student.management.exception;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
+/**
+ * 入力された受講生IDあるいは受講生コースIDがテーブルに存在しないか、受講生コースIDが受講生IDに紐づかないときに投げられる例外クラスです。
+ */
 public class InvalidIdException extends StudentManagementException {
 
   public InvalidIdException(int studentId) {
