@@ -1,5 +1,7 @@
 package raisetech.student.management.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +40,16 @@ public class StudentManagementExceptionHandler {
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
+  @ExceptionHandler(ConstraintViolationException.class)
+  public ResponseEntity<ErrorResponseBody> handleConstraintViolationException(
+      ConstraintViolationException ex) {
+
+    ErrorResponseBody errorResponseBody = new ErrorResponseBody(HttpStatus.BAD_REQUEST,
+        "validation error", newErrorResponse(ex));
+    return ResponseEntity.badRequest().body(errorResponseBody);
+
+  }
+
   private List<Map<String, String>> newErrorResponse(MethodArgumentNotValidException ex) {
 
     List<Map<String, String>> errors = new ArrayList<>();
@@ -49,7 +61,7 @@ public class StudentManagementExceptionHandler {
     });
     return errors;
   }
-  
+
   private List<Map<String, String>> newErrorResponse(StudentManagementException ex) {
 
     List<Map<String, String>> errors = new ArrayList<>();
@@ -57,6 +69,20 @@ public class StudentManagementExceptionHandler {
 
     error.put("field", ex.getField());
     error.put("message", ex.getMessage());
+    errors.add(error);
+
+    return errors;
+  }
+
+  private List<Map<String, String>> newErrorResponse(ConstraintViolationException ex) {
+
+    List<Map<String, String>> errors = new ArrayList<>();
+    Map<String, String> error = new HashMap<>();
+
+    for (ConstraintViolation violation : ex.getConstraintViolations()) {
+      error.put("field", violation.getPropertyPath().toString());
+      error.put("message", violation.getMessage());
+    }
     errors.add(error);
 
     return errors;
