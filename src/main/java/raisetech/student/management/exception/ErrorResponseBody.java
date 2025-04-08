@@ -5,6 +5,9 @@ import java.util.Map;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * クライアントに返すエラー情報を持つオブジェクトです。
+ */
 @Getter
 public final class ErrorResponseBody {
 
