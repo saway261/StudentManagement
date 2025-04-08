@@ -37,6 +37,7 @@ public class Student {
   private String nickname;
 
   @Schema(description = "Emailアドレス", example = "hanako@raisetech.com")
+  @NotNull
   @Email
   @Length(max = 50)
   private String email;

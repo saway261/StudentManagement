@@ -10,12 +10,12 @@ public class InvalidIdException extends StudentManagementException {
 
   public InvalidIdException(int studentId) {
     this.field = "student.studentId：" + studentId;
-    this.message = "受講生IDが不正か、存在しません。";
+    this.message = "受講生IDが存在しません。";
   }
 
   public InvalidIdException(Student student) {
     this.field = "student.studentId：" + student.getStudentId();
-    this.message = "受講生IDが不正か、存在しません。";
+    this.message = "受講生IDが存在しません。";
   }
 
   public InvalidIdException(StudentCourse course) {
