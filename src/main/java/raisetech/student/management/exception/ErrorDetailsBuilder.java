@@ -8,6 +8,9 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+/**
+ * StudentManagementExceptionHandlerクラスから例外インスタンスを受け取り、エラーの詳細情報を組み立てて返します。
+ */
 @Component
 public class ErrorDetailsBuilder {
 
