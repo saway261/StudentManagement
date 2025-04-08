@@ -1,10 +1,7 @@
 package raisetech.student.management.exception;
 
 import jakarta.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,6 +14,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class StudentManagementExceptionHandler {
 
+  ErrorDetailsBuilder errorDetailsBuilder;
+
+  @Autowired
+  public StudentManagementExceptionHandler(ErrorDetailsBuilder errorDetailsBuilder) {
+    this.errorDetailsBuilder = errorDetailsBuilder;
+  }
+
   /**
    * 無効なURIへのアクセスが発生したことをクライアントに返します。
    *
@@ -27,7 +31,8 @@ public class StudentManagementExceptionHandler {
   public ResponseEntity<ErrorResponseBody> handleInvalidAccessException(InvalidAccessException ex) {
 
     ErrorResponseBody errorResponseBody =
-        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "page not exist", buildErrorDetails(ex));
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "page not exist",
+            errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
@@ -41,7 +46,8 @@ public class StudentManagementExceptionHandler {
   public ResponseEntity<ErrorResponseBody> handleInvalidIdException(InvalidIdException ex) {
 
     ErrorResponseBody errorResponseBody =
-        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "invalid id", buildErrorDetails(ex));
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "invalid id",
+            errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
@@ -56,7 +62,8 @@ public class StudentManagementExceptionHandler {
       MethodArgumentNotValidException ex) {
 
     ErrorResponseBody errorResponseBody =
-        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "validation error", buildErrorDetails(ex));
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "validation error",
+            errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
@@ -71,57 +78,9 @@ public class StudentManagementExceptionHandler {
       ConstraintViolationException ex) {
 
     ErrorResponseBody errorResponseBody = new ErrorResponseBody(HttpStatus.BAD_REQUEST,
-        "validation error", buildErrorDetails(ex));
+        "validation error", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponseBody);
   }
 
-  /**
-   * MethodArgumentNotValidExceptionを受け取り、すべてのエラー発生個所とエラーメッセージをリストで返します。
-   *
-   * @param ex MethodArgumentNotValidException
-   * @return エラー発生個所とエラーメッセージ
-   */
-  private List<Map<String, String>> buildErrorDetails(MethodArgumentNotValidException ex) {
-
-    List<Map<String, String>> errors = new ArrayList<>();
-    ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
-      Map<String, String> error = new HashMap<>();
-      error.put("field", fieldError.getField());
-      error.put("message", fieldError.getDefaultMessage());
-      errors.add(error);
-    });
-    return errors;
-  }
-
-  /**
-   * カスタム例外クラスの例外を受け取り、エラー発生個所とエラーメッセージをリスト形式で返します。
-   *
-   * @param ex StudentManagementExceptionを継承したカスタム例外
-   * @return エラー発生個所とエラーメッセージ
-   */
-  private List<Map<String, String>> buildErrorDetails(StudentManagementException ex) {
-
-    List<Map<String, String>> errors = new ArrayList<>();
-    Map<String, String> error = new HashMap<>();
-
-    error.put("field", ex.getField());
-    error.put("message", ex.getMessage());
-    errors.add(error);
-
-    return errors;
-  }
-
-  private List<Map<String, String>> buildErrorDetails(ConstraintViolationException ex) {
-
-    List<Map<String, String>> errors = new ArrayList<>();
-    Map<String, String> error = new HashMap<>();
-
-    ex.getConstraintViolations().forEach(violation -> {
-      error.put("field", violation.getPropertyPath().toString());
-      error.put("message", violation.getMessage());
-    });
-    errors.add(error);
-    return errors;
-  }
 
 }
