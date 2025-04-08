@@ -1,4 +1,4 @@
-package raisetech.student.management.exception;
+package raisetech.student.management.exception.handling;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import raisetech.student.management.exception.InvalidAccessException;
+import raisetech.student.management.exception.InvalidIdException;
 
 /**
  * API実行時に発生した例外をハンドリングし、クライアントに例外発生個所とエラーメッセージを返します。
@@ -25,7 +27,7 @@ public class StudentManagementExceptionHandler {
    * 無効なURIへのアクセスが発生したことをクライアントに返します。
    *
    * @param ex InvalidAccessException
-   * @return HTTPステータス(BAD REQUEST), エラー発生個所, エラーメッセージ
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
    */
   @ExceptionHandler(InvalidAccessException.class)
   public ResponseEntity<ErrorResponseBody> handleInvalidAccessException(InvalidAccessException ex) {
@@ -40,7 +42,7 @@ public class StudentManagementExceptionHandler {
    * 入力されたIDが不正であることをクライアントに返します。
    *
    * @param ex InvalidIdException
-   * @return HTTPステータス(BAD REQUEST), エラー発生個所, エラーメッセージ
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
    */
   @ExceptionHandler(InvalidIdException.class)
   public ResponseEntity<ErrorResponseBody> handleInvalidIdException(InvalidIdException ex) {
@@ -55,7 +57,7 @@ public class StudentManagementExceptionHandler {
    * バリデーションエラーの発生をクライアントに返します。
    *
    * @param ex MethodArgumentNotValidException
-   * @return HTTPステータス(BAD REQUEST), エラー発生個所, エラーメッセージ
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponseBody> handleMethodArgumentNotValidException(
@@ -71,7 +73,7 @@ public class StudentManagementExceptionHandler {
    * バリデーションエラーの発生をクライアントに返します。
    *
    * @param ex ConstraintViolationException
-   * @return HTTPステータス(BAD REQUEST), エラー発生個所, エラーメッセージ
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
    */
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ErrorResponseBody> handleConstraintViolationException(

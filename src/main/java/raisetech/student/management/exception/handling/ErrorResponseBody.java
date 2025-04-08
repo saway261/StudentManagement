@@ -1,4 +1,4 @@
-package raisetech.student.management.exception;
+package raisetech.student.management.exception.handling;
 
 import java.util.List;
 import java.util.Map;

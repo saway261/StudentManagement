@@ -1,4 +1,4 @@
-package raisetech.student.management.exception;
+package raisetech.student.management.exception.handling;
 
 import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import raisetech.student.management.exception.StudentManagementException;
 
 /**
  * StudentManagementExceptionHandlerクラスから例外インスタンスを受け取り、エラーの詳細情報を組み立てて返します。
