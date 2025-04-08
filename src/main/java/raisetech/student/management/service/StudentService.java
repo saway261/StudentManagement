@@ -58,7 +58,7 @@ public class StudentService {
    * コース開始日にはリクエストが実行された日付、コース終了日にはコース開始日の6か月後の日付が設定されます。
    *
    * @param studentDetail 受講生詳細
-   * @return 実行結果
+   * @return 登録された受講生詳細
    */
   @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
@@ -69,14 +69,15 @@ public class StudentService {
     for (StudentCourse course : courseList) {
       repository.registerCourse(new StudentCourse(course.getCourseName(), student.getStudentId()));
     }
-    return studentDetail;
+
+    return searchstudentDetail(student.getStudentId());
   }
 
   /**
    * 受講生詳細の更新を行います。受講生と受講生コースを個別に登録します。 受講生のキャンセルフラグの更新もここでおこないます。(論理削除)
    *
    * @param studentDetail 更新後の受講生詳細
-   * @return 実行結果
+   * @return 更新された受講生詳細
    */
   @Transactional
   public StudentDetail updateStudent(StudentDetail studentDetail) {
@@ -84,7 +85,7 @@ public class StudentService {
     for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
       repository.updateCourse(studentCourse);
     }
-    return studentDetail;
+    return searchstudentDetail(studentDetail.getStudent().getStudentId());
   }
 
   /**
