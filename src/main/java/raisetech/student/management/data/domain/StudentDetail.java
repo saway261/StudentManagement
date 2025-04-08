@@ -1,5 +1,6 @@
 package raisetech.student.management.data.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import lombok.Setter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
-//空のStudentDetailインスタンスは生成できない。
+@Schema(description = "受講生詳細")
 @Getter
 @Setter
 @AllArgsConstructor
