@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import raisetech.student.management.exception.InvalidAccessException;
 import raisetech.student.management.exception.InvalidIdException;
 
@@ -27,30 +28,30 @@ public class StudentManagementExceptionHandler {
    * 無効なURIへのアクセスが発生したことをクライアントに返します。
    *
    * @param ex InvalidAccessException
-   * @return HTTPステータス(BAD REQUEST), エラー詳細
+   * @return HTTPステータス(NOT FOUND), エラー詳細
    */
   @ExceptionHandler(InvalidAccessException.class)
   public ResponseEntity<ErrorResponseBody> handleInvalidAccessException(InvalidAccessException ex) {
 
     ErrorResponseBody errorResponseBody =
-        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "page not exist",
+        new ErrorResponseBody(HttpStatus.NOT_FOUND, "page not exist",
             errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(errorResponseBody);
+    return ResponseEntity.status(404).body(errorResponseBody);
   }
 
   /**
    * 入力されたIDが不正であることをクライアントに返します。
    *
    * @param ex InvalidIdException
-   * @return HTTPステータス(BAD REQUEST), エラー詳細
+   * @return HTTPステータス(NOT FOUND), エラー詳細
    */
   @ExceptionHandler(InvalidIdException.class)
   public ResponseEntity<ErrorResponseBody> handleInvalidIdException(InvalidIdException ex) {
 
     ErrorResponseBody errorResponseBody =
-        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "invalid id",
+        new ErrorResponseBody(HttpStatus.NOT_FOUND, "invalid id",
             errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(errorResponseBody);
+    return ResponseEntity.status(404).body(errorResponseBody);
   }
 
   /**
@@ -63,6 +64,16 @@ public class StudentManagementExceptionHandler {
   public ResponseEntity<ErrorResponseBody> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException ex) {
 
+    ErrorResponseBody errorResponseBody =
+        new ErrorResponseBody(HttpStatus.BAD_REQUEST, "validation error",
+            errorDetailsBuilder.buildErrorDetails(ex));
+    return ResponseEntity.badRequest().body(errorResponseBody);
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ErrorResponseBody> handleMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException ex) {
+    
     ErrorResponseBody errorResponseBody =
         new ErrorResponseBody(HttpStatus.BAD_REQUEST, "validation error",
             errorDetailsBuilder.buildErrorDetails(ex));

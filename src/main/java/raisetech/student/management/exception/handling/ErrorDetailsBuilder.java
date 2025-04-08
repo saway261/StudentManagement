@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import raisetech.student.management.exception.StudentManagementException;
@@ -60,6 +61,21 @@ public class ErrorDetailsBuilder {
       error.put("message", violation.getMessage());
       errors.add(error);
     });
+    return errors;
+  }
+
+  public List<Map<String, String>> buildErrorDetails(TypeMismatchException ex) {
+    List<Map<String, String>> errors = new ArrayList<>();
+    Map<String, String> error = new HashMap<>();
+
+    String fieldName = ex.getPropertyName() != null ? ex.getPropertyName() : "unknown";
+    String requiredType =
+        ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown type";
+    String message = String.format("値を %s 型に変換できませんでした", requiredType);
+
+    error.put("field", fieldName);
+    error.put("message", message);
+    errors.add(error);
     return errors;
   }
 
