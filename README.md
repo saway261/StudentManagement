@@ -195,6 +195,11 @@ classDiagram
 
     class StudentExceptionHandler {
         -errorDetailsBuilder
+        +handleInvalidAccessException(InvalidAccessException ex) ResponseEntity~ErrorResponseBody~
+        +handleInvalidIdException(InvalidIdException ex) ResponseEntity~ErrorResponseBody~
+        +handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) ResponseEntity~ErrorResponseBody~
+        +handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) ResponseEntity~ErrorResponseBody~
+        +handleConstraintViolationException(ConstraintViolationException ex) ResponseEntity~ErrorResponseBody~
     }
 
     StudentController ..> StudentExceptionHandler:throw exception
@@ -202,15 +207,7 @@ classDiagram
   
 
 ```
----
-## 力を入れた点
-### ・例外の種類のよらないエラーレスポンスフォーマットの形成
-```mermaid
- erDiagram
-     StudentController 
 
-
-```
 
 ## 今後の課題
 ・テストの実施および現時点で想定できていないエラーハンドリングの実装  
