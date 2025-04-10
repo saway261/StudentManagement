@@ -15,12 +15,12 @@ import raisetech.student.management.exception.InvalidIdException;
  * API実行時に発生した例外をハンドリングし、クライアントに例外発生個所とエラーメッセージを返します。
  */
 @RestControllerAdvice
-public class StudentManagementExceptionHandler {
+public class StudentExceptionHandler {
 
   ErrorDetailsBuilder errorDetailsBuilder;
 
   @Autowired
-  public StudentManagementExceptionHandler(ErrorDetailsBuilder errorDetailsBuilder) {
+  public StudentExceptionHandler(ErrorDetailsBuilder errorDetailsBuilder) {
     this.errorDetailsBuilder = errorDetailsBuilder;
   }
 
