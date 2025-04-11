@@ -8,11 +8,6 @@ import raisetech.student.management.data.StudentCourse;
  */
 public class InvalidIdException extends StudentException {
 
-  public InvalidIdException(int studentId) {
-    this.field = "student.studentId：" + studentId;
-    this.message = "受講生IDが存在しません。";
-  }
-
   public InvalidIdException(Student student) {
     this.field = "student.studentId：" + student.getStudentId();
     this.message = "受講生IDが存在しません。";
