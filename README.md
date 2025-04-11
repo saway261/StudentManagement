@@ -32,7 +32,7 @@
 **使用ツール**  
 <img src="https://img.shields.io/badge/-IntelliJ IDEA-000000.svg?logo=intellijidea&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-Git-F05032.svg?logo=git&logoColor=F8A899">
-<img src="https://img.shields.io/badge/-GitHub-181717.svg?logo=github&style={バッチのスタイル}&logoColor=FFFFFF}">
+<img src="https://img.shields.io/badge/-GitHub-181717.svg?logo=github&logoColor=FFFFFF}">
 <img src="https://img.shields.io/badge/-Postman-FF6C37.svg?logo=postman&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-OpenAPI-6BA539.svg?logo=openapiinitiative&logoColor=FFFFFF">
 
