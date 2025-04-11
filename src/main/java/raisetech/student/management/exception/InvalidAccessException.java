@@ -7,7 +7,7 @@ public class InvalidAccessException extends StudentException {
 
   public InvalidAccessException() {
     this.field = "URI";
-    this.message = "現在無効なURLです。受講生一覧を見るには /student にアクセスしてください。";
+    this.message = "現在無効なURIです。受講生一覧を見るには /student にアクセスしてください。";
   }
 
 }
