@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
 
 /**
@@ -33,9 +34,9 @@ public class StudentService {
     List<Student> activeStudents = repository.searchActiveStudentList();
 
     for (Student student : activeStudents) {
-      activeStudentDetailList.add(searchstudentDetail(student.getStudentId()));
+      StudentDetail studentDetail = buildStudentDetail(student.getStudentId());
+      activeStudentDetailList.add(studentDetail);
     }
-
     return activeStudentDetailList;
   }
 
@@ -46,7 +47,12 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  public StudentDetail searchstudentDetail(int studentId) {
+  public StudentDetail searchStudentDetail(int studentId) throws InvalidIdException {
+    isExistStudentId(studentId);
+    return buildStudentDetail(studentId);
+  }
+
+  private StudentDetail buildStudentDetail(int studentId) {
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> courses = repository.searchCourses(studentId);
     StudentDetail studentDetail = new StudentDetail(student, courses);
@@ -70,7 +76,7 @@ public class StudentService {
       repository.registerCourse(new StudentCourse(course.getCourseName(), student.getStudentId()));
     }
 
-    return searchstudentDetail(student.getStudentId());
+    return buildStudentDetail(student.getStudentId());
   }
 
   /**
@@ -85,7 +91,7 @@ public class StudentService {
     for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
       repository.updateCourse(studentCourse);
     }
-    return searchstudentDetail(studentDetail.getStudent().getStudentId());
+    return buildStudentDetail(studentDetail.getStudent().getStudentId());
   }
 
   /**
@@ -94,13 +100,13 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 存在する場合はtrue
    */
-  public boolean isExistStudentId(int studentId) {
+  public boolean isExistStudentId(int studentId) throws InvalidIdException {
     for (int existId : repository.searchStudentIdList()) {
       if (existId == studentId) {
         return true;
       }
     }
-    return false;
+    throw new InvalidIdException(studentId);
   }
 
   /**
