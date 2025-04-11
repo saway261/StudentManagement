@@ -54,12 +54,6 @@ public class StudentService {
     return buildStudentDetail(studentId);
   }
 
-  private StudentDetail buildStudentDetail(int studentId) {
-    Student student = repository.searchStudent(studentId);
-    List<StudentCourse> courses = repository.searchCourses(studentId);
-    StudentDetail studentDetail = new StudentDetail(student, courses);
-    return studentDetail;
-  }
 
   /**
    * 受講生詳細の登録を行います。受講生と受講生コースを個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了予定日を設定します。
@@ -99,6 +93,19 @@ public class StudentService {
       repository.updateCourse(course);
     }
     return buildStudentDetail(studentDetail.getStudent().getStudentId());
+  }
+
+  /**
+   * テーブルから受講生IDに紐づく受講生と受講生コースを取得し、受講生詳細として組み上げます。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細
+   */
+  private StudentDetail buildStudentDetail(int studentId) {
+    Student student = repository.searchStudent(studentId);
+    List<StudentCourse> courses = repository.searchCourses(studentId);
+    StudentDetail studentDetail = new StudentDetail(student, courses);
+    return studentDetail;
   }
 
   /**
