@@ -86,8 +86,10 @@ public class StudentService {
    * @return 更新された受講生詳細
    */
   @Transactional
-  public StudentDetail updateStudent(StudentDetail studentDetail) {
-    repository.updateStudent(studentDetail.getStudent());
+  public StudentDetail updateStudent(StudentDetail studentDetail) throws InvalidIdException {
+    Student student = studentDetail.getStudent();
+    isExistStudentId(student.getStudentId());
+    repository.updateStudent(student);
     for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
       repository.updateCourse(studentCourse);
     }

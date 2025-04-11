@@ -92,11 +92,7 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
       throws InvalidIdException {
-    if (service.isExistStudentId(studentId)) {
-      return service.searchstudentDetail(studentId);
-    } else {
-      throw new InvalidIdException(studentId);
-    }
+    return service.searchStudentDetail(studentId);
   }
 
   @Operation(
@@ -183,9 +179,6 @@ public class StudentController {
 
     int studentId = studentDetail.getStudent().getStudentId();
 
-    if (!service.isExistStudentId(studentId)) {
-      throw new InvalidIdException(studentDetail.getStudent());
-    }
     for (StudentCourse course : studentDetail.getStudentCourseList()) {
       if (!service.isLinkedCourseIdWithStudentId(studentId, course.getCourseId())) {
         throw new InvalidIdException(course);
