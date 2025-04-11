@@ -48,7 +48,9 @@ public class StudentService {
    * @return 受講生詳細
    */
   public StudentDetail searchStudentDetail(int studentId) throws InvalidIdException {
-    isExistStudentId(studentId);
+    Student student = new Student();//isExistStudentIdに渡すための仮のStudentを作成
+    student.setStudentId(studentId);
+    isExistStudentId(student);
     return buildStudentDetail(studentId);
   }
 
@@ -87,11 +89,14 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail updateStudent(StudentDetail studentDetail) throws InvalidIdException {
+
     Student student = studentDetail.getStudent();
-    isExistStudentId(student.getStudentId());
+    isExistStudentId(student);
     repository.updateStudent(student);
-    for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
-      repository.updateCourse(studentCourse);
+
+    for (StudentCourse course : studentDetail.getStudentCourseList()) {
+      isLinkedCourseIdWithStudentId(course);
+      repository.updateCourse(course);
     }
     return buildStudentDetail(studentDetail.getStudent().getStudentId());
   }
@@ -99,31 +104,31 @@ public class StudentService {
   /**
    * 引数で渡された受講生IDが受講生テーブルに存在するかを判定します。
    *
-   * @param studentId 受講生ID
+   * @param student 受講生
    * @return 存在する場合はtrue
    */
-  public boolean isExistStudentId(int studentId) throws InvalidIdException {
+  public boolean isExistStudentId(Student student) throws InvalidIdException {
     for (int existId : repository.searchStudentIdList()) {
-      if (existId == studentId) {
+      if (existId == student.getStudentId()) {
         return true;
       }
     }
-    throw new InvalidIdException(studentId);
+    throw new InvalidIdException(student);
   }
 
   /**
    * 引数で渡された受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
    *
-   * @param courseId 受講生コースID
+   * @param course 受講生コース
    * @return 受講生コースIDが紐づいている場合はtrue
    */
-  public boolean isLinkedCourseIdWithStudentId(int studentId, int courseId) {
+  public boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
     List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
-        studentId);
-    if (existCourseIdListLinkedStudentId.contains(courseId)) {
+        course.getCourseId());
+    if (existCourseIdListLinkedStudentId.contains(course.getCourseId())) {
       return true;
     } else {
-      return false;
+      throw new InvalidIdException(course);
     }
   }
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.domain.validation.OnCreate;
 import raisetech.student.management.data.domain.validation.OnUpdate;
@@ -177,16 +176,7 @@ public class StudentController {
       @RequestBody @Valid StudentDetail studentDetail)
       throws InvalidIdException {
 
-    int studentId = studentDetail.getStudent().getStudentId();
-
-    for (StudentCourse course : studentDetail.getStudentCourseList()) {
-      if (!service.isLinkedCourseIdWithStudentId(studentId, course.getCourseId())) {
-        throw new InvalidIdException(course);
-      }
-    }
-
     StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
-
   }
 }
