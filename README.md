@@ -7,7 +7,7 @@
 ---
 所属しているスクール（RaiseTech）の課題で作成しています。  
 架空のプログラミングスクールの受講生の運営スタッフがプロフィールと受講コース情報を管理するためのREST
-APIです。このAPIは、以下の操作を行うことができます。
+APIです。このAPIは、以下の処理が可能です。
 
 ・受講生詳細の全件検索  
 ・受講生詳細の個別検索(受講生ID指定)  
@@ -32,7 +32,7 @@ APIです。このAPIは、以下の操作を行うことができます。
 **使用ツール**  
 <img src="https://img.shields.io/badge/-IntelliJ IDEA-000000.svg?logo=intellijidea&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-Git-F05032.svg?logo=git&logoColor=F8A899">
-<img src="https://img.shields.io/badge/-GitHub-181717.svg?logo=github&logoColor=FFFFFF}">
+<img src="https://img.shields.io/badge/-GitHub-181717.svg?logo=github&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-Postman-FF6C37.svg?logo=postman&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-OpenAPI-6BA539.svg?logo=openapiinitiative&logoColor=FFFFFF">
 
@@ -73,7 +73,7 @@ erDiagram
 
 ---
 
-### シーケンス図 Sequence Diagramm
+### シーケンス図 Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -148,6 +148,8 @@ sequenceDiagram
 
 ### クラス図 Class Diagram
 
+概観
+
 ```mermaid
 ---
 title: Student Management System(REST API)
@@ -194,19 +196,75 @@ classDiagram
         +updateStudent(Student student)
         +updateCourse(StudentCourse course)
     }
+    namespace ExceptionHandling {
+        class StudentExceptionHandler {
+        }
+    }
+    StudentService ..> StudentExceptionHandler: throw exception
+    StudentController ..> StudentExceptionHandler: throw exception
+    USER <.. StudentExceptionHandler: error response
 
+
+```
+
+例外処理
+
+```mermaid
+---
+title: Exception Handling
+---
+classDiagram
     class StudentExceptionHandler {
-        -errorDetailsBuilder
         +handleInvalidAccessException(InvalidAccessException ex) ResponseEntity~ErrorResponseBody~
         +handleInvalidIdException(InvalidIdException ex) ResponseEntity~ErrorResponseBody~
         +handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) ResponseEntity~ErrorResponseBody~
         +handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) ResponseEntity~ErrorResponseBody~
         +handleConstraintViolationException(ConstraintViolationException ex) ResponseEntity~ErrorResponseBody~
     }
-    StudentService ..> StudentExceptionHandler: throw exception
-    StudentController ..> StudentExceptionHandler: throw exception
-    StudentExceptionHandler ..> USER: error response
 
+    class ErrorResponseBody {
+        - HttpStatus status
+        - String message
+        - List~Map~ String, String~~ error
+    }
+
+    class ErrorDetailBuilder {
+        + buildErrorDetails(Exception ex) List~Map~ String, String~~
+    }
+    class error {
+        <<Component>>
+    }
+
+    note for StudentExceptionHandler "catch exceptions"
+    StudentExceptionHandler ..> ErrorDetailBuilder: uses
+    ErrorDetailBuilder ..> error: returns
+    StudentExceptionHandler ..> ErrorResponseBody: creates
+    ErrorResponseBody *-- error: contains
+
+
+```
+
+```mermaid
+classDiagram
+    namespace CustomException {
+        class StudentException {
+            <<abstract>>
+            # String field
+            # String message
+            + getField()
+            + getMessage()
+        }
+        class InvalidAccessException {
+            + getField()
+            + getMessage()
+        }
+        class InvalidIdException {
+            + getField()
+            + getMessage()
+        }
+    }
+    StudentException ..|> InvalidAccessException
+    StudentException ..|> InvalidIdException
 
 ```
 
