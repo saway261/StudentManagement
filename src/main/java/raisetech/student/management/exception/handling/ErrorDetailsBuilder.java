@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import raisetech.student.management.exception.StudentManagementException;
+import raisetech.student.management.exception.StudentException;
 
 /**
  * StudentManagementExceptionHandlerクラスから例外インスタンスを受け取り、エラーの詳細情報を組み立てて返します。
@@ -40,7 +40,7 @@ public class ErrorDetailsBuilder {
    * @param ex StudentManagementExceptionを継承したカスタム例外
    * @return エラー発生個所とエラーメッセージ
    */
-  public List<Map<String, String>> buildErrorDetails(StudentManagementException ex) {
+  public List<Map<String, String>> buildErrorDetails(StudentException ex) {
 
     List<Map<String, String>> errors = new ArrayList<>();
     Map<String, String> error = new HashMap<>();

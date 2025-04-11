@@ -6,7 +6,7 @@ import raisetech.student.management.data.StudentCourse;
 /**
  * 入力された受講生IDあるいは受講生コースIDがテーブルに存在しないか、受講生コースIDが受講生IDに紐づかないときに投げられる例外クラスです。
  */
-public class InvalidIdException extends StudentManagementException {
+public class InvalidIdException extends StudentException {
 
   public InvalidIdException(int studentId) {
     this.field = "student.studentId：" + studentId;

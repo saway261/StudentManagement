@@ -3,7 +3,7 @@ package raisetech.student.management.exception;
 /**
  * 無効なURIへのアクセスがされた際に投げられる例外クラスです。
  */
-public class InvalidAccessException extends StudentManagementException {
+public class InvalidAccessException extends StudentException {
 
   public InvalidAccessException() {
     this.field = "URI";
