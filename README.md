@@ -80,7 +80,7 @@ sequenceDiagram
     actor User
     participant API as API
     participant DB as Database
-    Note right of User: 全件検索フロー
+    Note over User, DB: 全件検索フロー
     User ->> API: GET /students (受講生詳細)
     API ->> DB: SELECT 受講生一覧
     API ->> DB: SELECT 受講生コース一覧
@@ -88,7 +88,7 @@ sequenceDiagram
     DB -->> API: 受講生コース一覧を返す
     API ->> API: 受講生詳細一覧をビルド
     API -->> User: 200 OK (受講生詳細一覧が返る)
-    Note right of User: 個別検索フロー
+    Note over User, DB: 個別検索フロー
     User ->> API: GET /students/{studentId}
     alt studentIdの形式が正しくない場合
         API -->> User: 400 BadRequest
@@ -116,7 +116,7 @@ sequenceDiagram
     actor User
     participant API as API
     participant DB as Database
-    Note right of User: 受講生詳細の新規登録フロー
+    Note over User, DB: 受講生詳細の新規登録フロー
     User ->> API: POST /students
     alt 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
@@ -133,7 +133,7 @@ sequenceDiagram
     actor User
     participant API as API
     participant DB as Database
-    Note right of User: 受講生詳細の更新(論理削除)フロー
+    Note over User, DB: 受講生詳細の更新(論理削除)フロー
     User ->> API: PUT /students
     alt 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
@@ -203,7 +203,6 @@ classDiagram
         +handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) ResponseEntity~ErrorResponseBody~
         +handleConstraintViolationException(ConstraintViolationException ex) ResponseEntity~ErrorResponseBody~
     }
-
     StudentController ..> StudentExceptionHandler: throw exception
     StudentExceptionHandler ..> USER: error response
 
