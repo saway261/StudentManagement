@@ -203,6 +203,7 @@ classDiagram
         +handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) ResponseEntity~ErrorResponseBody~
         +handleConstraintViolationException(ConstraintViolationException ex) ResponseEntity~ErrorResponseBody~
     }
+    StudentService ..> StudentExceptionHandler: throw exception
     StudentController ..> StudentExceptionHandler: throw exception
     StudentExceptionHandler ..> USER: error response
 
