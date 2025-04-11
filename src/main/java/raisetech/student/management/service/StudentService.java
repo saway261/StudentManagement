@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
 
 /**
@@ -33,42 +34,33 @@ public class StudentService {
     List<Student> activeStudents = repository.searchActiveStudentList();
 
     for (Student student : activeStudents) {
-      activeStudentDetailList.add(searchstudentDetail(student.getStudentId()));
+      StudentDetail studentDetail = buildStudentDetail(student.getStudentId());
+      activeStudentDetailList.add(studentDetail);
     }
-
     return activeStudentDetailList;
   }
 
   /**
-   * 受講生コース検索です。 引数として渡された受講生IDと一致する受講生コースを取得します。 アクティブ・非アクティブにかかわらず、すべての受講生から検索します。
-   *
-   * @param studentId 受講生ID
-   * @return 受講生コース(複数)
-   */
-  public List<StudentCourse> searchCourses(int studentId) {
-    return repository.searchCourses(studentId);
-  }
-
-  /**
    * 受講生検索です。 IDに基づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して受講生詳細を返します。
-   * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。
+   * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。該当する受講生IDが登録されていない場合は例外を投げます。
    *
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  public StudentDetail searchstudentDetail(int studentId) {
-    Student student = repository.searchStudent(studentId);
-    List<StudentCourse> courses = repository.searchCourses(studentId);
-    StudentDetail studentDetail = new StudentDetail(student, courses);
-    return studentDetail;
+  public StudentDetail searchStudentDetail(int studentId) throws InvalidIdException {
+    Student student = new Student();//isExistStudentIdに渡すための仮のStudentを作成
+    student.setStudentId(studentId);
+    isExistStudentId(student);
+    return buildStudentDetail(studentId);
   }
+
 
   /**
    * 受講生詳細の登録を行います。受講生と受講生コースを個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了予定日を設定します。
    * コース開始日にはリクエストが実行された日付、コース終了日にはコース開始日の6か月後の日付が設定されます。
    *
    * @param studentDetail 受講生詳細
-   * @return 実行結果
+   * @return 登録された受講生詳細
    */
   @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
@@ -79,22 +71,72 @@ public class StudentService {
     for (StudentCourse course : courseList) {
       repository.registerCourse(new StudentCourse(course.getCourseName(), student.getStudentId()));
     }
-    return studentDetail;
+
+    return buildStudentDetail(student.getStudentId());
   }
 
   /**
    * 受講生詳細の更新を行います。受講生と受講生コースを個別に登録します。 受講生のキャンセルフラグの更新もここでおこないます。(論理削除)
    *
    * @param studentDetail 更新後の受講生詳細
-   * @return 実行結果
+   * @return 更新された受講生詳細
    */
   @Transactional
-  public StudentDetail updateStudent(StudentDetail studentDetail) {
-    repository.updateStudent(studentDetail.getStudent());
-    for (StudentCourse studentCourse : studentDetail.getStudentCourseList()) {
-      repository.updateCourse(studentCourse);
+  public StudentDetail updateStudent(StudentDetail studentDetail) throws InvalidIdException {
+
+    Student student = studentDetail.getStudent();
+    isExistStudentId(student);
+    repository.updateStudent(student);
+
+    for (StudentCourse course : studentDetail.getStudentCourseList()) {
+      isLinkedCourseIdWithStudentId(course);
+      repository.updateCourse(course);
     }
+    return buildStudentDetail(studentDetail.getStudent().getStudentId());
+  }
+
+  /**
+   * テーブルから受講生IDに紐づく受講生と受講生コースを取得し、受講生詳細として組み上げます。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細
+   */
+  private StudentDetail buildStudentDetail(int studentId) {
+    Student student = repository.searchStudent(studentId);
+    List<StudentCourse> courses = repository.searchCourses(studentId);
+    StudentDetail studentDetail = new StudentDetail(student, courses);
     return studentDetail;
+  }
+
+  /**
+   * 引数で渡された受講生IDが受講生テーブルに存在するかを判定します。
+   *
+   * @param student 受講生
+   * @return 存在する場合はtrue
+   */
+  private boolean isExistStudentId(Student student) throws InvalidIdException {
+    for (int existId : repository.searchStudentIdList()) {
+      if (existId == student.getStudentId()) {
+        return true;
+      }
+    }
+    throw new InvalidIdException(student);
+  }
+
+  /**
+   * 引数で渡された受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
+   *
+   * @param course 受講生コース
+   * @return 受講生コースIDが紐づいている場合はtrue
+   */
+  private boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
+    List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
+        course.getCourseId());
+    if (existCourseIdListLinkedStudentId.contains(course.getCourseId())) {
+      return true;
+    } else {
+      throw new InvalidIdException(course);
+    }
   }
 }
 
