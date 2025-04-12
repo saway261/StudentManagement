@@ -52,6 +52,12 @@ public class ErrorDetailsBuilder {
     return errors;
   }
 
+  /**
+   * ConstraintViolationExceptionを受け取り、すべてのエラー発生個所とエラーメッセージをリストで返します。
+   *
+   * @param ex ConstraintViolationException
+   * @return エラー発生個所とエラーメッセージ
+   */
   public List<Map<String, String>> buildErrorDetails(ConstraintViolationException ex) {
     List<Map<String, String>> errors = new ArrayList<>();
 
@@ -64,6 +70,12 @@ public class ErrorDetailsBuilder {
     return errors;
   }
 
+  /**
+   * TypeMismatchExceptionを受け取り、エラー発生個所とエラーメッセージをリストで返します。
+   *
+   * @param ex TypeMismatchException
+   * @return エラー発生個所とエラーメッセージ
+   */
   public List<Map<String, String>> buildErrorDetails(TypeMismatchException ex) {
     List<Map<String, String>> errors = new ArrayList<>();
     Map<String, String> error = new HashMap<>();
