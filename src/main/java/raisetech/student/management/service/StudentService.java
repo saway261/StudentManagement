@@ -116,21 +116,6 @@ public class StudentService {
   }
 
   /**
-   * 引数で渡された受講生IDが受講生テーブルに存在するかを判定します。
-   *
-   * @param student 受講生
-   * @return 存在する場合はtrue
-   */
-  private boolean isExistStudentId(Student student) throws InvalidIdException {
-    for (int existId : repository.searchStudentIdList()) {
-      if (existId == student.getStudentId()) {
-        return true;
-      }
-    }
-    throw new InvalidIdException(student);
-  }
-
-  /**
    * 受講生コーステーブルから、引数で渡された受講生IDと一致する値をもつレコードを検索してコースIDリストを取得し、引数で渡されたコースIDがテーブルにおいて受講生IDと紐づいているかを判定します。
    * テーブルから取得したコースIDリストが空の場合は、受講生IDが存在しないと判断し、例外を投げます。
    *
