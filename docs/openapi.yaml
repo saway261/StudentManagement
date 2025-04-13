@@ -67,6 +67,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponseBody'
+        '404':
+          description: 指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
 
   /students/{studentId}:
     get:
