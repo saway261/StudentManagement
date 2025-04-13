@@ -13,6 +13,11 @@ public class InvalidIdException extends StudentException {
     this.message = "受講生IDが存在しません。";
   }
 
+  public InvalidIdException(int id) {
+    this.field = "argument" + id;
+    this.message = "受講生IDが存在しません。";
+  }
+
   public InvalidIdException(StudentCourse course) {
     this.field = "studentCourse.courseId：" + course.getCourseId();
     this.message = "コースIDが不正です。受講生IDに紐づけられたコースIDを入力してください。";

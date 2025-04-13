@@ -48,10 +48,11 @@ public class StudentService {
    * @return 受講生詳細
    */
   public StudentDetail searchStudentDetail(int studentId) throws InvalidIdException {
-    Student student = new Student();//isExistStudentIdに渡すための仮のStudentを作成
-    student.setStudentId(studentId);
-    isExistStudentId(student);
-    return buildStudentDetail(studentId);
+    StudentDetail studentDetail = buildStudentDetail(studentId);
+    if (studentDetail.getStudent() == null) {
+      throw new InvalidIdException(studentId);
+    }
+    return studentDetail;
   }
 
 
@@ -83,16 +84,22 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail updateStudent(StudentDetail studentDetail) throws InvalidIdException {
+    Student requestStudent = studentDetail.getStudent();
+    List<StudentCourse> requestCourses = studentDetail.getStudentCourseList();
 
-    Student student = studentDetail.getStudent();
-    isExistStudentId(student);
-    repository.updateStudent(student);
-
-    for (StudentCourse course : studentDetail.getStudentCourseList()) {
-      isLinkedCourseIdWithStudentId(course);
-      repository.updateCourse(course);
+    // リクエストボディの受講生コースリストをループで回す
+    for (StudentCourse course : requestCourses) {
+      course.setStudentId(requestStudent.getStudentId());
+      if (isLinkedCourseIdWithStudentId(course)) {//受講生コースのコースIDが受講生IDと紐づくか判定
+        repository.updateCourse(course);//紐づくなら更新処理を行う
+      } else {
+        throw new InvalidIdException(course);//紐づかないなら例外を投げる
+      }
     }
-    return buildStudentDetail(studentDetail.getStudent().getStudentId());
+    //受講生の更新処理を行う
+    repository.updateStudent(requestStudent);
+    StudentDetail responseStudentDetail = buildStudentDetail(requestStudent.getStudentId());
+    return responseStudentDetail;
   }
 
   /**
@@ -124,19 +131,20 @@ public class StudentService {
   }
 
   /**
-   * 引数で渡された受講生コースIDが、データベースにおいて受講生IDと紐づいているかを判定します。
+   * 受講生コーステーブルから、引数で渡された受講生IDと一致する値をもつレコードを検索してコースIDリストを取得し、引数で渡されたコースIDがテーブルにおいて受講生IDと紐づいているかを判定します。
+   * テーブルから取得したコースIDリストが空の場合は、受講生IDが存在しないと判断し、例外を投げます。
    *
    * @param course 受講生コース
    * @return 受講生コースIDが紐づいている場合はtrue
    */
   private boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
     List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
-        course.getCourseId());
-    if (existCourseIdListLinkedStudentId.contains(course.getCourseId())) {
-      return true;
-    } else {
-      throw new InvalidIdException(course);
+        course.getStudentId());
+    if (existCourseIdListLinkedStudentId.isEmpty()) {
+      //一件もコースIDが返らない場合、受講生IDが存在しないと判断する。
+      throw new InvalidIdException(course.getStudentId());
     }
+    return existCourseIdListLinkedStudentId.contains(course.getCourseId());
   }
 }
 
