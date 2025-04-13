@@ -44,9 +44,6 @@ APIです。このAPIは、以下の処理が可能です。
 studentDetail)を組み立てる
 
 ```mermaid
----
-title: StudentDetail (受講生詳細)
----
 erDiagram
     STUDENTS ||--|{ STUDENTS_COURSES: "has"
     STUDENTS {
