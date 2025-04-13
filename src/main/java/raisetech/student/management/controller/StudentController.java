@@ -167,6 +167,12 @@ public class StudentController {
               content = @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = ErrorResponseBody.class))
+          ),
+          @ApiResponse(
+              responseCode = "404", description = "指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponseBody.class))
           )
       }
   )
