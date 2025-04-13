@@ -62,7 +62,7 @@ erDiagram
     STUDENTS_COURSES {
         INT course_id PK
         VARCHAR course_name PK
-        INT student_id FK
+        INT student_id FK  "外部キー (STUDENTS.student_id)"
         DATE course_start_at
         DATE course_end_at
     }
@@ -87,23 +87,18 @@ sequenceDiagram
     API -->> User: 200 OK (受講生詳細一覧が返る)
     Note over User, DB: 個別検索フロー
     User ->> API: GET /students/{studentId}
-    alt studentIdの形式が正しくない場合
+    break studentIdの形式が正しくない場合
         API -->> User: 400 BadRequest
-    else studentIdの形式が正しい場合
-        API ->> DB: SELECT 受講生ID一覧
-        DB -->> API: 受講生ID一覧を返す
-        API ->> API: studentIdがテーブルの受講生ID一覧に含まれるか照会
-        alt studentIdがテーブルに存在しない場合
-            API -->> User: 404 NotFound
-        else studentIdがテーブルに存在する場合
-            API ->> DB: SELECT 受講生
-            API ->> DB: SELECT 受講生コース
+    end 
+            API ->> DB: SELECT 受講生<br>WHERE 受講生ID
+            API ->> DB: SELECT 受講生コース<br>WHERE 受講生ID
             DB -->> API: 受講生を返す
             DB -->> API: 受講生コースを返す
             API ->> API: 受講生詳細をビルド
+        break 受講生詳細が空の場合 
+            API -->> User: 404 NotFound:受講生IDが存在しません
+        end 
             API -->> User: 200 OK (受講生詳細詳細が返る)
-        end
-    end
 
 ```
 
@@ -115,13 +110,12 @@ sequenceDiagram
     participant DB as Database
     Note over User, DB: 受講生詳細の新規登録フロー
     User ->> API: POST /students
-    alt 受講生詳細の形式が正しくない場合
+    break 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
-    else 受講生詳細の形式が正しい場合
+    end
         API ->> DB: INSERT 受講生
         API ->> DB: INSERT 受講生コース
-        API -->> User: 200 OK (テーブルに登録された受講生詳細が帰る)
-    end
+        API -->> User: 200 OK (テーブルに登録された受講生詳細が返る)
 
 ```
 
@@ -132,13 +126,21 @@ sequenceDiagram
     participant DB as Database
     Note over User, DB: 受講生詳細の更新(論理削除)フロー
     User ->> API: PUT /students
-    alt 受講生詳細の形式が正しくない場合
+    break 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
-    else 受講生詳細の形式が正しい場合
-        API ->> DB: UPDATE 受講生
-        API ->> DB: UPDATE 受講生コース
-        API -->> User: 200 OK (テーブルで更新された受講生詳細が帰る)
     end
+    API ->> DB: SELECT 受講生コースID一覧<br>WHERE 受講生ID
+    DB -->> API:受講生IDに紐づく<br>受講生コースID一覧を返す
+    API ->> API: 更新したい受講生コースが<br>受講生と紐づいたものか判定
+    break 受講生IDに紐づく<br>受講生コースID一覧が空の場合
+        API -->> User: 404 NotFound:受講生IDが存在しません
+    end
+    break 受講生コースIDが受講生IDと紐づかない場合 
+        API -->> User: 404 NotFound:受講生コースIDが受講生IDと紐づきません
+    end
+    API ->> DB: UPDATE 受講生コース<br>WHERE 受講生ID
+    API ->> DB: UPDATE 受講生<br>WHERE 受講生コースID
+    API -->> User: 200 OK (テーブルで更新された受講生詳細が帰る)
 ```
 
 ---
@@ -178,9 +180,8 @@ classDiagram
         +searchstudentDetail(int studentId) StudentDetail
         +registerStudent(StudentDetail studentDetail) StudentDetail
         +updateStudent(StudentDetail studentDetail) StudentDetail
-        -buildStudentDetail(int studentId)
-        -isExistStudentId(int studentId) boolean
-        -sLinkedCourseIdWithStudentId(int studentId, int courseId) boolean
+        -buildStudentDetail(int studentId) StudentDetail
+        -isLinkedCourseIdWithStudentId(StudentCourse course) boolean
     }
     class StudentRepository {
         +searchActiveStudentList()
