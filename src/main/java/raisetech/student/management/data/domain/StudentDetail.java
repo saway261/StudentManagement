@@ -7,22 +7,20 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
 @Schema(description = "受講生詳細")
 @Getter
-@Setter
 @AllArgsConstructor
 public class StudentDetail {
 
   @NotNull
   @Valid
-  private Student student;
+  private final Student student;
 
   @NotEmpty
   @Valid
-  private List<StudentCourse> studentCourseList;
+  private final List<StudentCourse> studentCourseList;
 
 }
