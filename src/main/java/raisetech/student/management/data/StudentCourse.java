@@ -16,7 +16,7 @@ import raisetech.student.management.data.domain.validation.OnUpdate;
 @NoArgsConstructor
 public class StudentCourse {
 
-  @Schema(description = "コースID 自動裁判を行う", example = "1")
+  @Schema(description = "コースID 自動採番を行う", example = "1")
   @Positive(groups = OnUpdate.class)
   private int courseId;
 

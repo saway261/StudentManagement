@@ -56,7 +56,7 @@ public interface StudentRepository {
   void registerStudent(Student student);
 
   /**
-   * 受講生コースを新規登録します。コースIDに関しては自動裁判を行う。
+   * 受講生コースを新規登録します。コースIDに関しては自動採番を行う。
    *
    * @param course 新規受講生コース
    */
