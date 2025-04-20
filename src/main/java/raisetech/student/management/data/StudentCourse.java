@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import raisetech.student.management.data.domain.validation.OnUpdate;
 @Schema(description = "受講生コース")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class StudentCourse {
 
