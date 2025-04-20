@@ -89,11 +89,11 @@ public class StudentService {
 
     // リクエストボディの受講生コースリストをループで回す
     for (StudentCourse course : requestCourses) {
-      course.setStudentId(requestStudent.getStudentId());
-      if (isLinkedCourseIdWithStudentId(course)) {//受講生コースのコースIDが受講生IDと紐づくか判定
-        repository.updateCourse(course);//紐づくなら更新処理を行う
+      StudentCourse complementedCourse = new StudentCourse(course, requestStudent.getStudentId());
+      if (isLinkedCourseIdWithStudentId(complementedCourse)) {//受講生コースのコースIDが受講生IDと紐づくか判定
+        repository.updateCourse(complementedCourse);//紐づくなら更新処理を行う
       } else {
-        throw new InvalidIdException(course);//紐づかないなら例外を投げる
+        throw new InvalidIdException(complementedCourse);//紐づかないなら例外を投げる
       }
     }
     //受講生の更新処理を行う
