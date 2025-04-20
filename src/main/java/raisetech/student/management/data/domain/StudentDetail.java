@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -16,7 +15,6 @@ import raisetech.student.management.data.StudentCourse;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class StudentDetail {
 
   @NotNull
@@ -27,8 +25,4 @@ public class StudentDetail {
   @Valid
   private List<StudentCourse> studentCourseList;
 
-  public StudentDetail(Student student) {
-    this.student = student;
-    this.studentCourseList.add(new StudentCourse("未登録", student.getStudentId()));
-  }
 }

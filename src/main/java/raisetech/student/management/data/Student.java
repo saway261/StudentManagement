@@ -1,5 +1,7 @@
 package raisetech.student.management.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -66,5 +68,30 @@ public class Student {
 
   @Schema(description = "キャンセルフラグ", example = "false")
   private boolean isDeleted;
+
+  @JsonCreator
+  public Student(@JsonProperty("studentId") int studentId,
+      @JsonProperty("fullname") String fullname,
+      @JsonProperty("kanaName") String kanaName,
+      @JsonProperty("nickname") String nickname,
+      @JsonProperty("email") String email,
+      @JsonProperty("area") String area,
+      @JsonProperty("telephone") String telephone,
+      @JsonProperty("age") int age,
+      @JsonProperty("sex") String sex,
+      @JsonProperty("remark") String remark,
+      @JsonProperty("isDeleted") boolean isDeleted) {
+    this.studentId = studentId;
+    this.fullname = fullname;
+    this.kanaName = kanaName;
+    this.nickname = nickname;
+    this.email = email;
+    this.area = area;
+    this.telephone = telephone;
+    this.age = age;
+    this.sex = sex;
+    this.remark = remark;
+    this.isDeleted = isDeleted;
+  }
 
 }
