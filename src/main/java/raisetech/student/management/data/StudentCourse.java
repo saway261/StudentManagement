@@ -7,18 +7,16 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import lombok.Getter;
-import lombok.Setter;
 import raisetech.student.management.data.domain.validation.CourseName;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 
 @Schema(description = "受講生コース")
 @Getter
-@Setter
 public class StudentCourse {
 
   @Schema(description = "コースID 自動採番を行う", example = "1")
   @Positive(groups = OnUpdate.class)
-  private int courseId;
+  private final int courseId;
 
   @Schema(
       description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
@@ -26,17 +24,17 @@ public class StudentCourse {
   )
   @NotNull
   @CourseName
-  private String courseName;
+  private final String courseName;
 
   @Schema(description = "受講生ID", example = "1")
-  private int studentId;
+  private final int studentId;
 
   @Schema(description = "コース開始日 登録処理が実行された日付", example = "2025-01-01")
-  private LocalDate courseStartAt;
+  private final LocalDate courseStartAt;
 
   @Schema(description = "コース終了予定日 コース開始日の6か月後の日付", example = "2025-07-01")
   @NotNull(groups = OnUpdate.class)
-  private LocalDate courseEndAt;
+  private final LocalDate courseEndAt;
 
   /**
    * 受講生詳細登録で呼び出されるコンストラクタです。コース名,受講生IDを受け取り、コンストラクタが呼び出された日付をもとに、受講開始日と受講終了予定日を自動的にセットします。
@@ -63,7 +61,6 @@ public class StudentCourse {
    * @param studentId     受講生ID
    */
   public StudentCourse(StudentCourse requestCourse, int studentId) {
-    //requestCourseが、受講生詳細更新に必要なコースID,コース名,受講終了予定日を持っていない場合はNullPointerExceptionを投げる
     if (requestCourse.getCourseId() == 0 |
         requestCourse.getCourseName().isEmpty() |
         requestCourse.getCourseEndAt() == null) {
