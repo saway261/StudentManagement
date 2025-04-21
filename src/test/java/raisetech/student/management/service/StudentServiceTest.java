@@ -174,11 +174,9 @@ class StudentServiceTest {
     //前提
     int studentId = 1;
     int courseId = 1;
-    LocalDate now = LocalDate.now();
 
     //事前準備
-    StudentCourse course = new StudentCourse(courseId, "Javaコース", studentId, now,
-        now.plusMonths(6));
+    StudentCourse course = newDummyStudentCourse(courseId, studentId);
     List<Integer> notContainCourseIdList = List.of(1);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -186,7 +184,7 @@ class StudentServiceTest {
     //検証
     Assertions.assertTrue(sut.isLinkedCourseIdWithStudentId(course));
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
-    
+
   }
 
   @Test
@@ -195,11 +193,9 @@ class StudentServiceTest {
     //前提
     int studentId = 30;
     int courseId = 1;
-    LocalDate now = LocalDate.now();
 
     //事前準備
-    StudentCourse course = new StudentCourse(courseId, "Javaコース", studentId, now,
-        now.plusMonths(6));
+    StudentCourse course = newDummyStudentCourse(courseId, studentId);
     List<Integer> notContainCourseIdList = List.of(30);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -216,7 +212,7 @@ class StudentServiceTest {
     int studentId = 99;
 
     // 事前準備
-    StudentCourse course = new StudentCourse("Javaコース", studentId);
+    StudentCourse course = newDummyStudentCourse(studentId);
     List<Integer> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 
@@ -225,6 +221,20 @@ class StudentServiceTest {
       sut.isLinkedCourseIdWithStudentId(course);
     });
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
+  }
+
+  private Student newDummyStudent(int studentId) {
+    return new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
+        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
+  }
+
+  private StudentCourse newDummyStudentCourse(int courseId, int studentId) {
+    LocalDate now = LocalDate.now();
+    return new StudentCourse(courseId, "Javaコース", studentId, now, now.plusMonths(6));
+  }
+
+  private StudentCourse newDummyStudentCourse(int studentId) {
+    return new StudentCourse("Javaコース", studentId);
   }
 
 
