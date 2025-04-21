@@ -11,8 +11,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -25,6 +27,10 @@ class StudentServiceTest {
 
   @Mock
   private StudentRepository repository;
+
+  @Spy
+  @InjectMocks
+  private StudentService service;
 
   private StudentService sut;// System Under Test テスト対象システム
 
@@ -150,9 +156,8 @@ class StudentServiceTest {
     int studentId = 1;
 
     //事前準備
-    Student student = new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
-        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
-    List<StudentCourse> courseList = List.of(new StudentCourse("Javaコース", studentId));
+    Student student = newDummyStudent(studentId);
+    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchCourses(studentId)).thenReturn(courseList);
@@ -222,6 +227,7 @@ class StudentServiceTest {
     });
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
   }
+
 
   private Student newDummyStudent(int studentId) {
     return new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
