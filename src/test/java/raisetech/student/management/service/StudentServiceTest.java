@@ -58,8 +58,7 @@ class StudentServiceTest {
     // 前提
     int studentId = 1;
     //事前準備
-    StudentDetail studentDetail = new StudentDetail(
-        newDummyStudent(studentId), List.of(newDummyStudentCourse(1)));
+    StudentDetail studentDetail = newDummyStudentDetail(studentId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // 実際の実行結果
@@ -85,27 +84,22 @@ class StudentServiceTest {
     Mockito.verify(sut, times(1)).buildStudentDetail(studentId);
   }
 
-  //  @Test
-//  void registerStudent_shouldRegisterStudentAndCourses() {
-//    // Arrange
-//    Student student = new Student();
-//    student.setStudentId(1);
-//    StudentCourse course = new StudentCourse("Java", 1);
-//    StudentDetail studentDetail = new StudentDetail(student, List.of(course));
-//
-//    Mockito.when(repository.searchStudent(1)).thenReturn(student);
-//    Mockito.when(repository.searchCourses(1)).thenReturn(List.of(course));
-//
-//    // Act
-//    StudentDetail result = sut.registerStudent(studentDetail);
-//
-//    // Assert
-//    Mockito.verify(repository).registerStudent(student);
-//    Mockito.verify(repository).registerCourse(Mockito.any(StudentCourse.class));
-//    Mockito.verify(repository).searchStudent(1);
-//    Mockito.verify(repository).searchCourses(1);
-//  }
-//
+  @Test
+  void 受講生詳細登録_リポジトリのメソッドを適切に呼び出していること() {
+    // 事前準備
+    StudentDetail studentDetail = newDummyStudentDetail(1);
+    Student student = studentDetail.getStudent();
+    List<StudentCourse> courseList = studentDetail.getStudentCourseList();
+
+    // 実際の実行結果
+    sut.registerStudent(studentDetail);
+
+    // 検証
+    Mockito.verify(repository, times(1)).registerStudent(student);
+    Mockito.verify(repository, times(courseList.size()))
+        .registerCourse(Mockito.any(StudentCourse.class));
+  }
+
 //  @Test
 //  void updateStudent_shouldUpdateStudentAndCourses() throws Exception {
 //    // Arrange
@@ -222,6 +216,10 @@ class StudentServiceTest {
 
   private StudentCourse newDummyStudentCourse(int studentId) {
     return new StudentCourse("Javaコース", studentId);
+  }
+
+  private StudentDetail newDummyStudentDetail(int studentId) {
+    return new StudentDetail(newDummyStudent(studentId), List.of(newDummyStudentCourse(studentId)));
   }
 
 
