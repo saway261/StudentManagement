@@ -100,6 +100,8 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).registerStudent(student);
     Mockito.verify(repository, times(courseList.size()))
         .registerCourse(Mockito.any(StudentCourse.class));
+
+    //TODO:コンストラクタでcourseStartAtとcourseEndAtが初期化できているかはどう確認するのか？コンストラクタ単体テスト？
   }
 
   @Test
