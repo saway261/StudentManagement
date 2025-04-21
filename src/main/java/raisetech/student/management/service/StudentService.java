@@ -108,7 +108,7 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  private StudentDetail buildStudentDetail(int studentId) {
+  StudentDetail buildStudentDetail(int studentId) {
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> courses = repository.searchCourses(studentId);
     StudentDetail studentDetail = new StudentDetail(student, courses);
@@ -122,7 +122,7 @@ public class StudentService {
    * @param course 受講生コース
    * @return 受講生コースIDが紐づいている場合はtrue
    */
-  private boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
+  boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
     List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
         course.getStudentId());
     if (existCourseIdListLinkedStudentId.isEmpty()) {

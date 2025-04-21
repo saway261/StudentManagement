@@ -4,6 +4,7 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +30,7 @@ class StudentServiceTest {
 
   @BeforeEach
   void before() {
+    int studentId;
     sut = new StudentService(repository);
   }
 
@@ -141,21 +143,6 @@ class StudentServiceTest {
 //    Mockito.verify(repository).searchCourses(1);
 //  }
 //
-  @Test
-  void updateStudent_invalidCourseId_shouldThrowException() {
-    // 事前準備
-    Student student = new Student();
-    List<StudentCourse> courseList = new ArrayList<>();
-    courseList.add(new StudentCourse());
-
-    Mockito.when(repository.searchCourseIdListLinkedStudentId(1)).thenReturn(List.of(10, 11));
-
-    // Act & Assert
-    org.junit.jupiter.api.Assertions.assertThrows(
-        raisetech.student.management.exception.InvalidIdException.class,
-        () -> sut.updateStudent(studentDetail)
-    );
-  }
 
   @Test
   void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できているか() {
@@ -163,8 +150,8 @@ class StudentServiceTest {
     int studentId = 1;
 
     //事前準備
-    Student student = new Student();
-    student.setStudentId(studentId);
+    Student student = new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
+        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
     List<StudentCourse> courseList = List.of(new StudentCourse("Javaコース", studentId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
@@ -182,32 +169,62 @@ class StudentServiceTest {
   }
 
   @Test
-  void コースIDが受講生IDに紐づいていると判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていると判断しているか() {
-
-  }
-
-  @Test
-  void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断し例外を投げているか() {
-
-  }
-
-  @Test
-  void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げているか()
+  void コースIDが受講生IDに紐づいていると判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていると判断しtrueを返しているか()
       throws InvalidIdException {
     //前提
-    int studentId = 99;
+    int studentId = 1;
+    int courseId = 1;
+    LocalDate now = LocalDate.now();
+
     //事前準備
-    StudentCourse course = new StudentCourse();
-    course.setStudentId(studentId);
+    StudentCourse course = new StudentCourse(courseId, "Javaコース", studentId, now,
+        now.plusMonths(6));
+    List<Integer> notContainCourseIdList = List.of(1);
+    when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
+        notContainCourseIdList);
+
+    //検証
+    Assertions.assertTrue(sut.isLinkedCourseIdWithStudentId(course));
+    Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
+    
+  }
+
+  @Test
+  void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断しfalseを返しているか()
+      throws InvalidIdException {
+    //前提
+    int studentId = 30;
+    int courseId = 1;
+    LocalDate now = LocalDate.now();
+
+    //事前準備
+    StudentCourse course = new StudentCourse(courseId, "Javaコース", studentId, now,
+        now.plusMonths(6));
+    List<Integer> notContainCourseIdList = List.of(30);
+    when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
+        notContainCourseIdList);
+
+    //検証
+    Assertions.assertFalse(sut.isLinkedCourseIdWithStudentId(course));
+    Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
+
+  }
+
+  @Test
+  void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げているか() {
+    // 前提
+    int studentId = 99;
+
+    // 事前準備
+    StudentCourse course = new StudentCourse("Javaコース", studentId);
     List<Integer> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 
-    //実際の実行結果
-    sut.isLinkedCourseIdWithStudentId(course);
-
-    //検証
+    // 検証
+    Assertions.assertThrows(InvalidIdException.class, () -> {
+      sut.isLinkedCourseIdWithStudentId(course);
+    });
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
-    Assertions.assertThrows(InvalidIdException(course.getStudentId()));
   }
 
 
