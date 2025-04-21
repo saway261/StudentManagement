@@ -36,11 +36,10 @@ class StudentServiceTest {
   void アクティブ受講生の一覧検索_リポジトリの処理とbuildStudentDetailを適切に呼び出していること() {
     //前提
     int studentId = 1;
+    int courseId = 1;
     // 事前準備
-    Student student = newDummyStudent(studentId);
-    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId));
-    StudentDetail studentDetail = new StudentDetail(student, courseList);
-    List<Student> studentList = List.of(student);
+    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    List<Student> studentList = List.of(studentDetail.getStudent());
     Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
@@ -57,8 +56,9 @@ class StudentServiceTest {
   void 受講生単一検索_buildStudentDetailを適切に呼び出していること() throws Exception {
     // 前提
     int studentId = 1;
+    int courseId = 1;
     //事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(studentId);
+    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // 実際の実行結果
@@ -87,7 +87,9 @@ class StudentServiceTest {
   @Test
   void 受講生詳細登録_リポジトリのメソッドを適切に呼び出していること() {
     // 事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(1);
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentCourseList();
 
@@ -129,10 +131,11 @@ class StudentServiceTest {
   void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できているか() {
     //前提
     int studentId = 1;
+    int courseId = 1;
 
     //事前準備
     Student student = newDummyStudent(studentId);
-    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId));
+    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId, courseId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchCourses(studentId)).thenReturn(courseList);
@@ -156,7 +159,7 @@ class StudentServiceTest {
     int courseId = 1;
 
     //事前準備
-    StudentCourse course = newDummyStudentCourse(courseId, studentId);
+    StudentCourse course = newDummyStudentCourse(studentId, courseId);
     List<Integer> notContainCourseIdList = List.of(1);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -171,11 +174,11 @@ class StudentServiceTest {
   void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断しfalseを返しているか()
       throws InvalidIdException {
     //前提
-    int studentId = 30;
-    int courseId = 1;
+    int studentId = 1;
+    int courseId = 99;
 
     //事前準備
-    StudentCourse course = newDummyStudentCourse(courseId, studentId);
+    StudentCourse course = newDummyStudentCourse(studentId, courseId);
     List<Integer> notContainCourseIdList = List.of(30);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -190,9 +193,10 @@ class StudentServiceTest {
   void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げているか() {
     // 前提
     int studentId = 99;
+    int courseId = 1;
 
     // 事前準備
-    StudentCourse course = newDummyStudentCourse(studentId);
+    StudentCourse course = newDummyStudentCourse(studentId, courseId);
     List<Integer> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 
@@ -209,17 +213,14 @@ class StudentServiceTest {
         "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
   }
 
-  private StudentCourse newDummyStudentCourse(int courseId, int studentId) {
+  private StudentCourse newDummyStudentCourse(int studentId, int courseId) {
     LocalDate now = LocalDate.now();
     return new StudentCourse(courseId, "Javaコース", studentId, now, now.plusMonths(6));
   }
 
-  private StudentCourse newDummyStudentCourse(int studentId) {
-    return new StudentCourse("Javaコース", studentId);
-  }
-
-  private StudentDetail newDummyStudentDetail(int studentId) {
-    return new StudentDetail(newDummyStudent(studentId), List.of(newDummyStudentCourse(studentId)));
+  private StudentDetail newDummyStudentDetail(int studentId, int courseId) {
+    return new StudentDetail(newDummyStudent(studentId),
+        List.of(newDummyStudentCourse(studentId, courseId)));
   }
 
 
