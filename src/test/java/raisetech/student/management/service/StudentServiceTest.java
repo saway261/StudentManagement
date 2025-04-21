@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -8,7 +9,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,81 +30,62 @@ class StudentServiceTest {
 
   @Spy
   @InjectMocks
-  private StudentService service;
-
   private StudentService sut;// System Under Test テスト対象システム
 
-  @BeforeEach
-  void before() {
-    int studentId;
-    sut = new StudentService(repository);
+  @Test
+  void アクティブ受講生の一覧検索_リポジトリの処理とbuildStudentDetailを適切に呼び出していること() {
+    //前提
+    int studentId = 1;
+    // 事前準備
+    Student student = newDummyStudent(studentId);
+    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId));
+    StudentDetail studentDetail = new StudentDetail(student, courseList);
+    List<Student> studentList = List.of(student);
+    Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
+    doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
+
+    // 実際の実行結果
+    List<StudentDetail> actual = sut.searchActiveStudentDetailList();
+
+    // 検証
+    Mockito.verify(repository, times(1)).searchActiveStudentList();
+    Mockito.verify(sut, times(studentList.size())).buildStudentDetail(studentId);
+    //TODO:add(studentDetail)はどう検証したらいいのか
+  }
+
+  @Test
+  void 受講生単一検索_buildStudentDetailを適切に呼び出していること() throws Exception {
+    // 前提
+    int studentId = 1;
+    //事前準備
+    StudentDetail studentDetail = new StudentDetail(
+        newDummyStudent(studentId), List.of(newDummyStudentCourse(1)));
+    doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
+
+    // 実際の実行結果
+    StudentDetail actual = sut.searchStudentDetail(studentId);
+
+    // 検証
+    Mockito.verify(sut, times(1)).buildStudentDetail(studentId);
+  }
+
+  @Test
+  void 受講生単一検索_buildStudentDetailを適切に呼び出し戻り値がnullの場合は例外を投げていること()
+      throws Exception {
+    // 前提
+    int studentId = 99;
+    // 事前準備
+    StudentDetail studentDetail = new StudentDetail(null, null);
+    doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
+
+    //検証
+    Assertions.assertThrows(InvalidIdException.class, () -> {
+      sut.searchStudentDetail(studentId);
+    });
+    Mockito.verify(sut, times(1)).buildStudentDetail(studentId);
   }
 
   //  @Test
-//  void アクティブ受講生の一覧検索_リポジトリの処理とbuildStudentDetailを適切に呼び出し受講生詳細を組み上げていること() {
-//    // 事前準備
-//    List<Student> studentList = new ArrayList();
-//    Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
-//    Mockito.when(repository.searchStudent(1)).thenReturn(student);
-//    Mockito.when(repository.searchCourses(1)).thenReturn(List.of());
-//
-//    // 実際の実行結果
-//    List<StudentDetail> actual = sut.searchActiveStudentDetailList();
-//
-//    // 検証
-//    Mockito.verify(repository, times(1)).searchActiveStudentList();
-//    Mockito.verify(repository, times(1)).searchStudent(1);
-//    Mockito.verify(repository, times(1)).searchCourses(1);
-//  }
-//
-//  @Test
-//  void 受講生詳細の一覧検索_リポジトリとコンバーターの処理が適切に呼び出せていること() {
-//    StudentService sut = new StudentService(repository);
-//    List<Student> studentList = new ArrayList<>();
-//    List<StudentCourse> courseList = new ArrayList<>();
-//    Mockito.when(repository.searchStudent()).thenReturn(studentList);
-//    Mockito.when(repository.searchCourses()).thenReturn(courseList);
-//
-//    sut.searchStudentList();
-//
-//    verify(repository, times(1)).searchStudent();
-//    verify(repository, times(1)).searchCourses();
-//    verify(converter, times(1)).convertStudentDetails(studentList, courseList);
-//
-//
-//  }
-//
-//  @Test
-//  void searchStudentDetail_validId_shouldReturnStudentDetail() throws Exception {
-//    // Arrange
-//    int studentId = 1;
-//    Student student = new Student();
-//    student.setStudentId(studentId);
-//    Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
-//    Mockito.when(repository.searchCourses(studentId)).thenReturn(List.of());
-//
-//    // Act
-//    StudentDetail result = sut.searchStudentDetail(studentId);
-//
-//    // Assert
-//    Mockito.verify(repository).searchStudent(studentId);
-//    Mockito.verify(repository).searchCourses(studentId);
-//  }
-//
-//  @Test
-//  void searchStudentDetail_invalidId_shouldThrowException() {
-//    // Arrange
-//    int studentId = 99;
-//    Mockito.when(repository.searchStudent(studentId)).thenReturn(null);
-//
-//    // Act & Assert
-//    org.junit.jupiter.api.Assertions.assertThrows(
-//        raisetech.student.management.exception.InvalidIdException.class,
-//        () -> sut.searchStudentDetail(studentId)
-//    );
-//  }
-//
-//  @Test
 //  void registerStudent_shouldRegisterStudentAndCourses() {
 //    // Arrange
 //    Student student = new Student();
