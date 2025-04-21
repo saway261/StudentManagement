@@ -105,7 +105,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細更新成功_リポジトリのメソッドとisLinkedCourseIdWithStudentIdを呼び出しているか()
+  void 受講生詳細更新成功_リポジトリのメソッドとisLinkedCourseIdWithStudentIdを呼び出していること()
       throws Exception {
     // 前提
     int studentId = 1;
@@ -128,7 +128,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細更新失敗_isLinkedCourseIdWithStudentIdを呼び出しているか() throws Exception {
+  void 受講生詳細更新失敗_isLinkedCourseIdWithStudentIdを呼び出していること() throws Exception {
     // 前提
     int studentId = 1;
     int courseId = 99;
@@ -143,7 +143,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できているか() {
+  void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できていること() {
     //前提
     int studentId = 1;
     int courseId = 1;
@@ -167,7 +167,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void コースIDが受講生IDに紐づいていると判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていると判断しtrueを返しているか()
+  void コースIDが受講生IDに紐づいていると判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていると判断しtrueを返していこと()
       throws InvalidIdException {
     //前提
     int studentId = 1;
@@ -186,7 +186,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断しfalseを返しているか()
+  void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断しfalseを返していること()
       throws InvalidIdException {
     //前提
     int studentId = 1;
@@ -205,7 +205,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げているか() {
+  void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げていること() {
     // 前提
     int studentId = 99;
     int courseId = 1;
