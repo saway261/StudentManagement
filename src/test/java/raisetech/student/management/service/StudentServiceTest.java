@@ -102,30 +102,43 @@ class StudentServiceTest {
         .registerCourse(Mockito.any(StudentCourse.class));
   }
 
-//  @Test
-//  void updateStudent_shouldUpdateStudentAndCourses() throws Exception {
-//    // Arrange
-//    Student student = new Student();
-//    student.setStudentId(1);
-//    StudentCourse course = new StudentCourse();
-//    course.setCourseId(10);
-//    course.setStudentId(1);
-//    StudentDetail studentDetail = new StudentDetail(student, List.of(course));
-//
-//    Mockito.when(repository.searchCourseIdListLinkedStudentId(1)).thenReturn(List.of(10));
-//    Mockito.when(repository.searchStudent(1)).thenReturn(student);
-//    Mockito.when(repository.searchCourses(1)).thenReturn(List.of(course));
-//
-//    // Act
-//    StudentDetail result = sut.updateStudent(studentDetail);
-//
-//    // Assert
-//    Mockito.verify(repository).updateCourse(course);
-//    Mockito.verify(repository).updateStudent(student);
-//    Mockito.verify(repository).searchStudent(1);
-//    Mockito.verify(repository).searchCourses(1);
-//  }
-//
+  @Test
+  void 受講生詳細更新成功_リポジトリのメソッドとisLinkedCourseIdWithStudentIdを呼び出しているか()
+      throws Exception {
+    // 前提
+    int studentId = 1;
+    int courseId = 1;
+    // 事前準備
+    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    Student student = studentDetail.getStudent();
+    List<StudentCourse> courseList = studentDetail.getStudentCourseList();
+    doReturn(true).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
+
+    // 実際の実行
+    sut.updateStudent(studentDetail);
+
+    // 検証
+    Mockito.verify(sut, times(courseList.size()))
+        .isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
+    Mockito.verify(repository, times(courseList.size()))
+        .updateCourse(Mockito.any(StudentCourse.class));
+    Mockito.verify(repository, times(1)).updateStudent(student);
+  }
+
+  @Test
+  void 受講生詳細更新失敗_isLinkedCourseIdWithStudentIdを呼び出しているか() throws Exception {
+    // 前提
+    int studentId = 1;
+    int courseId = 99;
+    // 事前準備
+    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    doReturn(false).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
+
+    // 実行と検証
+    Assertions.assertThrows(InvalidIdException.class, () -> {
+      sut.updateStudent(studentDetail);
+    });
+  }
 
   @Test
   void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できているか() {
