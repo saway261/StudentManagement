@@ -53,7 +53,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生単一検索_buildStudentDetailを適切に呼び出していること() throws Exception {
+  void 受講生単一検索成功_buildStudentDetailを適切に呼び出していること() throws Exception {
     // 前提
     int studentId = 1;
     int courseId = 1;
@@ -69,7 +69,7 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生単一検索_buildStudentDetailを適切に呼び出し戻り値がnullの場合は例外を投げていること()
+  void 受講生単一検索失敗_buildStudentDetailを適切に呼び出し戻り値がnullの場合は例外を投げていること()
       throws Exception {
     // 前提
     int studentId = 99;
