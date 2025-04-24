@@ -88,7 +88,7 @@ class StudentServiceTest {
   void 受講生詳細登録_リポジトリのメソッドを適切に呼び出していること() {
     // 事前準備
     int studentId = 1;
-    int courseId = 1;
+    int courseId = 0;
     Student student = newDummyStudent(studentId);
     //コンストラクタでの初期化が行われているか判断するため、あえてstudentIdは0,courseStartAt, courseEndAtはnullとする。
     StudentCourse course = new StudentCourse(courseId, "Javaコース", 0, null, null);
@@ -104,12 +104,11 @@ class StudentServiceTest {
     Mockito.verify(repository, times(courseList.size()))
         .registerCourse(Mockito.argThat(sc ->
             sc != null &&
+                course.getCourseName().equals(sc.getCourseName())&&
+                sc.getStudentId() == studentId&&
                 now.equals(sc.getCourseStartAt()) &&
-                now.plusMonths(6).equals(sc.getCourseEndAt()) &&
-                sc.getStudentId() == studentId
+                now.plusMonths(6).equals(sc.getCourseEndAt())
         ));
-
-    //TODO:コンストラクタでcourseStartAtとcourseEndAtが初期化できているかはどう確認するのか？コンストラクタ単体テスト？
   }
 
   @Test
