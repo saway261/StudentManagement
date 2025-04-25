@@ -104,8 +104,8 @@ class StudentServiceTest {
     Mockito.verify(repository, times(courseList.size()))
         .registerCourse(Mockito.argThat(sc ->
             sc != null &&
-                course.getCourseName().equals(sc.getCourseName())&&
-                sc.getStudentId() == studentId&&
+                course.getCourseName().equals(sc.getCourseName()) &&
+                sc.getStudentId() == studentId &&
                 now.equals(sc.getCourseStartAt()) &&
                 now.plusMonths(6).equals(sc.getCourseEndAt())
         ));
