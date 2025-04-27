@@ -49,7 +49,8 @@ class StudentServiceTest {
     // 検証
     Mockito.verify(repository, times(1)).searchActiveStudentList();
     Mockito.verify(sut, times(studentList.size())).buildStudentDetail(studentId);
-    //TODO:add(studentDetail)はどう検証したらいいのか
+    Assertions.assertInstanceOf(List.class, actual);
+    Assertions.assertEquals(studentList.size(), actual.size());
   }
 
   @Test
