@@ -170,7 +170,7 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).searchCourses(studentId);
     Assertions.assertEquals(student, actual.getStudent());
     Assertions.assertEquals(courseList, actual.getStudentCourseList());
-    //TODO:StudentDetail studentDetail = new StudentDetail(student, courses);の検証として妥当？
+    Assertions.assertInstanceOf(StudentDetail.class, actual);
   }
 
   @Test
