@@ -4,6 +4,9 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static raisetech.student.management.TestDataFactory.newDummyStudent;
+import static raisetech.student.management.TestDataFactory.newDummyStudentCourse;
+import static raisetech.student.management.TestDataFactory.newDummyStudentDetail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -229,22 +232,5 @@ class StudentServiceTest {
     });
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
   }
-
-
-  private Student newDummyStudent(int studentId) {
-    return new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
-        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
-  }
-
-  private StudentCourse newDummyStudentCourse(int studentId, int courseId) {
-    LocalDate now = LocalDate.now();
-    return new StudentCourse(courseId, "Javaコース", studentId, now, now.plusMonths(6));
-  }
-
-  private StudentDetail newDummyStudentDetail(int studentId, int courseId) {
-    return new StudentDetail(newDummyStudent(studentId),
-        List.of(newDummyStudentCourse(studentId, courseId)));
-  }
-
 
 }
