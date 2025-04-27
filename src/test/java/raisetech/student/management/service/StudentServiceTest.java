@@ -4,9 +4,9 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static raisetech.student.management.TestDataFactory.newDummyStudent;
-import static raisetech.student.management.TestDataFactory.newDummyStudentCourse;
-import static raisetech.student.management.TestDataFactory.newDummyStudentDetail;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

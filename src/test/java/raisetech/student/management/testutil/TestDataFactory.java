@@ -1,4 +1,4 @@
-package raisetech.student.management;
+package raisetech.student.management.testutil;
 
 import java.time.LocalDate;
 import java.util.List;
