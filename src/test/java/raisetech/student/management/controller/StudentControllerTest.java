@@ -3,6 +3,7 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
@@ -151,7 +154,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_必須項目がnullのとき入力チェックにかかる() throws Exception {
+  void 受講生詳細登録失敗_受講生の必須項目がnullのとき入力チェックにかかる() throws Exception {
     // Arrange: fullnameがnull
     int studentId = 0;
     int courseId = 0;
@@ -335,6 +338,56 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生詳細登録失敗_受講生コースの必須情報がnullのとき入力チェックにかかる()
+      throws Exception {
+    // Arrange: コース名がnull
+    int studentId = 0;
+    int courseId = 0;
+    LocalDate now = LocalDate.now();
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        newDummyStudent(studentId),
+        List.of(new StudentCourse(
+            courseId,
+            null,// コース名がnull
+            studentId,
+            now,
+            now.plusMonths(6))
+        ));
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("courseName"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_受講生コースのコース名が不正のとき入力チェックにかかる()
+      throws Exception {
+    // Arrange: コース名が不正
+    int studentId = 0;
+    int courseId = 0;
+    LocalDate now = LocalDate.now();
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        newDummyStudent(studentId),
+        List.of(new StudentCourse(
+            courseId,
+            "Pythonコース",// 想定されないコース名
+            studentId,
+            now,
+            now.plusMonths(6))
+        ));
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("courseName"))).isTrue();
+  }
+
+  @Test
   void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
@@ -358,5 +411,4 @@ class StudentControllerTest {
 //  void 受講生詳細更新失敗_入力チェックにかかること() {
 //
 //  }
-//
 }
