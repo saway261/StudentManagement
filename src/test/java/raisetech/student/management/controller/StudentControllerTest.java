@@ -138,7 +138,10 @@ class StudentControllerTest {
     // Arrange
     int studentId = 0;//リクエスト時のIDは未入力のため0
     int courseId = 0;//リクエスト時のIDは未入力のため0
-    StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail requestStudentDetail = new StudentDetail(
+        newDummyStudent(studentId),
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+    );
     StudentDetail responseStudentDetail = newDummyStudentDetail(1, 1);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
 
@@ -161,7 +164,7 @@ class StudentControllerTest {
     StudentDetail invalidStudentDetail = new StudentDetail(
         new Student(
             studentId,
-            null, // fullname null
+            null, // fullnameがnull
             "やまだたろう",
             "タロー",
             "taro@email.com",

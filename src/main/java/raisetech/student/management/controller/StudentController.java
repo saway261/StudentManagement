@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.domain.StudentDetail;
-import raisetech.student.management.data.domain.validation.OnCreate;
+import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.exception.InvalidAccessException;
 import raisetech.student.management.exception.InvalidIdException;
@@ -137,7 +137,7 @@ public class StudentController {
       }
   )
   @PostMapping("/students")
-  @Validated(OnCreate.class)
+  @Validated(OnRegister.class)
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
