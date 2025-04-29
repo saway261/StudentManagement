@@ -13,6 +13,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
@@ -183,7 +184,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("fullname"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("fullname"))).isTrue();
   }
 
   @Test
@@ -217,7 +218,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("kanaName"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("kanaName"))).isTrue();
   }
 
   @Test
@@ -247,7 +248,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("email"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("email"))).isTrue();
   }
 
   @Test
@@ -277,7 +278,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("telephone"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("telephone"))).isTrue();
   }
 
   @Test
@@ -307,7 +308,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("age"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("age"))).isTrue();
   }
 
   @Test
@@ -337,7 +338,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("sex"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("sex"))).isTrue();
   }
 
   @Test
@@ -362,7 +363,7 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("courseName"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
   }
 
   @Test
@@ -387,7 +388,42 @@ class StudentControllerTest {
 
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().contains("courseName"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
+  }
+  //TODO:どのくらいの粒度で網羅したらいいのか？
+
+  @Test
+  void 受講生詳細登録失敗_受講生がnullのとき入力チェックにかかる() {
+    // Arrange
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        null, List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_受講生コースが空のとき入力チェックにかかる() {
+    // Arrange
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        newDummyStudent(studentId), new ArrayList<StudentCourse>()
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
   @Test
