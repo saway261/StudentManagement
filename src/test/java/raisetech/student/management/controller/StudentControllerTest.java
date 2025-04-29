@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
-import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourseOnRegister;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -172,7 +172,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -206,7 +206,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -236,7 +236,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -266,7 +266,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -296,7 +296,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -326,7 +326,7 @@ class StudentControllerTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourse(studentId, courseId))
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
 
     // Act & Assert
@@ -350,8 +350,8 @@ class StudentControllerTest {
             courseId,
             null,// コース名がnull
             studentId,
-            now,
-            now.plusMonths(6))
+            null,
+            null)
         ));
 
     // Act & Assert
@@ -375,8 +375,8 @@ class StudentControllerTest {
             courseId,
             "Pythonコース",// 想定されないコース名
             studentId,
-            now,
-            now.plusMonths(6))
+            null,
+            null)
         ));
 
     // Act & Assert

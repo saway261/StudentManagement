@@ -18,6 +18,10 @@ public class TestDataFactory {
     return new StudentCourse(courseId, "Javaコース", studentId, now, now.plusMonths(6));
   }
 
+  public static StudentCourse newDummyStudentCourseOnRegister(int studentId, int courseId) {
+    return new StudentCourse(courseId, "Javaコース", studentId, null, null);
+  }
+
   public static StudentDetail newDummyStudentDetail(int studentId, int courseId) {
     return new StudentDetail(newDummyStudent(studentId),
         List.of(newDummyStudentCourse(studentId, courseId)));
