@@ -1,17 +1,16 @@
 package raisetech.student.management.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -132,15 +131,17 @@ class StudentControllerTest {
     StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
     StudentDetail responseStudentDetail = newDummyStudentDetail(1, 1);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
+    ArgumentCaptor<StudentDetail> captor = ArgumentCaptor.forClass(StudentDetail.class);
 
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(requestStudentDetail);
-
+    // Act & Assertion
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(requestStudentDetail))
-        )
-        .andExpect(status().isOk());
-    Assertions.assertEquals(0, violations.size());
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestStudentDetail))
+    );
+    Mockito.verify(service, times(1)).registerStudent(captor.capture());
+    assertThat(captor.getValue())
+        .usingRecursiveComparison()
+        .isEqualTo(requestStudentDetail);
   }
 
 //  @Test
