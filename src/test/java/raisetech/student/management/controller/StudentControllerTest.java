@@ -1,7 +1,6 @@
 package raisetech.student.management.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
@@ -83,11 +82,9 @@ class StudentControllerTest {
     StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
-    // Act
+    // Act & Assert
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + studentId))
         .andExpect(status().isOk());
-
-    // Assert
     Mockito.verify(service, times(1)).searchStudentDetail(studentId);
   }
 
@@ -180,7 +177,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生の必須項目がnullのとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_受講生の必須項目がnullのとき入力チェックにかかること()
       throws Exception {
     // Arrange: fullnameがnull
     int studentId = 0;
@@ -210,7 +207,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_文字数が超過するとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_文字数が超過するとき入力チェックにかかること()
+      throws Exception {
     // Arrange: かなが51文字
     StringBuilder tooLongKanaName = new StringBuilder();
     tooLongKanaName.append("テスト");
@@ -243,7 +241,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_emailの形式が不正のとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_emailの形式が不正のとき入力チェックにかかること()
       throws Exception {
     // Arrange: emailの形式が不正
     int studentId = 0;
@@ -273,7 +271,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_電話番号の形式が不正のとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_電話番号の形式が不正のとき入力チェックにかかること()
       throws Exception {
     // Arrange: 電話番号の形式が不正
     int studentId = 0;
@@ -303,7 +301,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_年齢が15未満のとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_年齢が15未満のとき入力チェックにかかること()
+      throws Exception {
     // Arrange: ageが15未満
     int studentId = 0;
     int courseId = 0;
@@ -332,7 +331,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_性別がパターンにマッチしないとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_性別がパターンにマッチしないとき入力チェックにかかること()
       throws Exception {
     // Arrange: 性別が”男性”
     int studentId = 0;
@@ -362,7 +361,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生コースの必須情報がnullのとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_受講生コースの必須情報がnullのとき入力チェックにかかること()
       throws Exception {
     // Arrange: コース名がnull
     int studentId = 0;
@@ -382,12 +381,12 @@ class StudentControllerTest {
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().
-            equals("studentCourseList[" + anyInt() + "].courseName"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString()
+            .matches("studentCourseList\\[\\d+\\]\\.courseName"))).isTrue();
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生コースのコース名が不正のとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_受講生コースのコース名が不正のとき入力チェックにかかること()
       throws Exception {
     // Arrange: コース名が不正
     int studentId = 0;
@@ -408,12 +407,12 @@ class StudentControllerTest {
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString()
-            .equals("studentCourseList[" + anyInt() + "].courseName"))).isTrue();
+            .matches("studentCourseList\\[\\d+\\]\\.courseName"))).isTrue();
   }
   //TODO:どのくらいの粒度で網羅したらいいのか？
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生がnullのとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_受講生がnullのとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -429,7 +428,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生コースが空のとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_受講生コースが空のとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -445,7 +444,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_更新時_受講生IDと受講生コースIDが1未満のとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_更新時_受講生IDと受講生コースIDが1未満のとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -460,7 +459,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_更新時_受講終了予定日がnullのとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_更新時_受講終了予定日がnullのとき入力チェックにかかること() {
     // Arrange
     int studentId = 1;
     int courseId = 1;
@@ -479,7 +478,7 @@ class StudentControllerTest {
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString().
-            equals("studentCourseList[" + anyInt() + "].courseEndAt"))).isTrue();
+            matches("studentCourseList\\[\\d+\\]\\.courseEndAt"))).isTrue();
   }
 
 }
