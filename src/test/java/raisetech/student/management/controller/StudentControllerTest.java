@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
 import raisetech.student.management.service.StudentService;
@@ -441,6 +442,44 @@ class StudentControllerTest {
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細リクエストボディ検証_更新時_受講生IDと受講生コースIDが1未満のとき入力チェックにかかる() {
+    // Arrange
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = newDummyStudentDetail(studentId, courseId);
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
+        OnUpdate.class);
+
+    // Act & Assert
+    assertThat(violations.size()).isEqualTo(2);
+    assertThat(violations.stream()
+        .allMatch(v -> v.getPropertyPath().toString().contains("Id"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細リクエストボディ検証_更新時_受講終了予定日がnullのとき入力チェックにかかる() {
+    // Arrange
+    int studentId = 1;
+    int courseId = 1;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        newDummyStudent(studentId),
+        List.of(new StudentCourse(
+            courseId,
+            "Javaコース",
+            studentId,
+            LocalDate.now(),
+            null // 受講終了予定日
+        )));
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
+        OnUpdate.class);
+    // Act & Assert
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .allMatch(v -> v.getPropertyPath().toString().
+            equals("studentCourseList[" + anyInt() + "].courseEndAt"))).isTrue();
   }
 
 }
