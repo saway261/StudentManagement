@@ -158,7 +158,28 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_受講生の必須項目がnullのとき入力チェックにかかる() throws Exception {
+  void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
+      throws Exception {
+    // Arrange
+    int studentId = 1;
+    int courseId = 1;
+    StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
+    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
+
+    // Act & Assertion
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestStudentDetail))
+    ).andExpect(status().isOk());
+    Mockito.verify(service, times(1)).updateStudent(captor.capture());
+    assertThat(captor.getValue())
+        .usingRecursiveComparison()
+        .isEqualTo(requestStudentDetail);
+  }
+
+  @Test
+  void 受講生詳細リクエストボディ検証_受講生の必須項目がnullのとき入力チェックにかかる()
+      throws Exception {
     // Arrange: fullnameがnull
     int studentId = 0;
     int courseId = 0;
@@ -188,7 +209,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_文字数が超過するとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_文字数が超過するとき入力チェックにかかる() throws Exception {
     // Arrange: かなが51文字
     StringBuilder tooLongKanaName = new StringBuilder();
     tooLongKanaName.append("テスト");
@@ -222,7 +243,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_emailの形式が不正のとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_emailの形式が不正のとき入力チェックにかかる()
+      throws Exception {
     // Arrange: emailの形式が不正
     int studentId = 0;
     int courseId = 0;
@@ -252,7 +274,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_電話番号の形式が不正のとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_電話番号の形式が不正のとき入力チェックにかかる()
+      throws Exception {
     // Arrange: 電話番号の形式が不正
     int studentId = 0;
     int courseId = 0;
@@ -282,7 +305,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_年齢が15未満のとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_年齢が15未満のとき入力チェックにかかる() throws Exception {
     // Arrange: ageが15未満
     int studentId = 0;
     int courseId = 0;
@@ -312,7 +335,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_性別がパターンにマッチしないとき入力チェックにかかる() throws Exception {
+  void 受講生詳細リクエストボディ検証_性別がパターンにマッチしないとき入力チェックにかかる()
+      throws Exception {
     // Arrange: 性別が”男性”
     int studentId = 0;
     int courseId = 0;
@@ -342,7 +366,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_受講生コースの必須情報がnullのとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_受講生コースの必須情報がnullのとき入力チェックにかかる()
       throws Exception {
     // Arrange: コース名がnull
     int studentId = 0;
@@ -367,7 +391,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_受講生コースのコース名が不正のとき入力チェックにかかる()
+  void 受講生詳細リクエストボディ検証_受講生コースのコース名が不正のとき入力チェックにかかる()
       throws Exception {
     // Arrange: コース名が不正
     int studentId = 0;
@@ -393,7 +417,7 @@ class StudentControllerTest {
   //TODO:どのくらいの粒度で網羅したらいいのか？
 
   @Test
-  void 受講生詳細登録失敗_受講生がnullのとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_受講生がnullのとき入力チェックにかかる() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -410,7 +434,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細登録失敗_受講生コースが空のとき入力チェックにかかる() {
+  void 受講生詳細リクエストボディ検証_受講生コースが空のとき入力チェックにかかる() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -426,25 +450,6 @@ class StudentControllerTest {
         .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
-      throws Exception {
-    // Arrange
-    int studentId = 1;
-    int courseId = 1;
-    StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
-    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
-
-    // Act & Assertion
-    mockMvc.perform(MockMvcRequestBuilders.put("/students")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(requestStudentDetail))
-    ).andExpect(status().isOk());
-    Mockito.verify(service, times(1)).updateStudent(captor.capture());
-    assertThat(captor.getValue())
-        .usingRecursiveComparison()
-        .isEqualTo(requestStudentDetail);
-  }
 //
 //  @Test
 //  void 受講生詳細更新失敗_入力チェックにかかること() {
