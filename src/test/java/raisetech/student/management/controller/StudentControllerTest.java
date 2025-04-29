@@ -3,12 +3,16 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -19,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.Student;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
@@ -145,11 +150,190 @@ class StudentControllerTest {
         .isEqualTo(requestStudentDetail);
   }
 
-  //  @Test
-//  void 受講生詳細登録失敗_入力チェックにかかること() {
-//
-//  }
-//
+  @Test
+  void 受講生詳細登録失敗_必須項目がnullのとき入力チェックにかかる() throws Exception {
+    // Arrange: fullnameがnull
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            null, // fullname null
+            "やまだたろう",
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "090-0000-0000",
+            20,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("fullname"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_文字数が超過するとき入力チェックにかかる() throws Exception {
+    // Arrange: かなが51文字
+    StringBuilder tooLongKanaName = new StringBuilder();
+    tooLongKanaName.append("テスト");
+    tooLongKanaName.setLength(51);
+
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            tooLongKanaName.toString(),
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "090-0000-0000",
+            20,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("kanaName"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_emailの形式が不正のとき入力チェックにかかる() throws Exception {
+    // Arrange: emailの形式が不正
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            "やまだたろう",
+            "タロー",
+            "taroemailcom",// @がなく形式が不正
+            "東京都練馬区",
+            "090-0000-0000",
+            20,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("email"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_電話番号の形式が不正のとき入力チェックにかかる() throws Exception {
+    // Arrange: 電話番号の形式が不正
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            "やまだたろう",
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "09000000000",// -がなく形式が不正
+            20,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("telephone"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_年齢が15未満のとき入力チェックにかかる() throws Exception {
+    // Arrange: ageが15未満
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            "やまだたろう",
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "090-0000-0000",
+            14,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("age"))).isTrue();
+  }
+
+  @Test
+  void 受講生詳細登録失敗_性別がパターンにマッチしないとき入力チェックにかかる() throws Exception {
+    // Arrange: 性別が”男性”
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            "やまだたろう",
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "090-0000-0000",
+            20,
+            "男性",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourse(studentId, courseId))
+    );
+
+    // Act & Assert
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("sex"))).isTrue();
+  }
+
   @Test
   void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
