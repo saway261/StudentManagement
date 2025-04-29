@@ -37,6 +37,8 @@ class StudentControllerTest {
 
   private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
+  ArgumentCaptor<StudentDetail> captor = ArgumentCaptor.forClass(StudentDetail.class);
+
   @TestConfiguration
   static class MockConfig {
 
@@ -131,28 +133,42 @@ class StudentControllerTest {
     StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
     StudentDetail responseStudentDetail = newDummyStudentDetail(1, 1);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
-    ArgumentCaptor<StudentDetail> captor = ArgumentCaptor.forClass(StudentDetail.class);
 
     // Act & Assertion
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(requestStudentDetail))
-    );
+    ).andExpect(status().isOk());
     Mockito.verify(service, times(1)).registerStudent(captor.capture());
     assertThat(captor.getValue())
         .usingRecursiveComparison()
         .isEqualTo(requestStudentDetail);
   }
 
-//  @Test
+  //  @Test
 //  void 受講生詳細登録失敗_入力チェックにかかること() {
 //
 //  }
 //
-//  @Test
-//  void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること() {
-//
-//  }
+  @Test
+  void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
+      throws Exception {
+    // Arrange
+    int studentId = 1;
+    int courseId = 1;
+    StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
+    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
+
+    // Act & Assertion
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(requestStudentDetail))
+    ).andExpect(status().isOk());
+    Mockito.verify(service, times(1)).updateStudent(captor.capture());
+    assertThat(captor.getValue())
+        .usingRecursiveComparison()
+        .isEqualTo(requestStudentDetail);
+  }
 //
 //  @Test
 //  void 受講生詳細更新失敗_入力チェックにかかること() {
