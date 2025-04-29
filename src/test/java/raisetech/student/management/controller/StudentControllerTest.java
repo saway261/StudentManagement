@@ -4,14 +4,20 @@ import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import java.util.Set;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.domain.StudentDetail;
@@ -30,6 +36,7 @@ class StudentControllerTest {
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
+  private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
   @TestConfiguration
   static class MockConfig {
@@ -73,7 +80,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_サービスから例外を受け取りそのまま投げていること() throws Exception {
+  void 受講生詳細単一検索失敗_サービスから例外を受け取り404エラーを返していること()
+      throws Exception {
     // Arrange
     int studentId = 99;
     Mockito.when(service.searchStudentDetail(studentId))
@@ -88,7 +96,8 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに数値以外を渡すと例外が投げられること() throws Exception {
+  void 受講生詳細単一検索失敗_studentIdに数値以外を渡すと400エラーが返されること()
+      throws Exception {
     // Arrange
     String studentId = "test";
 
@@ -98,7 +107,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと渡すと例外が投げられること()
+  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと渡すと400エラーが返されること()
       throws Exception {
     int notPositiveStudentId = 0;
 
@@ -108,17 +117,32 @@ class StudentControllerTest {
   }
 
   @Test
-  void 古いエンドポイントに対するアクティブ受講生詳細一覧検索リクエスト_例外が返されること()
+  void 古いエンドポイントに対するアクティブ受講生詳細一覧検索リクエスト_404エラーが返されること()
       throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/studentAndCourses"))
         .andExpect(status().isNotFound());
   }
 
-//  @Test
-//  void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること() {
-//
-//  }
-//
+  @Test
+  void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
+      throws Exception {
+    // Arrange
+    int studentId = 0;//リクエスト時のIDは未入力のため0
+    int courseId = 0;//リクエスト時のIDは未入力のため0
+    StudentDetail requestStudentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail responseStudentDetail = newDummyStudentDetail(1, 1);
+    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(requestStudentDetail);
+
+    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(requestStudentDetail))
+        )
+        .andExpect(status().isOk());
+    Assertions.assertEquals(0, violations.size());
+  }
+
 //  @Test
 //  void 受講生詳細登録失敗_入力チェックにかかること() {
 //
