@@ -1,6 +1,7 @@
 package raisetech.student.management.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
@@ -199,13 +200,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("fullname"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.fullname"))).isTrue();
   }
 
   @Test
@@ -233,13 +233,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("kanaName"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.kanaName"))).isTrue();
   }
 
   @Test
@@ -264,13 +263,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("email"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.email"))).isTrue();
   }
 
   @Test
@@ -295,13 +293,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("telephone"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
   }
 
   @Test
@@ -325,13 +322,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("age"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
   }
 
   @Test
@@ -356,13 +352,12 @@ class StudentControllerTest {
         ),
         List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("sex"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.sex"))).isTrue();
   }
 
   @Test
@@ -381,13 +376,13 @@ class StudentControllerTest {
             null,
             null)
         ));
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().
+            equals("studentCourseList[" + anyInt() + "].courseName"))).isTrue();
   }
 
   @Test
@@ -406,13 +401,13 @@ class StudentControllerTest {
             null,
             null)
         ));
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString()
+            .equals("studentCourseList[" + anyInt() + "].courseName"))).isTrue();
   }
   //TODO:どのくらいの粒度で網羅したらいいのか？
 
@@ -424,13 +419,12 @@ class StudentControllerTest {
     StudentDetail invalidStudentDetail = new StudentDetail(
         null, List.of(newDummyStudentCourseOnRegister(studentId, courseId))
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
   }
 
   @Test
@@ -441,18 +435,12 @@ class StudentControllerTest {
     StudentDetail invalidStudentDetail = new StudentDetail(
         newDummyStudent(studentId), new ArrayList<StudentCourse>()
     );
-
-    // Act & Assert
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
-//
-//  @Test
-//  void 受講生詳細更新失敗_入力チェックにかかること() {
-//
-//  }
 }
