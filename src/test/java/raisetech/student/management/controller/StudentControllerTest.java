@@ -106,12 +106,14 @@ class StudentControllerTest {
         .andExpect(status().isBadRequest());
 
   }
-  //
-//  @Test
-//  void 古いエンドポイントに対するアクティブ受講生詳細一覧検索リクエスト_例外が返されること() {
-//
-//  }
-//
+
+  @Test
+  void 古いエンドポイントに対するアクティブ受講生詳細一覧検索リクエスト_例外が返されること()
+      throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/studentAndCourses"))
+        .andExpect(status().isNotFound());
+  }
+
 //  @Test
 //  void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること() {
 //
