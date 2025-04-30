@@ -1,10 +1,10 @@
 package raisetech.student.management.data.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
-import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
-import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourseOnRegister;
-import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
+import static raisetech.student.management.testutil.TestDataFactory.completedStudent;
+import static raisetech.student.management.testutil.TestDataFactory.completedStudentCourse;
+import static raisetech.student.management.testutil.TestDataFactory.completedStudentDetail;
+import static raisetech.student.management.testutil.TestDataFactory.enoughStudentCourseOnRegister;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -34,7 +34,7 @@ class StudentDetailTest {
     int studentId = 0;
     int courseId = 0;
     StudentDetail validStudentDetail = new StudentDetail(
-        newDummyStudent(studentId), List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        completedStudent(studentId), List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(validStudentDetail);
 
@@ -48,7 +48,7 @@ class StudentDetailTest {
     int studentId = 1;
     int courseId = 1;
     StudentDetail validStudentDetail = new StudentDetail(
-        newDummyStudent(studentId), List.of(newDummyStudentCourse(studentId, courseId))
+        completedStudent(studentId), List.of(completedStudentCourse(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(validStudentDetail,
         OnUpdate.class);
@@ -77,7 +77,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -111,7 +111,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -141,7 +141,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -171,7 +171,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -201,7 +201,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -231,7 +231,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -261,7 +261,7 @@ class StudentDetailTest {
             "特になし",
             false
         ),
-        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -279,7 +279,7 @@ class StudentDetailTest {
     int courseId = 0;
     LocalDate now = LocalDate.now();
     StudentDetail invalidStudentDetail = new StudentDetail(
-        newDummyStudent(studentId),
+        completedStudent(studentId),
         List.of(new StudentCourse(
             courseId,
             null,// コース名がnull
@@ -304,7 +304,7 @@ class StudentDetailTest {
     int courseId = 0;
     LocalDate now = LocalDate.now();
     StudentDetail invalidStudentDetail = new StudentDetail(
-        newDummyStudent(studentId),
+        completedStudent(studentId),
         List.of(new StudentCourse(
             courseId,
             "Pythonコース",// 想定されないコース名
@@ -328,7 +328,7 @@ class StudentDetailTest {
     int studentId = 0;
     int courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        null, List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+        null, List.of(enoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -344,7 +344,7 @@ class StudentDetailTest {
     int studentId = 0;
     int courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        newDummyStudent(studentId), new ArrayList<StudentCourse>()
+        completedStudent(studentId), new ArrayList<StudentCourse>()
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
@@ -359,7 +359,7 @@ class StudentDetailTest {
     // Arrange
     int studentId = 0;
     int courseId = 0;
-    StudentDetail invalidStudentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail invalidStudentDetail = completedStudentDetail(studentId, courseId);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
         OnUpdate.class);
 
@@ -375,7 +375,7 @@ class StudentDetailTest {
     int studentId = 1;
     int courseId = 1;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        newDummyStudent(studentId),
+        completedStudent(studentId),
         List.of(new StudentCourse(
             courseId,
             "Javaコース",
