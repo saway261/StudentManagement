@@ -22,7 +22,6 @@ bin/
 *.iws
 *.iml
 *.ipr
-*.properties
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
@@ -38,6 +37,4 @@ out/
 .vscode/
 
 ### Custom Ignore ###
-# アプリケーション設定ファイルを無視
-src/main/resources/application.properties
 ClassDiagrammMemo.md
