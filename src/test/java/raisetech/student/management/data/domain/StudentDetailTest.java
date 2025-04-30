@@ -2,6 +2,7 @@ package raisetech.student.management.data.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudent;
+import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourse;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentCourseOnRegister;
 import static raisetech.student.management.testutil.TestDataFactory.newDummyStudentDetail;
 
@@ -25,6 +26,35 @@ class StudentDetailTest {
   @BeforeAll
   static void setUpValidator() {
     validator = Validation.buildDefaultValidatorFactory().getValidator();
+  }
+
+  @Test
+  void 受講生リクエストボディ検証_すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと() {
+    // Arrange:
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail validStudentDetail = new StudentDetail(
+        newDummyStudent(studentId), List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+    );
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(validStudentDetail);
+
+    // Act & Assert
+    assertThat(violations).isEmpty();
+  }
+
+  @Test
+  void 受講生リクエストボディ検証_すべてのフィールドが更新時に期待する値をもつとき入力チェックにかからないこと() {
+    // Arrange:
+    int studentId = 1;
+    int courseId = 1;
+    StudentDetail validStudentDetail = new StudentDetail(
+        newDummyStudent(studentId), List.of(newDummyStudentCourse(studentId, courseId))
+    );
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(validStudentDetail,
+        OnUpdate.class);
+
+    // Act & Assert
+    assertThat(violations).isEmpty();
   }
 
   @Test
