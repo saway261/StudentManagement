@@ -331,6 +331,36 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生詳細リクエストボディ検証_年齢が80より大きいとき入力チェックにかかること()
+      throws Exception {
+    // Arrange: ageが81
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        new Student(
+            studentId,
+            "山田太郎",
+            "やまだたろう",
+            "タロー",
+            "taro@email.com",
+            "東京都練馬区",
+            "090-0000-0000",
+            81,
+            "男",
+            "特になし",
+            false
+        ),
+        List.of(newDummyStudentCourseOnRegister(studentId, courseId))
+    );
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    // Act & Assert
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
+  }
+
+  @Test
   void 受講生詳細リクエストボディ検証_性別がパターンにマッチしないとき入力チェックにかかること()
       throws Exception {
     // Arrange: 性別が”男性”
