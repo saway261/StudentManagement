@@ -39,5 +39,4 @@ out/
 
 ### Custom Ignore ###
 # アプリケーション設定ファイルを無視
-src/main/resources/application.properties
 ClassDiagrammMemo.md
