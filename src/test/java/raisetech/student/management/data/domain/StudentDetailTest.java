@@ -246,59 +246,36 @@ class StudentDetailTest {
         .allMatch(v -> v.getPropertyPath().toString().equals("student.sex"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_受講生コースの必須情報がnullのとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: コース名がnull
+  @ParameterizedTest
+  @ValueSource(strings = {"", "Pythonコース"})
+  void 受講生コースのコース名がnullや不正のとき入力チェックにかかること(String invalidCourseName) {
     int studentId = 0;
     int courseId = 0;
-    LocalDate now = LocalDate.now();
+
+    String courseName = invalidCourseName.isEmpty() ? null : invalidCourseName;//空文字の時はnullに置き換える
+
     StudentDetail invalidStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId),
         List.of(new StudentCourse(
             courseId,
-            null,// コース名がnull
+            courseName,
             studentId,
             null,
-            null)
-        ));
+            null
+        ))
+    );
+
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
-    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString()
             .matches("studentCourseList\\[\\d+\\]\\.courseName"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_受講生コースのコース名が不正のとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: コース名が不正
-    int studentId = 0;
-    int courseId = 0;
-    LocalDate now = LocalDate.now();
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        makeCompletedStudent(studentId),
-        List.of(new StudentCourse(
-            courseId,
-            "Pythonコース",// 想定されないコース名
-            studentId,
-            null,
-            null)
-        ));
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
-
-    // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString()
-            .matches("studentCourseList\\[\\d+\\]\\.courseName"))).isTrue();
-  }
-  //TODO:どのくらいの粒度で網羅したらいいのか？
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生がnullのとき入力チェックにかかること() {
+  void 受講生がnullのとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
@@ -314,7 +291,7 @@ class StudentDetailTest {
   }
 
   @Test
-  void 受講生詳細リクエストボディ検証_受講生コースが空のとき入力チェックにかかること() {
+  void 受講生コースが空のとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
     int courseId = 0;
