@@ -20,7 +20,8 @@ public class Student {
 
   @Schema(description = "受講生ID 自動採番を行う", example = "1")
   @Positive(groups = OnUpdate.class)
-  private final int studentId;
+  @NotNull(groups = OnUpdate.class)
+  private final Integer studentId;
 
   @Schema(description = "フルネーム", example = "佐藤花子")
   @NotNull
@@ -53,7 +54,7 @@ public class Student {
   @Schema(description = "年齢", example = "20")
   @Min(15)
   @Max(80)
-  private final int age;
+  private final Integer age;
 
   @Schema(description = "性別 '男''女''その他'のみが入力可能", example = "女")
   @Pattern(regexp = "^(男|女|その他)$", message = "性別は「男」「女」「その他」のいずれかを入力してください")
@@ -67,14 +68,14 @@ public class Student {
   private final boolean isDeleted;
 
   @JsonCreator
-  public Student(@JsonProperty("studentId") int studentId,
+  public Student(@JsonProperty("studentId") Integer studentId,
       @JsonProperty("fullname") String fullname,
       @JsonProperty("kanaName") String kanaName,
       @JsonProperty("nickname") String nickname,
       @JsonProperty("email") String email,
       @JsonProperty("area") String area,
       @JsonProperty("telephone") String telephone,
-      @JsonProperty("age") int age,
+      @JsonProperty("age") Integer age,
       @JsonProperty("sex") String sex,
       @JsonProperty("remark") String remark,
       @JsonProperty("isDeleted") boolean isDeleted) {

@@ -16,18 +16,19 @@ public class StudentCourse {
 
   @Schema(description = "コースID 自動採番を行う", example = "1")
   @Positive(groups = OnUpdate.class)
-  private final int courseId;
+  @NotNull(groups = OnUpdate.class)
+  private final Integer courseId;
 
   @Schema(
       description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
       example = "Javaコース"
   )
-  @NotNull
   @CourseName
+  @NotNull
   private final String courseName;
 
   @Schema(description = "受講生ID", example = "1")
-  private final int studentId;
+  private final Integer studentId;
 
   @Schema(description = "コース開始日 登録処理が実行された日付", example = "2025-01-01")
   private final LocalDate courseStartAt;
@@ -77,9 +78,9 @@ public class StudentCourse {
   }
 
   @JsonCreator
-  public StudentCourse(@JsonProperty("courseId") int courseId,
+  public StudentCourse(@JsonProperty("courseId") Integer courseId,
       @JsonProperty("courseName") String courseName,
-      @JsonProperty("studentId") int studentId,
+      @JsonProperty("studentId") Integer studentId,
       @JsonProperty("courseStartAt") LocalDate courseStartAt,
       @JsonProperty("courseEndAt") LocalDate courseEndAt) {
     this.courseId = courseId;
