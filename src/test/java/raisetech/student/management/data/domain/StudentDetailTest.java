@@ -74,8 +74,10 @@ class StudentDetailTest {
   void Studentフィールドのnull許容性を検証する(String fieldName,
       boolean expectViolation) {
     // Arrange
+    int studentId = 0;
+    int courseId = 0;
     Student student = new Student(
-        0,
+        studentId,
         fieldName.equals("fullname") ? null : "山田太郎",
         fieldName.equals("kanaName") ? null : "やまだたろう",
         fieldName.equals("nickname") ? null : "タロー",
@@ -89,7 +91,7 @@ class StudentDetailTest {
     );
 
     StudentDetail detail = new StudentDetail(student,
-        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
@@ -124,7 +126,6 @@ class StudentDetailTest {
   void 受講生コースが空のとき入力チェックにかかること() {
     // Arrange
     int studentId = 0;
-    int courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId), new ArrayList<StudentCourse>()
     );
@@ -181,12 +182,14 @@ class StudentDetailTest {
   })
   void 入力チェック_emailの不正な形式はすべて入力チェックにかかるべき(String invalidEmail) {
     // Arrange
+    int studentId = 0;
+    int courseId = 0;
     Student student = new Student(
-        0, "山田太郎", "やまだたろう", "タロー", invalidEmail,
-        "東京都", "090-0000-0000", 25, "男", "", false
+        studentId, "山田太郎", "やまだたろう", "タロー", invalidEmail,
+        "東京都", "090-0000-0000", 20, "男", "", false
     );
     StudentDetail detail = new StudentDetail(student,
-        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
@@ -208,22 +211,24 @@ class StudentDetailTest {
   })
   void 電話番号の形式が不正のとき入力チェックにかかること(String invalidPhoneNumber) {
     // Arrange
+    int studentId = 0;
+    int courseId = 0;
     Student invalidStudent = new Student(
-        0,
+        studentId,
         "山田太郎",
         "やまだたろう",
         "タロー",
         "test@example.com",
         "東京都",
         invalidPhoneNumber,
-        25,
+        20,
         "男",
         "備考なし",
         false
     );
 
     StudentDetail detail = new StudentDetail(invalidStudent,
-        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
@@ -269,12 +274,14 @@ class StudentDetailTest {
   @ValueSource(strings = {"男性", "female", "man", "それ以外"})
   void 性別がパターン外のときエラーになる(String invalidSex) {
     // Arrange
+    int studentId = 0;
+    int courseId = 0;
     Student invalidStudent = new Student(
-        0, "山田太郎", "やまだたろう", "タロー", "test@example.com",
-        "東京都", "090-0000-0000", 25, invalidSex, "", false
+        studentId, "山田太郎", "やまだたろう", "タロー", "test@example.com",
+        "東京都", "090-0000-0000", 20, invalidSex, "", false
     );
     StudentDetail detail = new StudentDetail(invalidStudent,
-        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
