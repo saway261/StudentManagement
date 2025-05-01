@@ -16,6 +16,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -31,7 +32,7 @@ class StudentDetailTest {
   }
 
   @Test
-  void 受講生リクエストボディ検証_すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと() {
+  void すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと() {
     // Arrange:
     int studentId = 0;
     int courseId = 0;
@@ -46,7 +47,7 @@ class StudentDetailTest {
   }
 
   @Test
-  void 受講生リクエストボディ検証_すべてのフィールドが更新時に期待する値をもつとき入力チェックにかからないこと() {
+  void すべてのフィールドが更新時に期待する値をもつとき入力チェックにかからないこと() {
     // Arrange:
     int studentId = 1;
     int courseId = 1;
@@ -328,20 +329,25 @@ class StudentDetailTest {
         .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_更新時_受講生IDと受講生コースIDが1未満のとき入力チェックにかかること() {
-    // Arrange
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = makeCompletedStudentDetail(studentId, courseId);
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
-        OnUpdate.class);
+  @ParameterizedTest
+  @CsvSource({
+      "0,1",
+      "1,0",
+      "0,0"
+  })
+  void 更新時_studentIdまたはcourseIdあるいは両方が1未満のとき入力チェックにかかること(
+      int studentId, int courseId) {
 
-    // Act & Assert
-    assertThat(violations.size()).isEqualTo(2);
+    StudentDetail invalidStudentDetail = makeCompletedStudentDetail(studentId, courseId);
+
+    Set<ConstraintViolation<StudentDetail>> violations =
+        validator.validate(invalidStudentDetail, OnUpdate.class);
+
+    assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString().contains("Id"))).isTrue();
   }
+
 
   @Test
   void 受講生詳細リクエストボディ検証_更新時_受講終了予定日がnullのとき入力チェックにかかること() {
