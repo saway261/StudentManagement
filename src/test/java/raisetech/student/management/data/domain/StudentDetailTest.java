@@ -184,10 +184,11 @@ class StudentDetailTest {
         .allMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_年齢が15未満のとき入力チェックにかかること()
+  @ParameterizedTest
+  @ValueSource(ints = {14, 81})
+  void 年齢が想定範囲外のとき入力チェックにかかること(int age)
       throws Exception {
-    // Arrange: ageが15未満
+    // Arrange
     int studentId = 0;
     int courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
@@ -199,37 +200,7 @@ class StudentDetailTest {
             "taro@email.com",
             "東京都練馬区",
             "090-0000-0000",
-            14,
-            "男",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
-    );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
-
-    // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
-  }
-
-  @Test
-  void 受講生詳細リクエストボディ検証_年齢が80より大きいとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: ageが81
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            "山田太郎",
-            "やまだたろう",
-            "タロー",
-            "taro@email.com",
-            "東京都練馬区",
-            "090-0000-0000",
-            81,
+            age,
             "男",
             "特になし",
             false
