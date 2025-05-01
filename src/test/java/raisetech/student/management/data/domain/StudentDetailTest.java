@@ -125,65 +125,69 @@ class StudentDetailTest {
   }
 
 
-  @Test
-  void 受講生詳細リクエストボディ検証_emailの形式が不正のとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: emailの形式が不正
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            "山田太郎",
-            "やまだたろう",
-            "タロー",
-            "taroemailcom",// @がなく形式が不正
-            "東京都練馬区",
-            "090-0000-0000",
-            20,
-            "男",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "plainaddress",        // @なし
+      "@missingusername.com",// ユーザー名なし
+      "username@.com",       // ドメイン名先頭にドット
+      "user@com.",           // ドメイン末尾にドット
+      "user@-com.com",       // 不正なドメイン記号
+      "user@com..com"        // ドット連続
+  })
+  void 入力チェック_emailの不正な形式はすべて入力チェックにかかるべき(String invalidEmail) {
+    // Arrange
+    Student student = new Student(
+        0, "山田太郎", "やまだたろう", "タロー", invalidEmail,
+        "東京都", "090-0000-0000", 25, "男", "", false
     );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+    StudentDetail detail = new StudentDetail(student,
+        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
+
+    // Act & Assert
+    assertThat(violations)
+        .anyMatch(v -> v.getPropertyPath().toString().equals("student.email"));
+  }
+
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+      "09000000000",     // ハイフンなし
+      "090-0000-000",    // 下4桁が3桁
+      "0900-000-00000",  // 中間と下桁の桁数異常
+      "abcd-efgh-ijkl",  // 数字以外
+      "-03-1234-5678",   // 先頭にハイフン
+      "03--1234-5678",   // ハイフン重複
+      "03-1234--5678"    // ハイフン重複（別位置）
+  })
+  void 電話番号の形式が不正のとき入力チェックにかかること(String invalidPhoneNumber) {
+    // Arrange
+    Student invalidStudent = new Student(
+        0,
+        "山田太郎",
+        "やまだたろう",
+        "タロー",
+        "test@example.com",
+        "東京都",
+        invalidPhoneNumber,
+        25,
+        "男",
+        "備考なし",
+        false
+    );
+
+    StudentDetail detail = new StudentDetail(invalidStudent,
+        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.email"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_電話番号の形式が不正のとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: 電話番号の形式が不正
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            "山田太郎",
-            "やまだたろう",
-            "タロー",
-            "taro@email.com",
-            "東京都練馬区",
-            "09000000000",// -がなく形式が不正
-            20,
-            "男",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
-    );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
-
-    // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
-  }
 
   @ParameterizedTest
   @ValueSource(ints = {14, 81})
@@ -216,35 +220,25 @@ class StudentDetailTest {
         .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_性別がパターンにマッチしないとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: 性別が”男性”
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            "山田太郎",
-            "やまだたろう",
-            "タロー",
-            "taro@email.com",
-            "東京都練馬区",
-            "090-0000-0000",
-            20,
-            "男性",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+  @ParameterizedTest
+  @ValueSource(strings = {"男性", "female", "man", "それ以外"})
+  void 性別がパターン外のときエラーになる(String invalidSex) {
+    // Arrange
+    Student invalidStudent = new Student(
+        0, "山田太郎", "やまだたろう", "タロー", "test@example.com",
+        "東京都", "090-0000-0000", 25, invalidSex, "", false
     );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+    StudentDetail detail = new StudentDetail(invalidStudent,
+        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
 
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.sex"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("student.sex"))).isTrue();
   }
+
 
   @ParameterizedTest
   @ValueSource(strings = {"", "Pythonコース"})
@@ -319,13 +313,14 @@ class StudentDetailTest {
   })
   void studentIdまたはcourseIdが1未満のとき_バリデーショングループによって挙動が異なる(
       int studentId, int courseId, String groupName, boolean expectViolation) {
-
+    // Arrange
     Class<?> group = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
 
     StudentDetail detail = makeCompletedStudentDetail(studentId, courseId);
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail, group);
 
+    // Act & Assert
     if (expectViolation) {
       assertThat(violations).isNotEmpty();
       assertThat(violations.stream()
