@@ -10,7 +10,6 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -318,7 +317,7 @@ class StudentDetailTest {
       "0,1,OnUpdate,true",
       "1,0,OnUpdate,true"
   })
-  void 入力チェック_studentIdまたはcourseIdが1未満のとき_バリデーショングループによって挙動が異なる(
+  void studentIdまたはcourseIdが1未満のとき_バリデーショングループによって挙動が異なる(
       int studentId, int courseId, String groupName, boolean expectViolation) {
 
     Class<?> group = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
@@ -337,27 +336,44 @@ class StudentDetailTest {
   }
 
 
-  @Test
-  void 受講生詳細リクエストボディ検証_更新時_受講終了予定日がnullのとき入力チェックにかかること() {
+  @ParameterizedTest
+  @CsvSource({
+      "Default,false",
+      "OnUpdate,true"
+  })
+  void courseEndAtがnullのとき_登録時は通過し更新時はエラーになる(
+      String groupName, boolean expectViolation) {
     // Arrange
     int studentId = 1;
     int courseId = 1;
-    StudentDetail invalidStudentDetail = new StudentDetail(
+
+    // グループ名をクラスに変換
+    Class<?> validationGroup = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
+
+    StudentDetail studentDetail = new StudentDetail(
         makeCompletedStudent(studentId),
         List.of(new StudentCourse(
             courseId,
             "Javaコース",
             studentId,
-            LocalDate.now(),
-            null // 受講終了予定日
-        )));
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
-        OnUpdate.class);
+            null,
+            null // courseEndAt
+        ))
+    );
+
+    Set<ConstraintViolation<StudentDetail>> violations =
+        validator.validate(studentDetail, validationGroup);
+
     // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().
-            matches("studentCourseList\\[\\d+\\]\\.courseEndAt"))).isTrue();
+    if (expectViolation) {
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .allMatch(v -> v.getPropertyPath().toString()
+              .matches("studentCourseList\\[\\d+\\]\\.courseEndAt"))).isTrue();
+    } else {
+      assertThat(violations).isEmpty();
+    }
   }
+
 
 }
