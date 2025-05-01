@@ -3,9 +3,9 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static raisetech.student.management.testutil.TestDataFactory.completedStudent;
-import static raisetech.student.management.testutil.TestDataFactory.completedStudentDetail;
-import static raisetech.student.management.testutil.TestDataFactory.enoughStudentCourseOnRegister;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
+import static raisetech.student.management.testutil.TestDataFactory.makeEnoughStudentCourseOnRegister;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -68,7 +68,7 @@ class StudentControllerTest {
     // Arrange
     int studentId = 1;
     int courseId = 1;
-    StudentDetail studentDetail = completedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
     // Act & Assert
@@ -128,10 +128,10 @@ class StudentControllerTest {
     int studentId = 0;//リクエスト時のIDは未入力のため0
     int courseId = 0;//リクエスト時のIDは未入力のため0
     StudentDetail requestStudentDetail = new StudentDetail(
-        completedStudent(studentId),
-        List.of(enoughStudentCourseOnRegister(studentId, courseId))
+        makeCompletedStudent(studentId),
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
     );
-    StudentDetail responseStudentDetail = completedStudentDetail(1, 1);
+    StudentDetail responseStudentDetail = makeCompletedStudentDetail(1, 1);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
 
     // Act & Assertion
@@ -151,7 +151,7 @@ class StudentControllerTest {
     // Arrange
     int studentId = 1;
     int courseId = 1;
-    StudentDetail requestStudentDetail = completedStudentDetail(studentId, courseId);
+    StudentDetail requestStudentDetail = makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
 
     // Act & Assertion
