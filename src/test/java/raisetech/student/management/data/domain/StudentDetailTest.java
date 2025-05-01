@@ -61,34 +61,79 @@ class StudentDetailTest {
     assertThat(violations).isEmpty();
   }
 
+  @ParameterizedTest
+  @CsvSource({// trueはNotNull, falseはnull許容
+      "fullname,true",
+      "kanaName,true",
+      "email,true",
+      "nickname,false",
+      "area,false",
+      "telephone,false",
+      "remark,false"
+  })
+  void Studentフィールドのnull許容性を検証する(String fieldName,
+      boolean expectViolation) {
+    // Arrange
+    Student student = new Student(
+        0,
+        fieldName.equals("fullname") ? null : "山田太郎",
+        fieldName.equals("kanaName") ? null : "やまだたろう",
+        fieldName.equals("nickname") ? null : "タロー",
+        fieldName.equals("email") ? null : "yamada@example.com",
+        fieldName.equals("area") ? null : "東京都",
+        fieldName.equals("telephone") ? null : "090-0000-0000",
+        20,
+        "男",
+        fieldName.equals("remark") ? null : "特になし",
+        false
+    );
+
+    StudentDetail detail = new StudentDetail(student,
+        List.of(makeEnoughStudentCourseOnRegister(0, 0)));
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
+
+    // Act & Assert
+    if (expectViolation) {
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .anyMatch(v -> v.getPropertyPath().toString().equals("student." + fieldName))).isTrue();
+    } else {
+      assertThat(violations).isEmpty();
+    }
+  }
+
+
   @Test
-  void 受講生詳細リクエストボディ検証_受講生の必須項目がnullのとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: fullnameがnull
+  void 受講生がnullのとき入力チェックにかかること() {
+    // Arrange
     int studentId = 0;
     int courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            null, // fullnameがnull
-            "やまだたろう",
-            "タロー",
-            "taro@email.com",
-            "東京都練馬区",
-            "090-0000-0000",
-            20,
-            "男",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+        null, List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.fullname"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+  }
+
+  @Test
+  void 受講生コースが空のとき入力チェックにかかること() {
+    // Arrange
+    int studentId = 0;
+    int courseId = 0;
+    StudentDetail invalidStudentDetail = new StudentDetail(
+        makeCompletedStudent(studentId), new ArrayList<StudentCourse>()
+    );
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+
+    // Act & Assert
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
   @ParameterizedTest
@@ -267,39 +312,6 @@ class StudentDetailTest {
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString()
             .matches("studentCourseList\\[\\d+\\]\\.courseName"))).isTrue();
-  }
-
-
-  @Test
-  void 受講生がnullのとき入力チェックにかかること() {
-    // Arrange
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        null, List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
-    );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
-
-    // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
-  }
-
-  @Test
-  void 受講生コースが空のとき入力チェックにかかること() {
-    // Arrange
-    int studentId = 0;
-    int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        makeCompletedStudent(studentId), new ArrayList<StudentCourse>()
-    );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
-
-    // Act & Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
   @ParameterizedTest
