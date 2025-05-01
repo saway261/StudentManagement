@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.validation.OnUpdate;
@@ -88,39 +90,39 @@ class StudentDetailTest {
         .allMatch(v -> v.getPropertyPath().toString().equals("student.fullname"))).isTrue();
   }
 
-  @Test
-  void 受講生詳細リクエストボディ検証_文字数が超過するとき入力チェックにかかること()
-      throws Exception {
-    // Arrange: かなが51文字
-    StringBuilder tooLongKanaName = new StringBuilder();
-    tooLongKanaName.append("テスト");
-    tooLongKanaName.setLength(51);
-
+  @ParameterizedTest
+  @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
+  void 文字列が51文字以上のとき入力チェックにかかること(String fieldName) throws Exception {
+    // Arrange
     int studentId = 0;
     int courseId = 0;
-    StudentDetail invalidStudentDetail = new StudentDetail(
-        new Student(
-            studentId,
-            "山田太郎",
-            tooLongKanaName.toString(),
-            "タロー",
-            "taro@email.com",
-            "東京都練馬区",
-            "090-0000-0000",
-            20,
-            "男",
-            "特になし",
-            false
-        ),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+    String over50char = "あ".repeat(51); // 51文字の文字列
+    String over200char = "い".repeat(201); //201文字の文字列(備考用)
+    Student student = new Student(
+        studentId,
+        fieldName.equals("fullname") ? over50char : "山田太郎",
+        fieldName.equals("kanaName") ? over50char : "やまだたろう",
+        fieldName.equals("nickname") ? over50char : "タロー",
+        fieldName.equals("email") ? over50char : "test@example.com",
+        fieldName.equals("area") ? over50char : "東京都",
+        "090-0000-0000",
+        20,
+        "男",
+        fieldName.equals("remark") ? over200char : "特になし",
+        false
     );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+    StudentDetail invalid = new StudentDetail(student,
+        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
 
-    // Act & Assert
+    // Act
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalid);
+
+    // Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student.kanaName"))).isTrue();
+        .allMatch(v -> v.getPropertyPath().toString().equals("student." + fieldName))).isTrue();
   }
+
 
   @Test
   void 受講生詳細リクエストボディ検証_emailの形式が不正のとき入力チェックにかかること()
