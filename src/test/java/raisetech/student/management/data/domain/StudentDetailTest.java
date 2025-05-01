@@ -9,6 +9,7 @@ import static raisetech.student.management.testutil.TestDataFactory.makeEnoughSt
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -249,6 +250,7 @@ class StudentDetailTest {
   @ParameterizedTest
   @ValueSource(strings = {"", "Pythonコース"})
   void 受講生コースのコース名がnullや不正のとき入力チェックにかかること(String invalidCourseName) {
+    // Arrange
     int studentId = 0;
     int courseId = 0;
 
@@ -267,6 +269,7 @@ class StudentDetailTest {
 
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
 
+    // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
         .allMatch(v -> v.getPropertyPath().toString()
@@ -308,21 +311,29 @@ class StudentDetailTest {
 
   @ParameterizedTest
   @CsvSource({
-      "0,1",
-      "1,0",
-      "0,0"
+      "0,0,Default,false",//登録時は1未満でも良いが、
+      "0,1,Default,false",
+      "1,0,Default,false",
+      "0,0,OnUpdate,true",//更新時は1未満のとき入力チェックにかかる
+      "0,1,OnUpdate,true",
+      "1,0,OnUpdate,true"
   })
-  void 更新時_studentIdまたはcourseIdあるいは両方が1未満のとき入力チェックにかかること(
-      int studentId, int courseId) {
+  void 入力チェック_studentIdまたはcourseIdが1未満のとき_バリデーショングループによって挙動が異なる(
+      int studentId, int courseId, String groupName, boolean expectViolation) {
 
-    StudentDetail invalidStudentDetail = makeCompletedStudentDetail(studentId, courseId);
+    Class<?> group = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
 
-    Set<ConstraintViolation<StudentDetail>> violations =
-        validator.validate(invalidStudentDetail, OnUpdate.class);
+    StudentDetail detail = makeCompletedStudentDetail(studentId, courseId);
 
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().contains("Id"))).isTrue();
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail, group);
+
+    if (expectViolation) {
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .allMatch(v -> v.getPropertyPath().toString().contains("Id"))).isTrue();
+    } else {
+      assertThat(violations).isEmpty();
+    }
   }
 
 
