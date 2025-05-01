@@ -51,7 +51,6 @@ public class Student {
   private final String telephone;
 
   @Schema(description = "年齢", example = "20")
-  @Positive
   @Min(15)
   @Max(80)
   private final int age;
