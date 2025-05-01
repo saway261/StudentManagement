@@ -4,6 +4,9 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourse;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ class StudentServiceTest {
     int studentId = 1;
     int courseId = 1;
     // 事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     List<Student> studentList = List.of(studentDetail.getStudent());
     Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
@@ -49,7 +52,8 @@ class StudentServiceTest {
     // 検証
     Mockito.verify(repository, times(1)).searchActiveStudentList();
     Mockito.verify(sut, times(studentList.size())).buildStudentDetail(studentId);
-    //TODO:add(studentDetail)はどう検証したらいいのか
+    Assertions.assertInstanceOf(List.class, actual);
+    Assertions.assertEquals(studentList.size(), actual.size());
   }
 
   @Test
@@ -58,7 +62,7 @@ class StudentServiceTest {
     int studentId = 1;
     int courseId = 1;
     //事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // 実際の実行結果
@@ -89,7 +93,7 @@ class StudentServiceTest {
     // 事前準備
     int studentId = 1;
     int courseId = 0;
-    Student student = newDummyStudent(studentId);
+    Student student = makeCompletedStudent(studentId);
     //コンストラクタでの初期化が行われているか判断するため、あえてstudentIdは0,courseStartAt, courseEndAtはnullとする。
     StudentCourse course = new StudentCourse(courseId, "Javaコース", 0, null, null);
     List<StudentCourse> courseList = List.of(course);
@@ -118,7 +122,7 @@ class StudentServiceTest {
     int studentId = 1;
     int courseId = 1;
     // 事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentCourseList();
     doReturn(true).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
@@ -140,7 +144,7 @@ class StudentServiceTest {
     int studentId = 1;
     int courseId = 99;
     // 事前準備
-    StudentDetail studentDetail = newDummyStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     doReturn(false).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
 
     // 実行と検証
@@ -156,8 +160,8 @@ class StudentServiceTest {
     int courseId = 1;
 
     //事前準備
-    Student student = newDummyStudent(studentId);
-    List<StudentCourse> courseList = List.of(newDummyStudentCourse(studentId, courseId));
+    Student student = makeCompletedStudent(studentId);
+    List<StudentCourse> courseList = List.of(makeCompletedStudentCourse(studentId, courseId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchCourses(studentId)).thenReturn(courseList);
@@ -170,7 +174,7 @@ class StudentServiceTest {
     Mockito.verify(repository, times(1)).searchCourses(studentId);
     Assertions.assertEquals(student, actual.getStudent());
     Assertions.assertEquals(courseList, actual.getStudentCourseList());
-    //TODO:StudentDetail studentDetail = new StudentDetail(student, courses);の検証として妥当？
+    Assertions.assertInstanceOf(StudentDetail.class, actual);
   }
 
   @Test
@@ -181,7 +185,7 @@ class StudentServiceTest {
     int courseId = 1;
 
     //事前準備
-    StudentCourse course = newDummyStudentCourse(studentId, courseId);
+    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
     List<Integer> notContainCourseIdList = List.of(1);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -200,7 +204,7 @@ class StudentServiceTest {
     int courseId = 99;
 
     //事前準備
-    StudentCourse course = newDummyStudentCourse(studentId, courseId);
+    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
     List<Integer> notContainCourseIdList = List.of(30);
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -218,7 +222,7 @@ class StudentServiceTest {
     int courseId = 1;
 
     // 事前準備
-    StudentCourse course = newDummyStudentCourse(studentId, courseId);
+    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
     List<Integer> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 
@@ -228,22 +232,5 @@ class StudentServiceTest {
     });
     Mockito.verify(repository, times(1)).searchCourseIdListLinkedStudentId(studentId);
   }
-
-
-  private Student newDummyStudent(int studentId) {
-    return new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
-        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
-  }
-
-  private StudentCourse newDummyStudentCourse(int studentId, int courseId) {
-    LocalDate now = LocalDate.now();
-    return new StudentCourse(courseId, "Javaコース", studentId, now, now.plusMonths(6));
-  }
-
-  private StudentDetail newDummyStudentDetail(int studentId, int courseId) {
-    return new StudentDetail(newDummyStudent(studentId),
-        List.of(newDummyStudentCourse(studentId, courseId)));
-  }
-
 
 }
