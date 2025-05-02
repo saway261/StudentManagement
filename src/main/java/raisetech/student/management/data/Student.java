@@ -17,7 +17,7 @@ import raisetech.student.management.data.domain.validation.PhoneNumber;
 @Schema(description = "受講生")
 @Getter
 public class Student {
-
+// TODO:OnRegisterグループを適用する
   @Schema(description = "受講生ID 自動採番を行う", example = "1")
   @Positive(groups = OnUpdate.class)
   @NotNull(groups = OnUpdate.class)

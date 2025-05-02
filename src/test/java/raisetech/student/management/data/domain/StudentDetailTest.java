@@ -10,6 +10,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -63,43 +64,116 @@ class StudentDetailTest {
 
   @ParameterizedTest
   @CsvSource({// trueはNotNull, falseはnull許容
+      "studentId,false",
       "fullname,true",
       "kanaName,true",
-      "email,true",
       "nickname,false",
+      "email,true",
       "area,false",
       "telephone,false",
-      "remark,false"
+      "age,false",
+      "sex,false",
+      "remark,false",
+      "courseId,false",
+      "courseName,true",
+      "courseStartAt,false",
+      "courseEndAt,false"
   })
-  void Studentフィールドのnull許容性を検証する(String fieldName,
+  void 登録時のStudentDetailの各フィールドのnull許容性を検証する(String fieldName,
       boolean expectViolation) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    int courseId;
     Student student = new Student(
-        studentId,
+        fieldName.equals("studentId") ? null : 1,
         fieldName.equals("fullname") ? null : "山田太郎",
         fieldName.equals("kanaName") ? null : "やまだたろう",
         fieldName.equals("nickname") ? null : "タロー",
         fieldName.equals("email") ? null : "yamada@example.com",
         fieldName.equals("area") ? null : "東京都",
         fieldName.equals("telephone") ? null : "090-0000-0000",
-        20,
-        "男",
+        fieldName.equals("age") ? null : 20,
+        fieldName.equals("sex") ? null : "男",
         fieldName.equals("remark") ? null : "特になし",
         false
     );
+    Integer studentId = student.getStudentId();
+    LocalDate now = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        fieldName.equals("courseId") ? null : 1,
+        fieldName.equals("courseName") ? null : "Javaコース",
+        studentId,
+        fieldName.equals("courseStartAt") ? null : now,
+        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+    );
 
-    StudentDetail detail = new StudentDetail(student,
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId)));
+    StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
 
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(detail);
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail);
 
     // Act & Assert
     if (expectViolation) {
       assertThat(violations).isNotEmpty();
       assertThat(violations.stream()
-          .anyMatch(v -> v.getPropertyPath().toString().equals("student." + fieldName))).isTrue();
+          .anyMatch(v -> v.getPropertyPath().toString().contains(fieldName))).isTrue();
+    } else {
+      assertThat(violations).isEmpty();
+    }
+  }
+
+  @ParameterizedTest
+  @CsvSource({// trueはNotNull, falseはnull許容
+      "studentId,true",
+      "fullname,true",
+      "kanaName,true",
+      "nickname,false",
+      "email,true",
+      "area,false",
+      "telephone,false",
+      "age,false",
+      "sex,false",
+      "remark,false",
+      "courseId,true",
+      "courseName,true",
+      "courseStartAt,false",
+      "courseEndAt,true"
+  })
+  void 更新時のStudentDetailの各フィールドのnull許容性を検証する(String fieldName,
+      boolean expectViolation) {
+    // Arrange
+    int courseId;
+    Student student = new Student(
+        fieldName.equals("studentId") ? null : 1,
+        fieldName.equals("fullname") ? null : "山田太郎",
+        fieldName.equals("kanaName") ? null : "やまだたろう",
+        fieldName.equals("nickname") ? null : "タロー",
+        fieldName.equals("email") ? null : "yamada@example.com",
+        fieldName.equals("area") ? null : "東京都",
+        fieldName.equals("telephone") ? null : "090-0000-0000",
+        fieldName.equals("age") ? null : 20,
+        fieldName.equals("sex") ? null : "男",
+        fieldName.equals("remark") ? null : "特になし",
+        false
+    );
+    Integer studentId = student.getStudentId();
+    LocalDate now = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        fieldName.equals("courseId") ? null : 1,
+        fieldName.equals("courseName") ? null : "Javaコース",
+        studentId,
+        fieldName.equals("courseStartAt") ? null : now,
+        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+    );
+
+    StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
+
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail,
+        OnUpdate.class);
+
+    // Act & Assert
+    if (expectViolation) {
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .anyMatch(v -> v.getPropertyPath().toString().contains(fieldName))).isTrue();
     } else {
       assertThat(violations).isEmpty();
     }

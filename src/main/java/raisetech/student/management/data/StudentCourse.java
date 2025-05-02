@@ -39,13 +39,13 @@ public class StudentCourse {
 
   /**
    * 受講生詳細登録で呼び出されるコンストラクタです。コース名,受講生IDを受け取り、コンストラクタが呼び出された日付をもとに、受講開始日と受講終了予定日を自動的にセットします。
-   * 受講生詳細更新で呼び出すと、courseIdが0なのでのちの処理でInvalidIdExceptionが投げられます。これにより、受講生詳細更新で子のコンストラクタを呼び出し、意図せず受講終了予定日が書き替えられることを防ぎます。
+   * 受講生詳細更新で呼び出すと、courseIdがnullなのでのちの処理でInvalidIdExceptionが投げられます。これにより、受講生詳細更新で子のコンストラクタを呼び出し、意図せず受講終了予定日が書き替えられることを防ぎます。
    *
    * @param courseName コース名
    * @param studentId  受講生ID
    */
-  public StudentCourse(String courseName, int studentId) {
-    this.courseId = 0;
+  public StudentCourse(String courseName, Integer studentId) {
+    this.courseId = null;
     this.courseName = courseName;
     this.studentId = studentId;
 
@@ -61,8 +61,8 @@ public class StudentCourse {
    * @param requestCourse 受講生コースコースオブジェクト
    * @param studentId     受講生ID
    */
-  public StudentCourse(StudentCourse requestCourse, int studentId) {
-    if (requestCourse.getCourseId() == 0 |
+  public StudentCourse(StudentCourse requestCourse, Integer studentId) {
+    if (requestCourse.getCourseId() == null |
         requestCourse.getCourseName().isEmpty() |
         requestCourse.getCourseEndAt() == null) {
       throw new NullPointerException();
