@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import lombok.Getter;
 import raisetech.student.management.data.domain.validation.CourseName;
+import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 
 @Schema(description = "受講生コース")
@@ -23,8 +24,8 @@ public class StudentCourse {
       description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
       example = "Javaコース"
   )
-  @CourseName
-  @NotNull
+  @CourseName(groups = {OnRegister.class, OnUpdate.class})
+  @NotNull(groups = {OnRegister.class, OnUpdate.class})
   private final String courseName;
 
   @Schema(description = "受講生ID", example = "1")

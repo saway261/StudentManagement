@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 
 class StudentDetailTest {
@@ -82,7 +83,6 @@ class StudentDetailTest {
   void 登録時のStudentDetailの各フィールドのnull許容性を検証する(String fieldName,
       boolean expectViolation) {
     // Arrange
-    int courseId;
     Student student = new Student(
         fieldName.equals("studentId") ? null : 1,
         fieldName.equals("fullname") ? null : "山田太郎",
@@ -108,7 +108,8 @@ class StudentDetailTest {
 
     StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
 
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail);
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail,
+        OnRegister.class);
 
     // Act & Assert
     if (expectViolation) {
@@ -180,35 +181,42 @@ class StudentDetailTest {
   }
 
 
-  @Test
-  void 受講生がnullのとき入力チェックにかかること() {
+  @ParameterizedTest
+  @ValueSource(strings = {"OnRegister", "OnUpdate"})
+  void 受講生がnullのとき入力チェックにかかること(String groupName) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    int studentId = 1;
+    int courseId = 1;
+    Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        null, List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+        null, List.of(makeCompletedStudentCourse(studentId, courseId))
     );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
+        group);
 
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+    // studentCourseでviolationが発生しても、studentでのviolationが確認できれば良いのでanyMatch
   }
 
-  @Test
-  void 受講生コースが空のとき入力チェックにかかること() {
+  @ParameterizedTest
+  @ValueSource(strings = {"OnRegister", "OnUpdate"})
+  void 受講生コースが空のとき入力チェックにかかること(String groupName) {
     // Arrange
-    int studentId = 0;
+    int studentId = 1;
+    Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
     StudentDetail invalidStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId), new ArrayList<StudentCourse>()
     );
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail);
+    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(invalidStudentDetail,
+        group);
 
     // Act & Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .allMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
   }
 
   @ParameterizedTest
