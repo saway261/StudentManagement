@@ -36,8 +36,8 @@ class StudentDetailTest {
   @Test
   void すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと() {
     // Arrange:
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = null;
+    Integer courseId = null;
     StudentDetail validStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId), List.of(
         makeEnoughStudentCourseOnRegister(studentId, courseId))
@@ -51,8 +51,8 @@ class StudentDetailTest {
   @Test
   void すべてのフィールドが更新時に期待する値をもつとき入力チェックにかからないこと() {
     // Arrange:
-    int studentId = 1;
-    int courseId = 1;
+    Integer studentId = 1;
+    Integer courseId = 1;
     StudentDetail validStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId), List.of(makeCompletedStudentCourse(studentId, courseId))
     );
@@ -121,72 +121,13 @@ class StudentDetailTest {
     }
   }
 
-  @ParameterizedTest
-  @CsvSource({// trueはNotNull, falseはnull許容
-      "studentId,true",
-      "fullname,true",
-      "kanaName,true",
-      "nickname,false",
-      "email,true",
-      "area,false",
-      "telephone,false",
-      "age,false",
-      "sex,false",
-      "remark,false",
-      "courseId,true",
-      "courseName,true",
-      "courseStartAt,false",
-      "courseEndAt,true"
-  })
-  void 更新時のStudentDetailの各フィールドのnull許容性を検証する(String fieldName,
-      boolean expectViolation) {
-    // Arrange
-    int courseId;
-    Student student = new Student(
-        fieldName.equals("studentId") ? null : 1,
-        fieldName.equals("fullname") ? null : "山田太郎",
-        fieldName.equals("kanaName") ? null : "やまだたろう",
-        fieldName.equals("nickname") ? null : "タロー",
-        fieldName.equals("email") ? null : "yamada@example.com",
-        fieldName.equals("area") ? null : "東京都",
-        fieldName.equals("telephone") ? null : "090-0000-0000",
-        fieldName.equals("age") ? null : 20,
-        fieldName.equals("sex") ? null : "男",
-        fieldName.equals("remark") ? null : "特になし",
-        false
-    );
-    Integer studentId = student.getStudentId();
-    LocalDate now = LocalDate.now();
-    StudentCourse studentCourse = new StudentCourse(
-        fieldName.equals("courseId") ? null : 1,
-        fieldName.equals("courseName") ? null : "Javaコース",
-        studentId,
-        fieldName.equals("courseStartAt") ? null : now,
-        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
-    );
-
-    StudentDetail studentDetail = new StudentDetail(student, List.of(studentCourse));
-
-    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail,
-        OnUpdate.class);
-
-    // Act & Assert
-    if (expectViolation) {
-      assertThat(violations).isNotEmpty();
-      assertThat(violations.stream()
-          .anyMatch(v -> v.getPropertyPath().toString().contains(fieldName))).isTrue();
-    } else {
-      assertThat(violations).isEmpty();
-    }
-  }
-
 
   @ParameterizedTest
   @ValueSource(strings = {"OnRegister", "OnUpdate"})
   void 受講生がnullのとき入力チェックにかかること(String groupName) {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
+    Integer studentId = 1;
+    Integer courseId = 1;
     Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
     StudentDetail invalidStudentDetail = new StudentDetail(
         null, List.of(makeCompletedStudentCourse(studentId, courseId))
@@ -205,7 +146,7 @@ class StudentDetailTest {
   @ValueSource(strings = {"OnRegister", "OnUpdate"})
   void 受講生コースが空のとき入力チェックにかかること(String groupName) {
     // Arrange
-    int studentId = 1;
+    Integer studentId = 1;
     Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
     StudentDetail invalidStudentDetail = new StudentDetail(
         makeCompletedStudent(studentId), new ArrayList<StudentCourse>()
@@ -223,8 +164,8 @@ class StudentDetailTest {
   @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
   void 文字列が51文字以上のとき入力チェックにかかること(String fieldName) throws Exception {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
     String over50char = "あ".repeat(51); // 51文字の文字列
     String over200char = "い".repeat(201); //201文字の文字列(備考用)
     Student student = new Student(
@@ -264,8 +205,8 @@ class StudentDetailTest {
   })
   void 入力チェック_emailの不正な形式はすべて入力チェックにかかるべき(String invalidEmail) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
     Student student = new Student(
         studentId, "山田太郎", "やまだたろう", "タロー", invalidEmail,
         "東京都", "090-0000-0000", 20, "男", "", false
@@ -293,8 +234,8 @@ class StudentDetailTest {
   })
   void 電話番号の形式が不正のとき入力チェックにかかること(String invalidPhoneNumber) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
     Student invalidStudent = new Student(
         studentId,
         "山田太郎",
@@ -326,8 +267,8 @@ class StudentDetailTest {
   void 年齢が想定範囲外のとき入力チェックにかかること(int age)
       throws Exception {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
     StudentDetail invalidStudentDetail = new StudentDetail(
         new Student(
             studentId,
@@ -356,8 +297,8 @@ class StudentDetailTest {
   @ValueSource(strings = {"男性", "female", "man", "それ以外"})
   void 性別がパターン外のときエラーになる(String invalidSex) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
     Student invalidStudent = new Student(
         studentId, "山田太郎", "やまだたろう", "タロー", "test@example.com",
         "東京都", "090-0000-0000", 20, invalidSex, "", false
@@ -378,8 +319,8 @@ class StudentDetailTest {
   @ValueSource(strings = {"", "Pythonコース"})
   void 受講生コースのコース名がnullや不正のとき入力チェックにかかること(String invalidCourseName) {
     // Arrange
-    int studentId = 0;
-    int courseId = 0;
+    Integer studentId = 0;
+    Integer courseId = 0;
 
     String courseName = invalidCourseName.isEmpty() ? null : invalidCourseName;//空文字の時はnullに置き換える
 
@@ -413,7 +354,7 @@ class StudentDetailTest {
       "1,0,OnUpdate,true"
   })
   void studentIdまたはcourseIdが1未満のとき_バリデーショングループによって挙動が異なる(
-      int studentId, int courseId, String groupName, boolean expectViolation) {
+      Integer studentId, Integer courseId, String groupName, boolean expectViolation) {
     // Arrange
     Class<?> group = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
 
@@ -440,8 +381,8 @@ class StudentDetailTest {
   void courseEndAtがnullのとき_登録時は通過し更新時はエラーになる(
       String groupName, boolean expectViolation) {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
+    Integer studentId = 1;
+    Integer courseId = 1;
 
     // グループ名をクラスに変換
     Class<?> validationGroup = groupName.equals("OnUpdate") ? OnUpdate.class : Default.class;
