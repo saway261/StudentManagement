@@ -3,8 +3,8 @@ package raisetech.student.management.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 import lombok.Getter;
 import raisetech.student.management.data.domain.validation.CourseName;
@@ -16,9 +16,9 @@ import raisetech.student.management.data.domain.validation.OnUpdate;
 public class StudentCourse {
 
   @Schema(description = "コースID 自動採番を行う", example = "1")
-  @Positive(groups = OnUpdate.class)
+  @Valid
   @NotNull(groups = OnUpdate.class)
-  private final Integer courseId;
+  private final Id courseId;
 
   @Schema(
       description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
@@ -29,7 +29,7 @@ public class StudentCourse {
   private final String courseName;
 
   @Schema(description = "受講生ID", example = "1")
-  private final Integer studentId;
+  private final Id studentId;
 
   @Schema(description = "コース開始日 登録処理が実行された日付", example = "2025-01-01")
   private final LocalDate courseStartAt;
@@ -45,7 +45,7 @@ public class StudentCourse {
    * @param courseName コース名
    * @param studentId  受講生ID
    */
-  public StudentCourse(String courseName, Integer studentId) {
+  public StudentCourse(String courseName, Id studentId) {
     this.courseId = null;
     this.courseName = courseName;
     this.studentId = studentId;
@@ -62,9 +62,9 @@ public class StudentCourse {
    * @param requestCourse 受講生コースコースオブジェクト
    * @param studentId     受講生ID
    */
-  public StudentCourse(StudentCourse requestCourse, Integer studentId) {
-    if (requestCourse.getCourseId() == null |
-        requestCourse.getCourseName().isEmpty() |
+  public StudentCourse(StudentCourse requestCourse, Id studentId) {
+    if (requestCourse.getCourseId() == null ||
+        requestCourse.getCourseName().isEmpty() ||
         requestCourse.getCourseEndAt() == null) {
       throw new NullPointerException();
 
@@ -79,9 +79,9 @@ public class StudentCourse {
   }
 
   @JsonCreator
-  public StudentCourse(@JsonProperty("courseId") Integer courseId,
+  public StudentCourse(@JsonProperty("courseId") Id courseId,
       @JsonProperty("courseName") String courseName,
-      @JsonProperty("studentId") Integer studentId,
+      @JsonProperty("studentId") Id studentId,
       @JsonProperty("courseStartAt") LocalDate courseStartAt,
       @JsonProperty("courseEndAt") LocalDate courseEndAt) {
     this.courseId = courseId;

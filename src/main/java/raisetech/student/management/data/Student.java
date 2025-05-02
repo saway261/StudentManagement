@@ -3,12 +3,12 @@ package raisetech.student.management.data;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 import raisetech.student.management.data.domain.validation.OnRegister;
@@ -20,9 +20,9 @@ import raisetech.student.management.data.domain.validation.PhoneNumber;
 public class Student {
 
   @Schema(description = "受講生ID 自動採番を行う", example = "1")
-  @Positive(groups = OnUpdate.class)
+  @Valid
   @NotNull(groups = OnUpdate.class)
-  private final Integer studentId;
+  private final Id studentId;
 
   @Schema(description = "フルネーム", example = "佐藤花子")
   @NotNull(groups = {OnRegister.class, OnUpdate.class})
@@ -70,7 +70,7 @@ public class Student {
   private final boolean isDeleted;
 
   @JsonCreator
-  public Student(@JsonProperty("studentId") Integer studentId,
+  public Student(@JsonProperty("studentId") Id studentId,
       @JsonProperty("fullname") String fullname,
       @JsonProperty("kanaName") String kanaName,
       @JsonProperty("nickname") String nickname,
