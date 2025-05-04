@@ -1,13 +1,12 @@
 package raisetech.student.management.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.validation.constraints.Positive;
 import java.util.Objects;
-import lombok.Getter;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 
-@Getter
 public class Id {
 
   @Positive(groups = {OnRegister.class, OnUpdate.class})
@@ -19,6 +18,11 @@ public class Id {
       throw new IllegalArgumentException("IDはnullまたは1以上でなければなりません");
     }
     this.value = value;
+  }
+
+  @JsonValue
+  public Integer getValue() {
+    return value;
   }
 
   public boolean isNull() {
