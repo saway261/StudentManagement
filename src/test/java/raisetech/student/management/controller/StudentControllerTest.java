@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.Id;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
@@ -66,8 +67,8 @@ class StudentControllerTest {
   void 受講生詳細単一検索成功_サービスの処理が適切に呼び出されること()
       throws Exception {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
@@ -81,7 +82,7 @@ class StudentControllerTest {
   void 受講生詳細単一検索失敗_サービスから例外を受け取り404エラーを返していること()
       throws Exception {
     // Arrange
-    int studentId = 99;
+    Id studentId = new Id(99);
     Mockito.when(service.searchStudentDetail(studentId))
         .thenThrow(new InvalidIdException(studentId));
 
@@ -125,13 +126,16 @@ class StudentControllerTest {
   void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    int studentId = 0;//リクエスト時のIDは未入力のため0
-    int courseId = 0;//リクエスト時のIDは未入力のため0
+    Id studentIdBeforeRegister = null;//リクエスト時のIDは未入力のためnull
+    Id courseIdBeforeRegister = null;//リクエスト時のIDは未入力のためnull
+    Id studentIdAfterRegister = new Id(1);
+    Id courseIdAfterRegister = new Id(1);
     StudentDetail requestStudentDetail = new StudentDetail(
-        makeCompletedStudent(studentId),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
+        makeCompletedStudent(studentIdBeforeRegister),
+        List.of(makeEnoughStudentCourseOnRegister(studentIdBeforeRegister, courseIdBeforeRegister))
     );
-    StudentDetail responseStudentDetail = makeCompletedStudentDetail(1, 1);
+    StudentDetail responseStudentDetail = makeCompletedStudentDetail(studentIdAfterRegister,
+        courseIdAfterRegister);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
 
     // Act & Assertion
@@ -149,8 +153,8 @@ class StudentControllerTest {
   void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     StudentDetail requestStudentDetail = makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
 

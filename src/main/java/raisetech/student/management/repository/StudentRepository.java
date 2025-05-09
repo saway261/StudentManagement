@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -24,7 +25,7 @@ public interface StudentRepository {
    * @param studentId 受講生ID
    * @return 受講生
    */
-  Student searchStudent(int studentId);
+  Student searchStudent(Id studentId);
 
   /**
    * 受講生IDに紐づく受講生コース情報を検索します
@@ -32,21 +33,14 @@ public interface StudentRepository {
    * @param studentId 受講生ID
    * @return 受講生IDに紐づく受講生コース情報(複数)
    */
-  List<StudentCourse> searchCourses(int studentId);
-
-  /**
-   * 受講生テーブルに登録されている受講生IDの一覧を取得します。
-   *
-   * @return 受講生IDの一覧
-   */
-  List<Integer> searchStudentIdList();
+  List<StudentCourse> searchCourses(Id studentId);
 
   /**
    * 引数で渡された受講生IDに紐づいている受講生コースIDの一覧を取得します。
    *
    * @return 受講生コースIDの一覧
    */
-  List<Integer> searchCourseIdListLinkedStudentId(int studentId);
+  List<Id> searchCourseIdListLinkedStudentId(Id studentId);
 
   /**
    * 受講生を新規登録します。IDに関しては自動採番を行う。

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
@@ -47,7 +48,7 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  public StudentDetail searchStudentDetail(int studentId) throws InvalidIdException {
+  public StudentDetail searchStudentDetail(Id studentId) throws InvalidIdException {
     StudentDetail studentDetail = buildStudentDetail(studentId);
     if (studentDetail.getStudent() == null) {
       throw new InvalidIdException(studentId);
@@ -108,7 +109,7 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  StudentDetail buildStudentDetail(int studentId) {
+  StudentDetail buildStudentDetail(Id studentId) {
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> courses = repository.searchCourses(studentId);
     StudentDetail studentDetail = new StudentDetail(student, courses);
@@ -123,7 +124,7 @@ public class StudentService {
    * @return 受講生コースIDが紐づいている場合はtrue
    */
   boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
-    List<Integer> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
+    List<Id> existCourseIdListLinkedStudentId = repository.searchCourseIdListLinkedStudentId(
         course.getStudentId());
     if (existCourseIdListLinkedStudentId.isEmpty()) {
       //一件もコースIDが返らない場合、受講生IDが存在しないと判断する。

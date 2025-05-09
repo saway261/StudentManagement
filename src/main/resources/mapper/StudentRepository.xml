@@ -13,13 +13,8 @@
     SELECT * FROM students WHERE student_id = #{studentId}
   </select>
 
-  <!-- 受講生IDリストの検索-->
-  <select id="searchStudentIdList" resultType="java.lang.Integer">
-    SELECT student_id FROM students
-  </select>
-
   <!-- 受講生IDに紐づく受講生コースIDリストの検索-->
-  <select id="searchCourseIdListLinkedStudentId" resultType="java.lang.Integer">
+  <select id="searchCourseIdListLinkedStudentId" resultType="raisetech.student.management.data.Id">
     SELECT course_id FROM students_courses WHERE student_id = #{studentId}
   </select>
 

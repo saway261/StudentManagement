@@ -1,6 +1,6 @@
 package raisetech.student.management.exception;
 
-import raisetech.student.management.data.Student;
+import raisetech.student.management.data.Id;
 import raisetech.student.management.data.StudentCourse;
 
 /**
@@ -8,12 +8,7 @@ import raisetech.student.management.data.StudentCourse;
  */
 public class InvalidIdException extends StudentException {
 
-  public InvalidIdException(Student student) {
-    this.field = "student.studentId：" + student.getStudentId();
-    this.message = "受講生IDが存在しません。";
-  }
-
-  public InvalidIdException(int id) {
+  public InvalidIdException(Id id) {
     this.field = "argument" + id;
     this.message = "受講生IDが存在しません。";
   }
