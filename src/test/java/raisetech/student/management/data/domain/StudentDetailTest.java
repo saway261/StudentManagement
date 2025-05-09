@@ -423,11 +423,22 @@ class StudentDetailTest {
     }
   }
 
-  @Test
-  @DisplayName("更新時_studentIdが1未満の数値の時入力チェックにかかること")
-  void test_012() {
-
-  }
+//  @Test
+//  @DisplayName("更新時_studentIdが1未満の数値の時入力チェックにかかること")
+//  void test_012() {
+//    Id studentId = new Id(-3);
+//    Id courseId = new Id(1);
+//
+//    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+//
+//    Set<ConstraintViolation<StudentDetail>> violations = validator.validate(studentDetail,
+//        OnUpdate.class);
+//
+//    assertThat(violations).isNotEmpty();
+//    assertThat(violations.stream()
+//        .anyMatch(v -> v.getPropertyPath().toString().contains("studentId"))).isTrue();
+//
+//  }
 
   @ParameterizedTest
   @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
@@ -609,11 +620,11 @@ class StudentDetailTest {
     }
   }
 
-  @Test
-  @DisplayName("更新時_courseIdが1未満の数値の時入力チェックにかかること")
-  void test_018() {
-
-  }
+//  @Test
+//  @DisplayName("更新時_courseIdが1未満の数値の時入力チェックにかかること")
+//  void test_018() {
+//
+//  }
 
   @ParameterizedTest
   @CsvSource({
