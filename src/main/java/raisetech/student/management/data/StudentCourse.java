@@ -1,42 +1,22 @@
 package raisetech.student.management.data;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import raisetech.student.management.data.domain.validation.CourseName;
-import raisetech.student.management.data.domain.validation.OnRegister;
-import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.data.value.Id;
 
-@Schema(description = "受講生コース")
 @Getter
 @AllArgsConstructor
 public class StudentCourse {
 
-  @Schema(description = "コースID 自動採番を行う", example = "1")
-  @Valid
-  @NotNull(groups = OnUpdate.class)
   private final Id courseId;
 
-  @Schema(
-      description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
-      example = "Javaコース"
-  )
-  @CourseName(groups = {OnRegister.class, OnUpdate.class})
-  @NotNull(groups = {OnRegister.class, OnUpdate.class})
   private final String courseName;
 
-  @Schema(description = "受講生ID", example = "1")
   private final Id studentId;
 
-  @Schema(description = "コース開始日 登録処理が実行された日付", example = "2025-01-01")
   private final LocalDate courseStartAt;
 
-  @Schema(description = "コース終了予定日 コース開始日の6か月後の日付", example = "2025-07-01")
-  @NotNull(groups = OnUpdate.class)
   private final LocalDate courseEndAt;
 
   /**
