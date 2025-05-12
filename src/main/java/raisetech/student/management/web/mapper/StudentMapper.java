@@ -10,10 +10,12 @@ import raisetech.student.management.data.value.Id;
 import raisetech.student.management.web.form.StudentCourseForm;
 import raisetech.student.management.web.form.StudentDetailForm;
 import raisetech.student.management.web.form.StudentForm;
+import raisetech.student.management.web.response.StudentDetailResponse;
 
 @Component
 public class StudentMapper {
 
+  // --- フォーム → ドメイン（登録・更新用） ---
   public StudentDetail toDomain(StudentDetailForm form) {
     Student student = toDomain(form.getStudent());
     List<StudentCourse> courses = form.getStudentCourseList().stream()
@@ -49,6 +51,9 @@ public class StudentMapper {
     );
   }
 
-  // fromDomain（必要に応じて実装）
+  // --- ドメイン → レスポンスDTO（出力用） ---
+  public StudentDetailResponse fromDomain(StudentDetail studentDetail) {
+    return new StudentDetailResponse(studentDetail);
+  }
 }
 
