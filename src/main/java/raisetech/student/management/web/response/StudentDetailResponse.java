@@ -6,7 +6,7 @@ import lombok.Getter;
 import raisetech.student.management.data.domain.StudentDetail;
 
 @Getter
-@Schema(description = "受講生詳細レスポンス")
+@Schema(description = "受講生詳細（出力用）")
 public class StudentDetailResponse {
 
   @Schema(description = "受講生情報")

@@ -3,7 +3,7 @@ package raisetech.student.management.web.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import raisetech.student.management.data.Student;
 
-@Schema(description = "受講生情報（レスポンス）")
+@Schema(description = "受講生情報（出力用）")
 public class StudentResponse {
 
   @Schema(description = "受講生ID", example = "1")
@@ -21,7 +21,7 @@ public class StudentResponse {
   @Schema(description = "メールアドレス", example = "hana@example.com")
   private final String email;
 
-  @Schema(description = "住所", example = "東京都品川区")
+  @Schema(description = "居住地（市区町村まで）", example = "東京都品川区")
   private final String area;
 
   @Schema(description = "電話番号", example = "090-1234-5678")
