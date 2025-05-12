@@ -1,4 +1,4 @@
-package raisetech.student.management.data;
+package raisetech.student.management.data.value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

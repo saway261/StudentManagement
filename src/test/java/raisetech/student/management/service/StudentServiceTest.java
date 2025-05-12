@@ -19,10 +19,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
 

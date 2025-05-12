@@ -1,7 +1,7 @@
 package raisetech.student.management.exception;
 
-import raisetech.student.management.data.Id;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.value.Id;
 
 /**
  * 入力された受講生IDあるいは受講生コースIDがテーブルに存在しないか、受講生コースIDが受講生IDに紐づかないときに投げられる例外クラスです。

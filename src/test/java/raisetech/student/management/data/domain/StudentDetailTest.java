@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.value.Id;
 
 class StudentDetailTest {
 

@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.data.domain.validation.PhoneNumber;
+import raisetech.student.management.data.value.Id;
 
 @Schema(description = "受講生")
 @Getter

@@ -9,6 +9,7 @@ import lombok.Getter;
 import raisetech.student.management.data.domain.validation.CourseName;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.value.Id;
 
 @Schema(description = "受講生コース")
 @Getter

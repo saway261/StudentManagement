@@ -2,10 +2,10 @@ package raisetech.student.management.testutil;
 
 import java.time.LocalDate;
 import java.util.List;
-import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.value.Id;
 
 public class TestDataFactory {
 
