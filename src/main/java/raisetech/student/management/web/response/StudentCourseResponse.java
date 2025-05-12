@@ -2,9 +2,11 @@ package raisetech.student.management.web.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import lombok.Getter;
 import raisetech.student.management.data.StudentCourse;
 
 @Schema(description = "受講生が受講しているコース情報（出力用）")
+@Getter
 public class StudentCourseResponse {
 
   @Schema(description = "コースID", example = "1")
