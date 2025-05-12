@@ -26,6 +26,8 @@ import raisetech.student.management.exception.InvalidAccessException;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorResponseBody;
 import raisetech.student.management.service.StudentService;
+import raisetech.student.management.web.form.StudentDetailForm;
+import raisetech.student.management.web.mapper.StudentMapper;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるControllerです。
@@ -35,10 +37,12 @@ import raisetech.student.management.service.StudentService;
 public class StudentController {
 
   private StudentService service;
+  private StudentMapper mapper;
 
   @Autowired
-  public StudentController(StudentService service) {
+  public StudentController(StudentService service, StudentMapper mapper) {
     this.service = service;
+    this.mapper = mapper;
   }
 
   @Operation(
@@ -139,10 +143,12 @@ public class StudentController {
   @PostMapping("/students")
   @Validated(OnRegister.class)
   public ResponseEntity<StudentDetail> registerStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
+      @RequestBody @Valid StudentDetailForm form) {
+    StudentDetail studentDetail = mapper.toDomain(form);
     StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
   }
+
 
   @Operation(
       summary = "受講生詳細更新",
@@ -179,9 +185,8 @@ public class StudentController {
   @PutMapping("/students")
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetail> updateStudent(
-      @RequestBody @Valid StudentDetail studentDetail)
-      throws InvalidIdException {
-
+      @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
+    StudentDetail studentDetail = mapper.toDomain(form);
     StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
   }
