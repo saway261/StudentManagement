@@ -28,6 +28,7 @@ import raisetech.student.management.exception.handling.ErrorResponseBody;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.web.form.StudentDetailForm;
 import raisetech.student.management.web.mapper.StudentMapper;
+import raisetech.student.management.web.response.StudentDetailResponse;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるControllerです。
@@ -55,8 +56,10 @@ public class StudentController {
       )}
   )
   @GetMapping("/students")
-  public List<StudentDetail> getActiveStudentDetailList() {
-    return service.searchActiveStudentDetailList();
+  public List<StudentDetailResponse> getActiveStudentDetailList() {
+    return service.searchActiveStudentDetailList().stream()
+        .map(mapper::fromDomain)
+        .toList();
   }
 
   @Operation(
@@ -93,9 +96,9 @@ public class StudentController {
       }
   )
   @GetMapping("/students/{studentId}")
-  public StudentDetail viewStudentDetail(@PathVariable("studentId") Id studentId)
+  public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
       throws InvalidIdException {
-    return service.searchStudentDetail(studentId);
+    return mapper.fromDomain(service.searchStudentDetail(studentId));
   }
 
   @Operation(
@@ -142,13 +145,13 @@ public class StudentController {
   )
   @PostMapping("/students")
   @Validated(OnRegister.class)
-  public ResponseEntity<StudentDetail> registerStudent(
+  public ResponseEntity<StudentDetailResponse> registerStudent(
       @RequestBody @Valid StudentDetailForm form) {
-    StudentDetail studentDetail = mapper.toDomain(form);
-    StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+    StudentDetail request = mapper.toDomain(form);
+    StudentDetail resistered = service.registerStudent(request);
+    StudentDetailResponse responseBody = mapper.fromDomain(resistered);
+    return ResponseEntity.ok(responseBody);
   }
-
 
   @Operation(
       summary = "受講生詳細更新",
@@ -184,10 +187,12 @@ public class StudentController {
   )
   @PutMapping("/students")
   @Validated(OnUpdate.class)
-  public ResponseEntity<StudentDetail> updateStudent(
+  public ResponseEntity<StudentDetailResponse> updateStudent(
       @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
-    StudentDetail studentDetail = mapper.toDomain(form);
-    StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+    StudentDetail request = mapper.toDomain(form);
+    StudentDetail updated = service.updateStudent(request);
+    StudentDetailResponse responseBody = mapper.fromDomain(updated);
+    return ResponseEntity.ok(responseBody);
   }
+
 }
