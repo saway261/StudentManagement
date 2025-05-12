@@ -1,11 +1,10 @@
 package raisetech.student.management.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import raisetech.student.management.data.domain.validation.CourseName;
 import raisetech.student.management.data.domain.validation.OnRegister;
@@ -13,6 +12,7 @@ import raisetech.student.management.data.domain.validation.OnUpdate;
 
 @Schema(description = "受講生コース")
 @Getter
+@AllArgsConstructor
 public class StudentCourse {
 
   @Schema(description = "コースID 自動採番を行う", example = "1")
@@ -75,19 +75,6 @@ public class StudentCourse {
       this.courseStartAt = requestCourse.courseStartAt;
       this.courseEndAt = requestCourse.getCourseEndAt();
     }
-
   }
 
-  @JsonCreator
-  public StudentCourse(@JsonProperty("courseId") Id courseId,
-      @JsonProperty("courseName") String courseName,
-      @JsonProperty("studentId") Id studentId,
-      @JsonProperty("courseStartAt") LocalDate courseStartAt,
-      @JsonProperty("courseEndAt") LocalDate courseEndAt) {
-    this.courseId = courseId;
-    this.courseName = courseName;
-    this.studentId = studentId;
-    this.courseStartAt = courseStartAt;
-    this.courseEndAt = courseEndAt;
-  }
 }

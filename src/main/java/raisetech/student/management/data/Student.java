@@ -1,7 +1,5 @@
 package raisetech.student.management.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -9,6 +7,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 import raisetech.student.management.data.domain.validation.OnRegister;
@@ -17,6 +16,7 @@ import raisetech.student.management.data.domain.validation.PhoneNumber;
 
 @Schema(description = "受講生")
 @Getter
+@AllArgsConstructor
 public class Student {
 
   @Schema(description = "受講生ID 自動採番を行う", example = "1")
@@ -68,30 +68,5 @@ public class Student {
 
   @Schema(description = "キャンセルフラグ", example = "false")
   private final boolean isDeleted;
-
-  @JsonCreator
-  public Student(@JsonProperty("studentId") Id studentId,
-      @JsonProperty("fullname") String fullname,
-      @JsonProperty("kanaName") String kanaName,
-      @JsonProperty("nickname") String nickname,
-      @JsonProperty("email") String email,
-      @JsonProperty("area") String area,
-      @JsonProperty("telephone") String telephone,
-      @JsonProperty("age") Integer age,
-      @JsonProperty("sex") String sex,
-      @JsonProperty("remark") String remark,
-      @JsonProperty("isDeleted") boolean isDeleted) {
-    this.studentId = studentId;
-    this.fullname = fullname;
-    this.kanaName = kanaName;
-    this.nickname = nickname;
-    this.email = email;
-    this.area = area;
-    this.telephone = telephone;
-    this.age = age;
-    this.sex = sex;
-    this.remark = remark;
-    this.isDeleted = isDeleted;
-  }
 
 }
