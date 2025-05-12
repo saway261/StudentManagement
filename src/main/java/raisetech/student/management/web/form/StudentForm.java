@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import raisetech.student.management.data.domain.validation.OnRegister;
@@ -17,6 +18,7 @@ import raisetech.student.management.data.domain.validation.PhoneNumber;
 @Schema(description = "受講生登録・更新用フォーム")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class StudentForm {
 
   @Schema(description = "受講生ID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")

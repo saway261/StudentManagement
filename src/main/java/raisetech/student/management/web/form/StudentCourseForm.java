@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import raisetech.student.management.data.domain.validation.CourseName;
@@ -13,6 +14,7 @@ import raisetech.student.management.data.domain.validation.OnUpdate;
 @Schema(description = "受講生コース登録・更新用フォーム")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class StudentCourseForm {
 
   @Schema(description = "コースID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")
