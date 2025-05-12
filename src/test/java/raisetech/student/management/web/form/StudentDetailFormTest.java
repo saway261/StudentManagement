@@ -85,8 +85,7 @@ class StudentDetailFormTest {
       "remark,false", //TC-12
       "courseId,false", //TC-13
       "courseName,true", //TC-14
-      "courseStartAt,false", //TC-15
-      "courseEndAt,false" //TC-16
+      "courseEndAt,false" //TC-15
   })
   @DisplayName("登録時_StudentDetailの各フィールドのnull許容性を検証する")
   void test_003(String fieldName, boolean expectViolation) {
@@ -360,20 +359,19 @@ class StudentDetailFormTest {
 
   @ParameterizedTest
   @CsvSource({// trueはNotNull, falseはnull許容
-      "studentId,true", //TC-32
-      "fullname,true", //TC-33
-      "kanaName,true", //TC-34
-      "nickname,false", //TC-35
-      "email,true", //TC-36
-      "area,false", //TC-37
-      "telephone,false", //TC-38
-      "age,false", //TC-39
-      "sex,false", //TC-40
-      "remark,false", //TC-41
-      "courseId,true", //TC-42
-      "courseName,true", //TC-43
-      "courseStartAt,false", //TC-44
-      "courseEndAt,true" //TC-45
+      "studentId,true", //TC-31
+      "fullname,true", //TC-32
+      "kanaName,true", //TC-33
+      "nickname,false", //TC-34
+      "email,true", //TC-35
+      "area,false", //TC-36
+      "telephone,false", //TC-37
+      "age,false", //TC-38
+      "sex,false", //TC-39
+      "remark,false", //TC-40
+      "courseId,true", //TC-41
+      "courseName,true", //TC-42
+      "courseEndAt,true" //TC-43
   })
   @DisplayName("更新時_StudentDetailの各フィールドのnull許容性を検証する")
   void test_011(String fieldName, boolean expectViolation) {
