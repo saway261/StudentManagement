@@ -413,13 +413,22 @@ class StudentDetailFormTest {
     }
   }
 
-  /// /  @Test /  @DisplayName("更新時_studentIdが1未満の数値の時入力チェックにかかること") /  void test_012() { /    Id
-  /// studentId = new Id(-3); /    Id courseId = new Id(1); / /    StudentDetail studentDetail =
-  /// makeCompletedStudentDetail(studentId, courseId); / / Set<ConstraintViolation<StudentDetail>>
-  /// violations = validator.validate(studentDetail, / OnUpdate.class); / /
-  /// assertThat(violations).isNotEmpty(); / assertThat(violations.stream() /        .anyMatch(v ->
-  /// v.getPropertyPath().toString().contains("studentId"))).isTrue(); / /  }
-//
+  @Test
+  @DisplayName("更新時_studentIdが1未満の数値の時入力チェックにかかること")
+  void test_012() {
+    Integer studentId = -3;
+    Integer courseId = 1;
+    StudentDetailForm studentDetail = new StudentDetailForm(
+        makeCompletedStudentForm(studentId),
+        List.of(makeCompletedStudentCourseForm(courseId)));
+
+    Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
+        OnUpdate.class);
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("studentId"))).isTrue();
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
   @DisplayName("更新時_文字列超過のとき入力チェックにかかること")
@@ -597,13 +606,22 @@ class StudentDetailFormTest {
     }
   }
 
-  //
-//  @Test
-//  @DisplayName("更新時_courseIdが1未満の数値の時入力チェックにかかること")
-//  void test_018() {
-//
-//  }
-//
+  @Test
+  @DisplayName("更新時_courseIdが1未満の数値の時入力チェックにかかること")
+  void test_018() {
+    Integer studentId = 1;
+    Integer courseId = -3;
+    StudentDetailForm studentDetail = new StudentDetailForm(
+        makeCompletedStudentForm(studentId),
+        List.of(makeCompletedStudentCourseForm(courseId)));
+
+    Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
+        OnUpdate.class);
+    assertThat(violations).isNotEmpty();
+    assertThat(violations.stream()
+        .anyMatch(v -> v.getPropertyPath().toString().contains("courseId"))).isTrue();
+  }
+
   @ParameterizedTest
   @CsvSource({
       "Javaコース,false",
