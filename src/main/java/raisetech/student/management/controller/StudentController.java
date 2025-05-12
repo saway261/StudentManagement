@@ -51,7 +51,7 @@ public class StudentController {
       description = "アクティブな受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません",
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
-              array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+              array = @ArraySchema(schema = @Schema(implementation = StudentDetailResponse.class))
           )
       )}
   )
@@ -79,7 +79,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )),
           @ApiResponse(
               responseCode = "404", description = "指定された受講生IDが存在しなかったときのエラー",
@@ -124,7 +124,7 @@ public class StudentController {
           description = "新規に登録したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = StudentDetailForm.class)
           )
       ),
       responses = {
@@ -132,7 +132,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )
           ),
           @ApiResponse(
@@ -160,7 +160,7 @@ public class StudentController {
           description = "更新したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = StudentDetailForm.class)
           )
       ),
       responses = {
@@ -168,7 +168,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )
           ),
           @ApiResponse(
