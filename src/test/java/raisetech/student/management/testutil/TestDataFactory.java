@@ -58,4 +58,24 @@ public class TestDataFactory {
 
     return new StudentDetailForm(studentForm, List.of(studentCourseForm));
   }
+
+  public static StudentCourseForm makeCompletedStudentCourseForm(Integer courseId) {
+    LocalDate now = LocalDate.now();
+    return new StudentCourseForm(
+        courseId, "Javaコース", now.plusMonths(6)
+    );
+  }
+
+  public static StudentCourseForm makeEnoughStudentCourseFormOnRegister() {
+    return new StudentCourseForm(
+        null, "Javaコース", null
+    );
+  }
+
+  public static StudentForm makeCompletedStudentForm(Integer studentId) {
+    return new StudentForm(
+        studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
+        "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false
+    );
+  }
 }
