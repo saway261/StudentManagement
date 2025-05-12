@@ -45,13 +45,14 @@ public class StudentMapper {
     return new StudentCourse(
         form.getCourseId() == null ? null : new Id(form.getCourseId()),
         form.getCourseName(),
-        form.getStudentId() == null ? null : new Id(form.getStudentId()),
-        form.getCourseStartAt(),
-        form.getCourseEndAt()
+        null,
+        null,
+        form.getCourseEndAt() == null ? null : form.getCourseEndAt()
     );
   }
 
   // --- ドメイン → レスポンスDTO（出力用） ---
+
   public StudentDetailResponse fromDomain(StudentDetail studentDetail) {
     return new StudentDetailResponse(studentDetail);
   }
