@@ -28,12 +28,6 @@ public class StudentCourseForm {
   @CourseName(groups = {OnRegister.class, OnUpdate.class})
   private String courseName;
 
-  @Schema(description = "受講生ID（サーバ側で設定）", example = "1")
-  private Integer studentId;
-
-  @Schema(description = "コース開始日（システム側で自動設定）", example = "2025-01-01")
-  private LocalDate courseStartAt;
-
   @Schema(description = "コース終了予定日（更新時に設定）", example = "2025-07-01")
   @NotNull(groups = OnUpdate.class)
   private LocalDate courseEndAt;
