@@ -3,13 +3,12 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
 import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
-import static raisetech.student.management.testutil.TestDataFactory.makeEnoughStudentCourseOnRegister;
+import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnRegister;
+import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnUpdate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -25,6 +24,8 @@ import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
 import raisetech.student.management.service.StudentService;
+import raisetech.student.management.web.form.StudentDetailForm;
+import raisetech.student.management.web.mapper.StudentMapper;
 
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
@@ -34,6 +35,9 @@ class StudentControllerTest {
 
   @Autowired
   private StudentService service;
+
+  @Autowired
+  private StudentMapper mapper;
 
   private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -45,6 +49,11 @@ class StudentControllerTest {
     @Bean
     public StudentService service() {
       return Mockito.mock(StudentService.class);
+    }
+
+    @Bean
+    public StudentMapper mapper() {
+      return Mockito.mock(StudentMapper.class);
     }
 
     @Bean
@@ -126,47 +135,43 @@ class StudentControllerTest {
   void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    Id studentIdBeforeRegister = null;//リクエスト時のIDは未入力のためnull
-    Id courseIdBeforeRegister = null;//リクエスト時のIDは未入力のためnull
-    Id studentIdAfterRegister = new Id(1);
-    Id courseIdAfterRegister = new Id(1);
-    StudentDetail requestStudentDetail = new StudentDetail(
-        makeCompletedStudent(studentIdBeforeRegister),
-        List.of(makeEnoughStudentCourseOnRegister(studentIdBeforeRegister, courseIdBeforeRegister))
-    );
-    StudentDetail responseStudentDetail = makeCompletedStudentDetail(studentIdAfterRegister,
-        courseIdAfterRegister);
-    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
+    StudentDetailForm form = makeDummyStudentDetailFormOnRegister(); // JSONにする対象
+    StudentDetail expectedDomain = mapper.toDomain(form); // サービスに渡る想定値
+    StudentDetail expectedResponse = makeCompletedStudentDetail(new Id(1), new Id(1));
+    Mockito.when(service.registerStudent(expectedDomain)).thenReturn(expectedResponse);
 
-    // Act & Assertion
+    // Act
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(requestStudentDetail))
-    ).andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(form)))
+        .andExpect(status().isOk());
+
+    // Assert
     Mockito.verify(service, times(1)).registerStudent(captor.capture());
-    assertThat(captor.getValue())
-        .usingRecursiveComparison()
-        .isEqualTo(requestStudentDetail);
+    assertThat(captor.getValue()).usingRecursiveComparison()
+        .isEqualTo(expectedDomain);
   }
 
   @Test
   void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    Id studentId = new Id(1);
-    Id courseId = new Id(1);
-    StudentDetail requestStudentDetail = makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
+    Integer studentId = 1;
+    Integer courseId = 1;
+    StudentDetailForm form = makeDummyStudentDetailFormOnUpdate(studentId, courseId); // ← JSONにする対象
+    StudentDetail expectedDomain = mapper.toDomain(form); // ← サービスに渡る想定値
+    StudentDetail expectedResponse = expectedDomain;
+    Mockito.when(service.updateStudent(expectedDomain)).thenReturn(expectedResponse);
 
     // Act & Assertion
     mockMvc.perform(MockMvcRequestBuilders.put("/students")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(requestStudentDetail))
+        .content(objectMapper.writeValueAsString(form))
     ).andExpect(status().isOk());
     Mockito.verify(service, times(1)).updateStudent(captor.capture());
     assertThat(captor.getValue())
         .usingRecursiveComparison()
-        .isEqualTo(requestStudentDetail);
+        .isEqualTo(expectedDomain);
   }
 
 }
