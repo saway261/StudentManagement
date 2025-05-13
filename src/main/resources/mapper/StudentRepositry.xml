@@ -5,7 +5,7 @@
 
   <!-- アクティブ受講生の全件検索--><!-- id=メソッド名　resultType=返り値のクラスのフルパス-->
   <select id="searchActiveStudentList" resultType="raisetech.student.management.data.Student">
-    SELECT * FROM students WHERE is_deleted = 0
+    SELECT * FROM students WHERE is_deleted = false
   </select>
 
   <!-- 受講生の検索-->
