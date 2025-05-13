@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -27,6 +28,16 @@ class StudentRepositoryTest {
     Student actual = sut.searchStudent(studentId);
 
     assertThat(actual.getStudentId()).isEqualTo(studentId);
+  }
+
+  @Test
+  void 受講生IDに紐づく受講生コースの一覧を検索できること() {
+    int studentId = 2;
+    List<StudentCourse> actual = sut.searchCourses(studentId);
+
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual.stream()
+        .allMatch(course -> course.getStudentId() == studentId)).isTrue();
   }
 
   @Test
