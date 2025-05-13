@@ -41,7 +41,7 @@ public class StudentResponse {
   @Schema(description = "削除フラグ", example = "false")
   private final boolean isDeleted;
 
-  public StudentResponse(Student domain) {
+  StudentResponse(Student domain) { //package private
     this.studentId = domain.getStudentId().getValue(); // Id → int
     this.fullname = domain.getFullname();
     this.kanaName = domain.getKanaName();
@@ -54,5 +54,6 @@ public class StudentResponse {
     this.remark = domain.getRemark();
     this.isDeleted = domain.isDeleted();
   }
+
 }
 
