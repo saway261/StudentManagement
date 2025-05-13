@@ -1,5 +1,8 @@
 package raisetech.student.management.controller;
 
+import static raisetech.student.management.web.form.StudentDetailForm.toDomain;
+import static raisetech.student.management.web.response.StudentDetailResponse.fromDomain;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -8,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +31,6 @@ import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorResponseBody;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.web.form.StudentDetailForm;
-import raisetech.student.management.web.mapper.StudentMapper;
 import raisetech.student.management.web.response.StudentDetailResponse;
 
 /**
@@ -38,12 +41,10 @@ import raisetech.student.management.web.response.StudentDetailResponse;
 public class StudentController {
 
   private StudentService service;
-  private StudentMapper mapper;
 
   @Autowired
-  public StudentController(StudentService service, StudentMapper mapper) {
+  public StudentController(StudentService service) {
     this.service = service;
-    this.mapper = mapper;
   }
 
   @Operation(
@@ -57,9 +58,11 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetailResponse> getActiveStudentDetailList() {
-    return service.searchActiveStudentDetailList().stream()
-        .map(mapper::fromDomain)
-        .toList();
+    List<StudentDetailResponse> responseList = new ArrayList<>();
+    for (StudentDetail studentDetail : service.searchActiveStudentDetailList()) {
+      responseList.add(fromDomain(studentDetail));
+    }
+    return responseList;
   }
 
   @Operation(
@@ -98,7 +101,7 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
       throws InvalidIdException {
-    return mapper.fromDomain(service.searchStudentDetail(studentId));
+    return fromDomain(service.searchStudentDetail(studentId));
   }
 
   @Operation(
@@ -147,9 +150,9 @@ public class StudentController {
   @Validated(OnRegister.class)
   public ResponseEntity<StudentDetailResponse> registerStudent(
       @RequestBody @Valid StudentDetailForm form) {
-    StudentDetail request = mapper.toDomain(form);
+    StudentDetail request = toDomain(form);
     StudentDetail resistered = service.registerStudent(request);
-    StudentDetailResponse responseBody = mapper.fromDomain(resistered);
+    StudentDetailResponse responseBody = fromDomain(resistered);
     return ResponseEntity.ok(responseBody);
   }
 
@@ -189,9 +192,9 @@ public class StudentController {
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetailResponse> updateStudent(
       @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
-    StudentDetail request = mapper.toDomain(form);
+    StudentDetail request = toDomain(form);
     StudentDetail updated = service.updateStudent(request);
-    StudentDetailResponse responseBody = mapper.fromDomain(updated);
+    StudentDetailResponse responseBody = fromDomain(updated);
     return ResponseEntity.ok(responseBody);
   }
 
