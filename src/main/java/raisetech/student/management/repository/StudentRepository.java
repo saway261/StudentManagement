@@ -35,13 +35,6 @@ public interface StudentRepository {
   List<StudentCourse> searchCourses(int studentId);
 
   /**
-   * 受講生テーブルに登録されている受講生IDの一覧を取得します。
-   *
-   * @return 受講生IDの一覧
-   */
-  List<Integer> searchStudentIdList();
-
-  /**
    * 引数で渡された受講生IDに紐づいている受講生コースIDの一覧を取得します。
    *
    * @return 受講生コースIDの一覧
