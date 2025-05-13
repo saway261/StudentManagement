@@ -53,8 +53,8 @@ public class StudentMapper {
 
   // --- ドメイン → レスポンスDTO（出力用） ---
 
-  public StudentDetailResponse fromDomain(StudentDetail studentDetail) {
-    return new StudentDetailResponse(studentDetail);
+  public StudentDetailResponse fromDomain(StudentDetail domain) {
+    return new StudentDetailResponse(domain);
   }
 }
 
