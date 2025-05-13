@@ -21,11 +21,11 @@ public class StudentCourseResponse {
   @Schema(description = "コース終了予定日", example = "2025-07-01")
   private final LocalDate courseEndAt;
 
-  public StudentCourseResponse(StudentCourse course) {
-    this.courseId = course.getCourseId().getValue();
-    this.courseName = course.getCourseName();
-    this.courseStartAt = course.getCourseStartAt();
-    this.courseEndAt = course.getCourseEndAt();
+  public StudentCourseResponse(StudentCourse domain) {
+    this.courseId = domain.getCourseId().getValue();
+    this.courseName = domain.getCourseName();
+    this.courseStartAt = domain.getCourseStartAt();
+    this.courseEndAt = domain.getCourseEndAt();
   }
 }
 

@@ -41,20 +41,18 @@ public class StudentResponse {
   @Schema(description = "削除フラグ", example = "false")
   private final boolean isDeleted;
 
-  public StudentResponse(Student student) {
-    this.studentId = student.getStudentId().getValue(); // Id → int
-    this.fullname = student.getFullname();
-    this.kanaName = student.getKanaName();
-    this.nickname = student.getNickname();
-    this.email = student.getEmail();
-    this.area = student.getArea();
-    this.telephone = student.getTelephone();
-    this.age = student.getAge();
-    this.sex = student.getSex();
-    this.remark = student.getRemark();
-    this.isDeleted = student.isDeleted();
+  public StudentResponse(Student domain) {
+    this.studentId = domain.getStudentId().getValue(); // Id → int
+    this.fullname = domain.getFullname();
+    this.kanaName = domain.getKanaName();
+    this.nickname = domain.getNickname();
+    this.email = domain.getEmail();
+    this.area = domain.getArea();
+    this.telephone = domain.getTelephone();
+    this.age = domain.getAge();
+    this.sex = domain.getSex();
+    this.remark = domain.getRemark();
+    this.isDeleted = domain.isDeleted();
   }
-
-  // getter（必要に応じて lombok @Getter を使ってもOK）
 }
 

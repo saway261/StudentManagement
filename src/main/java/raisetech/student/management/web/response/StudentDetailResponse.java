@@ -15,9 +15,9 @@ public class StudentDetailResponse {
   @Schema(description = "受講生が登録しているすべてのコース情報")
   private final List<StudentCourseResponse> studentCourseList;
 
-  public StudentDetailResponse(StudentDetail studentDetail) {
-    this.student = new StudentResponse(studentDetail.getStudent());
-    this.studentCourseList = studentDetail.getStudentCourseList().stream()
+  public StudentDetailResponse(StudentDetail domain) {
+    this.student = new StudentResponse(domain.getStudent());
+    this.studentCourseList = domain.getStudentCourseList().stream()
         .map(StudentCourseResponse::new)
         .toList();
   }
