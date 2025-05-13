@@ -21,6 +21,13 @@ class StudentRepositoryTest {
     assertThat(actual.size()).isEqualTo(5);
   }
 
+  @Test
+  void 受講生の単一検索が行えること() {
+    int studentId = 1;
+    Student actual = sut.searchStudent(studentId);
+
+    assertThat(actual.getStudentId()).isEqualTo(studentId);
+  }
 
   @Test
   void 受講生登録が行えること() {
