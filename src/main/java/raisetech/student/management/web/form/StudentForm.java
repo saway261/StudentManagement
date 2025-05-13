@@ -11,9 +11,11 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import raisetech.student.management.data.Student;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.data.domain.validation.PhoneNumber;
+import raisetech.student.management.data.value.Id;
 
 @Schema(description = "受講生登録・更新用フォーム")
 @Data
@@ -70,5 +72,21 @@ public class StudentForm {
 
   @Schema(description = "キャンセルフラグ", example = "false")
   private boolean isDeleted;
+
+  Student toDomain(StudentForm form) { //package private
+    return new Student(
+        form.getStudentId() == null ? null : new Id(form.getStudentId()),
+        form.getFullname(),
+        form.getKanaName(),
+        form.getNickname(),
+        form.getEmail(),
+        form.getArea(),
+        form.getTelephone(),
+        form.getAge(),
+        form.getSex(),
+        form.getRemark(),
+        form.isDeleted()
+    );
+  }
 
 }
