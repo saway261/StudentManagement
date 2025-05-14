@@ -105,18 +105,40 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース情報の更新が行えること() {
+  void 受講生コース名およびコース終了予定日の更新を行うことができ受講生IDとコース開始日の更新はできないこと() {
+    Integer studentId = 1;
     Integer courseId = 1;
-    StudentCourse expected = new StudentCourse(
+    StudentCourse original = new StudentCourse(
         courseId,
         "Javaコース",
-        1,
-        null,
+        studentId,
+        LocalDate.of(2024, 7, 15),
         LocalDate.of(2025, 4, 15)
     );
 
+    StudentCourse forUpdate = new StudentCourse(
+        courseId,
+        "AWSコース",
+        2,
+        LocalDate.of(2023, 10, 15),
+        LocalDate.of(2025, 12, 15)
+    );
+
+    sut.updateCourse(forUpdate);
+
+    StudentCourse actual = sut.searchCourses(studentId).stream()
+        .filter(sc -> sc.getCourseId().equals(courseId))
+        .findFirst()
+        .orElseThrow(() -> new AssertionError(
+            "指定された courseId の StudentCourse が見つかりませんでした"));
+
+    assertThat(actual.getCourseName()).isEqualTo(forUpdate.getCourseName());
+    assertThat(actual.getStudentId()).isEqualTo(original.getStudentId());
+    assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
+    assertThat(actual.getCourseEndAt()).isEqualTo(forUpdate.getCourseEndAt());
 
   }
+
 
   @Test
   void 受講生の論理削除が行えること() {
