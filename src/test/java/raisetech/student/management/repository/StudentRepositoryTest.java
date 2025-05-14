@@ -41,6 +41,14 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 受講生IDに紐づく受講生コースIDの一覧を検索できること() {
+    int studentId = 4;
+    List<Integer> actual = sut.searchCourseIdListLinkedStudentId(studentId);
+
+    assertThat(actual.size()).isEqualTo(2);
+  }
+
+  @Test
   void 受講生登録が行えること() {
     sut.registerStudent(makeCompletedStudent(null));
 
