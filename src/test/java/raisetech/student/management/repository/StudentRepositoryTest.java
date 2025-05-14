@@ -2,6 +2,7 @@ package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
+import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourse;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,17 @@ class StudentRepositoryTest {
     List<Student> actual = sut.searchActiveStudentList();
     assertThat(actual.size()).isEqualTo(6);
 
+  }
+
+  @Test
+  void 受講生コース登録が行えること() {
+    int studentId = 1;
+    sut.registerCourse(makeCompletedStudentCourse(studentId, null));
+
+    List<StudentCourse> actual = sut.searchCourses(studentId);
+    assertThat(actual.size()).isEqualTo(2);
+    assertThat(actual.stream()
+        .allMatch(course -> course.getStudentId() == studentId)).isTrue();
   }
 
 
