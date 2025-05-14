@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
 import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnRegister;
 import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnUpdate;
-import static raisetech.student.management.web.form.StudentDetailForm.toDomain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -128,7 +127,7 @@ class StudentControllerTest {
       throws Exception {
     // Arrange
     StudentDetailForm form = makeDummyStudentDetailFormOnRegister(); // JSONにする対象
-    StudentDetail expectedDomain = toDomain(form); // サービスに渡る想定値
+    StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // サービスに渡る想定値
     StudentDetail expectedResponse = makeCompletedStudentDetail(new Id(1), new Id(1));
     Mockito.when(service.registerStudent(Mockito.any(StudentDetail.class)))
         .thenReturn(expectedResponse);
@@ -152,7 +151,7 @@ class StudentControllerTest {
     Integer studentId = 1;
     Integer courseId = 1;
     StudentDetailForm form = makeDummyStudentDetailFormOnUpdate(studentId, courseId); // ← JSONにする対象
-    StudentDetail expectedDomain = toDomain(form); // ← サービスに渡る想定値
+    StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // ← サービスに渡る想定値
     StudentDetail expectedResponse = expectedDomain;
     Mockito.when(service.updateStudent(Mockito.any(StudentDetail.class)))
         .thenReturn(expectedResponse);

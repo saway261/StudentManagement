@@ -6,7 +6,6 @@ import static raisetech.student.management.testutil.TestDataFactory.makeComplete
 import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnRegister;
 import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnUpdate;
 import static raisetech.student.management.testutil.TestDataFactory.makeEnoughStudentCourseFormOnRegister;
-import static raisetech.student.management.web.form.StudentDetailForm.toDomain;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -706,7 +705,7 @@ class StudentDetailFormTest {
       List<StudentCourseForm> coursesForm = detailForm.getStudentCourseList();
 
       // Act
-      StudentDetail domain = toDomain(detailForm);
+      StudentDetail domain = StudentDetailForm.toDomain(detailForm);
 
       // Assert
       Student studentDomain = domain.getStudent();
@@ -742,7 +741,7 @@ class StudentDetailFormTest {
       List<StudentCourseForm> coursesForm = detailForm.getStudentCourseList();
 
       // Act
-      StudentDetail domain = toDomain(detailForm);
+      StudentDetail domain = StudentDetailForm.toDomain(detailForm);
 
       // Assert
       Student studentDomain = domain.getStudent();
