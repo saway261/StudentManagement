@@ -74,16 +74,14 @@ class IdTest {
   class OnUpdateValidation {
 
     @Test
-    @DisplayName("nullは許容される")
-    void nullValue_isValid() {
+    void nullは許容される() {
       Id id = new Id(null);
       Set<ConstraintViolation<Id>> violations = validator.validate(id, OnUpdate.class);
       assertThat(violations).isEmpty();
     }
 
     @Test
-    @DisplayName("正の値は許容される")
-    void positiveValue_isValid() {
+    void 正の値は許容される() {
       Id id = new Id(10);
       Set<ConstraintViolation<Id>> violations = validator.validate(id, OnUpdate.class);
       assertThat(violations).isEmpty();
