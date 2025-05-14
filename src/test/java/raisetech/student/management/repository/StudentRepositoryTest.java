@@ -143,6 +143,29 @@ class StudentRepositoryTest {
   @Test
   void 受講生の論理削除が行えること() {
 
+    Integer studentId = 1;
+    Student forLogicalDelete = new Student(
+        studentId,
+        "田中太郎",
+        "たなかたろう",
+        "タロー",
+        "tarotaro@gmail.com",
+        "茨城県かすみがうら市",
+        "080-1234-5678",
+        32,
+        "男",
+        "",
+        true //もとはfalse
+    );
+
+    sut.updateStudent(forLogicalDelete);
+
+    List<Student> actual = sut.searchActiveStudentList();
+
+    assertThat(actual.size()).isEqualTo(4);
+    assertThat(
+        actual.stream().allMatch(student -> student.getStudentId().equals(studentId))).isFalse();
+
   }
 
 
