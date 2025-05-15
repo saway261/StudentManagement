@@ -164,7 +164,7 @@ class StudentDetailFormTest {
           .allMatch(v -> v.getPropertyPath().toString().equals("student." + fieldName))).isTrue();
     }
 
-    @ParameterizedTest(name = "[{index}] 登録時_emailの形式が {0} のときバリデーションエラー : true")
+    @ParameterizedTest(name = "[{index}] 登録時_emailの形式が ”{0}” のときバリデーションエラー : true")
     @ValueSource(strings = {
         "plainaddress",        // @なし
         "@missingusername.com",// ユーザー名なし
@@ -193,7 +193,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.email"));
     }
 
-    @ParameterizedTest(name = "[{index}] 登録時_電話番号の形式が {0} のときバリデーションエラー : true")
+    @ParameterizedTest(name = "[{index}] 登録時_電話番号の形式が ”{0}” のときバリデーションエラー : true")
     @ValueSource(strings = {
         "09000000000",     // ハイフンなし
         "090-0000-000",    // 下4桁が3桁
@@ -268,7 +268,7 @@ class StudentDetailFormTest {
           .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
     }
 
-    @ParameterizedTest(name = "登録時_性別が {0} のときバリデーションエラー：{1}")
+    @ParameterizedTest(name = "[{index}] 登録時_性別が ”{0}” のときバリデーションエラー：{1}")
     @CsvSource({
         "男,false",
         "女,false",
@@ -303,7 +303,7 @@ class StudentDetailFormTest {
       }
     }
 
-    @ParameterizedTest(name = "登録時_コース名が {0} のときバリデーションエラー：{1}")
+    @ParameterizedTest(name = "[{index}] 登録時_コース名が ”{0}” のときバリデーションエラー：{1}")
     @CsvSource({
         "Javaコース,false",
         "AWSコース,false",
@@ -505,7 +505,7 @@ class StudentDetailFormTest {
 
     }
 
-    @ParameterizedTest(name = "[{index}] 更新時_emailの形式が {0} のときバリデーションエラー : true")
+    @ParameterizedTest(name = "[{index}] 更新時_emailの形式が ”{0}” のときバリデーションエラー : true")
     @ValueSource(strings = {
         "plainaddress",        // @なし
         "@missingusername.com",// ユーザー名なし
@@ -534,7 +534,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.email"));
     }
 
-    @ParameterizedTest(name = "[{index}] 更新時_電話番号の形式が {0} のときバリデーションエラー : true")
+    @ParameterizedTest(name = "[{index}] 更新時_電話番号の形式が ”{0}” のときバリデーションエラー : true")
     @ValueSource(strings = {
         "09000000000",     // ハイフンなし
         "090-0000-000",    // 下4桁が3桁
@@ -610,7 +610,7 @@ class StudentDetailFormTest {
     }
 
 
-    @ParameterizedTest(name = "更新時_性別が {0} のときバリデーションエラー：{1}")
+    @ParameterizedTest(name = "[{index}] 更新時_性別が ”{0}” のときバリデーションエラー：{1}")
     @CsvSource({
         "男,false",
         "女,false",
@@ -661,7 +661,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().contains("courseId"))).isTrue();
     }
 
-    @ParameterizedTest(name = "更新時_コース名が {0} のときバリデーションエラー：{1}")
+    @ParameterizedTest(name = "[{index}] 更新時_コース名が ”{0}” のときバリデーションエラー：{1}")
     @CsvSource({
         "Javaコース,false",
         "AWSコース,false",
