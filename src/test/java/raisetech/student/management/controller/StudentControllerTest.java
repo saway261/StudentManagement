@@ -3,9 +3,6 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
-import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnRegister;
-import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnUpdate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,6 +21,7 @@ import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
 import raisetech.student.management.service.StudentService;
+import raisetech.student.management.testutil.TestDataFactory;
 import raisetech.student.management.web.form.StudentDetailForm;
 
 @WebMvcTest(StudentController.class)
@@ -69,7 +67,7 @@ class StudentControllerTest {
     // Arrange
     Id studentId = new Id(1);
     Id courseId = new Id(1);
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
     // Act & Assert
@@ -126,9 +124,10 @@ class StudentControllerTest {
   void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    StudentDetailForm form = makeDummyStudentDetailFormOnRegister(); // JSONにする対象
+    StudentDetailForm form = TestDataFactory.makeDummyStudentDetailFormOnRegister(); // JSONにする対象
     StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // サービスに渡る想定値
-    StudentDetail expectedResponse = makeCompletedStudentDetail(new Id(1), new Id(1));
+    StudentDetail expectedResponse = TestDataFactory.makeCompletedStudentDetail(new Id(1),
+        new Id(1));
     Mockito.when(service.registerStudent(Mockito.any(StudentDetail.class)))
         .thenReturn(expectedResponse);
 
@@ -150,7 +149,8 @@ class StudentControllerTest {
     // Arrange
     Integer studentId = 1;
     Integer courseId = 1;
-    StudentDetailForm form = makeDummyStudentDetailFormOnUpdate(studentId, courseId); // ← JSONにする対象
+    StudentDetailForm form = TestDataFactory.makeDummyStudentDetailFormOnUpdate(studentId,
+        courseId); // ← JSONにする対象
     StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // ← サービスに渡る想定値
     StudentDetail expectedResponse = expectedDomain;
     Mockito.when(service.updateStudent(Mockito.any(StudentDetail.class)))

@@ -4,9 +4,6 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourse;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,6 +22,7 @@ import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.testutil.TestDataFactory;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -42,7 +40,7 @@ class StudentServiceTest {
     Id studentId = new Id(1);
     Id courseId = new Id(1);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     List<Student> studentList = List.of(studentDetail.getStudent());
     Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
@@ -63,7 +61,7 @@ class StudentServiceTest {
     Id studentId = new Id(1);
     Id courseId = new Id(1);
     //事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // 実際の実行結果
@@ -99,7 +97,7 @@ class StudentServiceTest {
     LocalDate now = LocalDate.now();
 
     // ID付きの Student を用意（DB登録後の状態を模倣）
-    Student student = makeCompletedStudent(studentIdAfterRegister);
+    Student student = TestDataFactory.makeCompletedStudent(studentIdAfterRegister);
 
     // 登録時に使う StudentDetail（IDあり前提）
     StudentDetail studentDetail = new StudentDetail(
@@ -135,7 +133,7 @@ class StudentServiceTest {
     Id studentId = new Id(1);
     Id courseId = new Id(1);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentCourseList();
     doReturn(true).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
@@ -157,7 +155,7 @@ class StudentServiceTest {
     Id studentId = new Id(1);
     Id courseId = new Id(99);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     doReturn(false).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
 
     // 実行と検証
@@ -173,8 +171,9 @@ class StudentServiceTest {
     Id courseId = new Id(1);
 
     //事前準備
-    Student student = makeCompletedStudent(studentId);
-    List<StudentCourse> courseList = List.of(makeCompletedStudentCourse(studentId, courseId));
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
+    List<StudentCourse> courseList = List.of(
+        TestDataFactory.makeCompletedStudentCourse(studentId, courseId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchCourses(studentId)).thenReturn(courseList);
@@ -198,7 +197,7 @@ class StudentServiceTest {
     Id courseId = new Id(1);
 
     //事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
     List<Id> containCourseIdList = List.of(new Id(1));
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         containCourseIdList);
@@ -217,7 +216,7 @@ class StudentServiceTest {
     Id courseId = new Id(99);
 
     //事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
     List<Id> notContainCourseIdList = List.of(new Id(30));
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
@@ -235,7 +234,7 @@ class StudentServiceTest {
     Id courseId = new Id(1);
 
     // 事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
     List<Id> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 

@@ -1,11 +1,6 @@
 package raisetech.student.management.web.form;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourseForm;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentForm;
-import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnRegister;
-import static raisetech.student.management.testutil.TestDataFactory.makeDummyStudentDetailFormOnUpdate;
-import static raisetech.student.management.testutil.TestDataFactory.makeEnoughStudentCourseFormOnRegister;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -27,6 +22,7 @@ import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 import raisetech.student.management.data.value.Id;
+import raisetech.student.management.testutil.TestDataFactory;
 
 class StudentDetailFormTest {
 
@@ -49,7 +45,7 @@ class StudentDetailFormTest {
       Integer courseId = 1;
       Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
       StudentDetailForm invalidStudentDetailForm = new StudentDetailForm(
-          null, List.of(makeCompletedStudentCourseForm(courseId))
+          null, List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId))
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetailForm,
@@ -70,7 +66,7 @@ class StudentDetailFormTest {
       Integer studentId = 1;
       Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
       StudentDetailForm invalidStudentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId), new ArrayList<StudentCourseForm>()
+          TestDataFactory.makeCompletedStudentForm(studentId), new ArrayList<StudentCourseForm>()
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetail,
@@ -160,7 +156,7 @@ class StudentDetailFormTest {
           false
       );
       StudentDetailForm invalid = new StudentDetailForm(student,
-          List.of(makeEnoughStudentCourseFormOnRegister()));
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister()));
 
       // Act
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(invalid,
@@ -191,7 +187,7 @@ class StudentDetailFormTest {
           "東京都", "090-0000-0000", 20, "男", "", false
       );
       StudentDetailForm studentDetail = new StudentDetailForm(student,
-          List.of(makeEnoughStudentCourseFormOnRegister()));
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister()));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnRegister.class);
@@ -231,7 +227,7 @@ class StudentDetailFormTest {
       );
 
       StudentDetailForm studentDetail = new StudentDetailForm(invalidStudent,
-          List.of(makeEnoughStudentCourseFormOnRegister()));
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister()));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnRegister.class);
@@ -264,7 +260,7 @@ class StudentDetailFormTest {
               "特になし",
               false
           ),
-          List.of(makeEnoughStudentCourseFormOnRegister())
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister())
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetail,
@@ -296,7 +292,7 @@ class StudentDetailFormTest {
           "東京都", "090-0000-0000", 20, sex, "", false
       );
       StudentDetailForm StudentDetail = new StudentDetailForm(invalidStudent,
-          List.of(makeEnoughStudentCourseFormOnRegister()));
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister()));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(StudentDetail,
           OnRegister.class);
@@ -328,7 +324,7 @@ class StudentDetailFormTest {
       Integer courseId = null;
 
       StudentDetailForm invalidStudentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
+          TestDataFactory.makeCompletedStudentForm(studentId),
           List.of(new StudentCourseForm(
               courseId,
               courseName,
@@ -358,8 +354,8 @@ class StudentDetailFormTest {
       Integer studentId = null;
       Integer courseId = null;
       StudentDetailForm validStudentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
-          List.of(makeEnoughStudentCourseFormOnRegister())
+          TestDataFactory.makeCompletedStudentForm(studentId),
+          List.of(TestDataFactory.makeEnoughStudentCourseFormOnRegister())
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           validStudentDetail,
@@ -429,8 +425,8 @@ class StudentDetailFormTest {
       Integer studentId = -3;
       Integer courseId = 1;
       StudentDetailForm studentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          TestDataFactory.makeCompletedStudentForm(studentId),
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnUpdate.class);
@@ -463,7 +459,7 @@ class StudentDetailFormTest {
           false
       );
       StudentDetailForm invalid = new StudentDetailForm(student,
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       // Act
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(invalid,
@@ -495,7 +491,7 @@ class StudentDetailFormTest {
           "東京都", "090-0000-0000", 20, "男", "", false
       );
       StudentDetailForm studentDetail = new StudentDetailForm(student,
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnUpdate.class);
@@ -535,7 +531,7 @@ class StudentDetailFormTest {
       );
 
       StudentDetailForm studentDetail = new StudentDetailForm(invalidStudent,
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnUpdate.class);
@@ -568,7 +564,7 @@ class StudentDetailFormTest {
               "特になし",
               false
           ),
-          List.of(makeCompletedStudentCourseForm(courseId))
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId))
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetail,
@@ -601,7 +597,7 @@ class StudentDetailFormTest {
           "東京都", "090-0000-0000", 20, sex, "", false
       );
       StudentDetailForm StudentDetail = new StudentDetailForm(invalidStudent,
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(StudentDetail,
           OnUpdate.class);
@@ -622,8 +618,8 @@ class StudentDetailFormTest {
       Integer studentId = 1;
       Integer courseId = -3;
       StudentDetailForm studentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
-          List.of(makeCompletedStudentCourseForm(courseId)));
+          TestDataFactory.makeCompletedStudentForm(studentId),
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId)));
 
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(studentDetail,
           OnUpdate.class);
@@ -650,7 +646,7 @@ class StudentDetailFormTest {
       LocalDate now = LocalDate.now();
 
       StudentDetailForm invalidStudentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
+          TestDataFactory.makeCompletedStudentForm(studentId),
           List.of(new StudentCourseForm(
               courseId,
               courseName,
@@ -680,8 +676,8 @@ class StudentDetailFormTest {
       Integer studentId = 1;
       Integer courseId = 1;
       StudentDetailForm validStudentDetail = new StudentDetailForm(
-          makeCompletedStudentForm(studentId),
-          List.of(makeCompletedStudentCourseForm(courseId))
+          TestDataFactory.makeCompletedStudentForm(studentId),
+          List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId))
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           validStudentDetail,
@@ -700,7 +696,7 @@ class StudentDetailFormTest {
     @Test
     void 登録時_StudentDetailFormがStudentDetailに変換されstudentIdとcourseIdがId型に変換されていること() {
       // Arrange
-      StudentDetailForm detailForm = makeDummyStudentDetailFormOnRegister();
+      StudentDetailForm detailForm = TestDataFactory.makeDummyStudentDetailFormOnRegister();
       StudentForm studentForm = detailForm.getStudent();
       List<StudentCourseForm> coursesForm = detailForm.getStudentCourseList();
 
@@ -736,7 +732,8 @@ class StudentDetailFormTest {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
-      StudentDetailForm detailForm = makeDummyStudentDetailFormOnUpdate(studentId, courseId);
+      StudentDetailForm detailForm = TestDataFactory.makeDummyStudentDetailFormOnUpdate(studentId,
+          courseId);
       StudentForm studentForm = detailForm.getStudent();
       List<StudentCourseForm> coursesForm = detailForm.getStudentCourseList();
 
