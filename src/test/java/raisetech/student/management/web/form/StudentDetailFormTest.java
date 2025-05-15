@@ -37,19 +37,17 @@ class StudentDetailFormTest {
   @DisplayName("バリデーションのテスト")
   class validation {
 
-    @ParameterizedTest(name = "[{index}] {0}グループ_受講生がnullのとき入力チェックにかかること")
-    @ValueSource(strings = {"OnRegister", "OnUpdate"})
-    @DisplayName("登録時および更新時_受講生がnullのとき入力チェックにかかること")
-    void test_001(String groupName) {
+    @Test
+    @DisplayName("登録時_受講生がnullのときバリデーションエラー : true")
+    void test_001() {
       // Arrange
       Integer courseId = 1;
-      Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
       StudentDetailForm invalidStudentDetailForm = new StudentDetailForm(
           null, List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId))
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetailForm,
-          group);
+          OnRegister.class);
 
       // Act & Assert
       assertThat(violations).isNotEmpty();
@@ -58,19 +56,17 @@ class StudentDetailFormTest {
       // studentCourseでviolationが発生しても、studentでのviolationが確認できれば良いのでanyMatch
     }
 
-    @ParameterizedTest(name = "[{index}] {0}グループ_受講生コースが空のとき入力チェックにかかること")
-    @ValueSource(strings = {"OnRegister", "OnUpdate"})
-    @DisplayName("登録時および更新時_受講生コースが空のとき入力チェックにかかること")
-    void test_002(String groupName) {
+    @Test
+    @DisplayName("登録時_受講生コースが空のとき入力チェックにかかること")
+    void test_002() {
       // Arrange
       Integer studentId = 1;
-      Class<?> group = groupName.equals("OnRegister") ? OnRegister.class : OnUpdate.class;
       StudentDetailForm invalidStudentDetail = new StudentDetailForm(
           TestDataFactory.makeCompletedStudentForm(studentId), new ArrayList<StudentCourseForm>()
       );
       Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
           invalidStudentDetail,
-          group);
+          OnRegister.class);
 
       // Act & Assert
       assertThat(violations).isNotEmpty();
@@ -363,6 +359,43 @@ class StudentDetailFormTest {
 
       // Act & Assert
       assertThat(violations).isEmpty();
+    }
+
+    @Test
+    @DisplayName("更新時_受講生がnullのときバリデーションエラー : true")
+    void test_001更新() {
+      // Arrange
+      Integer courseId = 1;
+      StudentDetailForm invalidStudentDetailForm = new StudentDetailForm(
+          null, List.of(TestDataFactory.makeCompletedStudentCourseForm(courseId))
+      );
+      Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
+          invalidStudentDetailForm,
+          OnUpdate.class);
+
+      // Act & Assert
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .anyMatch(v -> v.getPropertyPath().toString().equals("student"))).isTrue();
+      // studentCourseでviolationが発生しても、studentでのviolationが確認できれば良いのでanyMatch
+    }
+
+    @Test
+    @DisplayName("登録時および更新時_受講生コースが空のときバリデーションエラー : true")
+    void test_002更新() {
+      // Arrange
+      Integer studentId = 1;
+      StudentDetailForm invalidStudentDetail = new StudentDetailForm(
+          TestDataFactory.makeCompletedStudentForm(studentId), new ArrayList<StudentCourseForm>()
+      );
+      Set<ConstraintViolation<StudentDetailForm>> violations = validator.validate(
+          invalidStudentDetail,
+          OnUpdate.class);
+
+      // Act & Assert
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
     }
 
     @ParameterizedTest(name = "[{index}] 更新時_フィールド: {0} がnullでバリデーションエラー: {1}")
