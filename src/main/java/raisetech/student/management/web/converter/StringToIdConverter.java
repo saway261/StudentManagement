@@ -2,7 +2,7 @@ package raisetech.student.management.web.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import raisetech.student.management.data.Id;
+import raisetech.student.management.data.value.Id;
 
 @Component
 public class StringToIdConverter implements Converter<String, Id> {

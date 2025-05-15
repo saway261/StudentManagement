@@ -2,9 +2,9 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import raisetech.student.management.data.Id;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.value.Id;
 
 /**
  * 受講生テーブルと受講生コーステーブルと紐づくRepositoryです。
