@@ -2,12 +2,13 @@ package raisetech.student.management.data.value;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.validation.constraints.Positive;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
 
 @Getter
+@EqualsAndHashCode
 public class Id {
 
   @Positive(groups = {OnRegister.class, OnUpdate.class})
@@ -30,21 +31,5 @@ public class Id {
     return String.valueOf(value);
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Id)) {
-      return false;
-    }
-    Id other = (Id) o;
-    return Objects.equals(value, other.value);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(value);
-  }
 }
 
