@@ -363,7 +363,7 @@ class StudentDetailFormTest {
 
     @Test
     @DisplayName("更新時_受講生がnullのときバリデーションエラー : true")
-    void test_001更新() {
+    void test_011() {
       // Arrange
       Integer courseId = 1;
       StudentDetailForm invalidStudentDetailForm = new StudentDetailForm(
@@ -382,7 +382,7 @@ class StudentDetailFormTest {
 
     @Test
     @DisplayName("登録時および更新時_受講生コースが空のときバリデーションエラー : true")
-    void test_002更新() {
+    void test_012() {
       // Arrange
       Integer studentId = 1;
       StudentDetailForm invalidStudentDetail = new StudentDetailForm(
@@ -415,7 +415,7 @@ class StudentDetailFormTest {
         "courseEndAt,true" //TC-43
     })
     @DisplayName("更新時_StudentDetailの各フィールドのnull許容性を検証する")
-    void test_011(String fieldName, boolean expectViolation) {
+    void test_013(String fieldName, boolean expectViolation) {
       // Arrange
       StudentForm student = new StudentForm(
           fieldName.equals("studentId") ? null : 1,
@@ -454,7 +454,7 @@ class StudentDetailFormTest {
 
     @Test
     @DisplayName("更新時_studentIdが1未満の数値の時バリデーションエラー : true")
-    void test_012() {
+    void test_014() {
       Integer studentId = -3;
       Integer courseId = 1;
       StudentDetailForm studentDetail = new StudentDetailForm(
@@ -471,7 +471,7 @@ class StudentDetailFormTest {
     @ParameterizedTest(name = "[{index}] 更新時_{0}が文字数超過のときバリデーションエラー : true")
     @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
     @DisplayName("更新時_文字列超過のとき入力チェックにかかること")
-    void test_013(String fieldName) throws Exception {
+    void test_015(String fieldName) throws Exception {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
@@ -515,7 +515,7 @@ class StudentDetailFormTest {
         "user@com..com"        // ドット連続
     })
     @DisplayName("更新時_emailの形式が不正な場合は入力チェックにかかること")
-    void test_014(String invalidEmail) {
+    void test_016(String invalidEmail) {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
@@ -545,7 +545,7 @@ class StudentDetailFormTest {
         "03-1234--5678"    // ハイフン重複（別位置）
     })
     @DisplayName("更新時_電話番号の形式が不正のとき入力チェックにかかること")
-    void test_015(String invalidPhoneNumber) {
+    void test_017(String invalidPhoneNumber) {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
@@ -578,7 +578,7 @@ class StudentDetailFormTest {
     @ParameterizedTest(name = "[{index}] 更新時_年齢が {0} のときバリデーションエラー : true")
     @ValueSource(ints = {14, 81})
     @DisplayName("更新時_年齢が15未満または80より大きいとき入力チェックにかかること")
-    void test_016(int age)
+    void test_018(int age)
         throws Exception {
       // Arrange
       Integer studentId = 1;
@@ -621,7 +621,7 @@ class StudentDetailFormTest {
         "それ以外,true"
     })
     @DisplayName("更新時_性別がパターン外のとき入力チェックにかかること")
-    void test_017(String sex, boolean expectViolation) {
+    void test_019(String sex, boolean expectViolation) {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
@@ -647,7 +647,7 @@ class StudentDetailFormTest {
 
     @Test
     @DisplayName("更新時_courseIdが1未満の数値の時バリデーションエラー : true")
-    void test_018() {
+    void test_020() {
       Integer studentId = 1;
       Integer courseId = -3;
       StudentDetailForm studentDetail = new StudentDetailForm(
@@ -672,7 +672,7 @@ class StudentDetailFormTest {
         "Pythonコース,true", //存在しないコース
     })
     @DisplayName("更新時_コース名が正しい時は通過し、不正のときは入力チェックにかかること")
-    void test_019(String courseName, boolean expectViolation) {
+    void test_021(String courseName, boolean expectViolation) {
       // Arrange
       Integer studentId = 1;
       Integer courseId = 1;
@@ -704,7 +704,7 @@ class StudentDetailFormTest {
 
     @Test
     @DisplayName("更新時_すべてのフィールドが登録時に期待する値をもつときバリデーションエラー : false")
-    void test_020() {
+    void test_022() {
       // Arrange:
       Integer studentId = 1;
       Integer courseId = 1;
