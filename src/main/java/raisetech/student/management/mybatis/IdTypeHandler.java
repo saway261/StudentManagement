@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import raisetech.student.management.data.Id;
+import raisetech.student.management.data.value.Id;
 
 public class IdTypeHandler extends BaseTypeHandler<Id> {
 
