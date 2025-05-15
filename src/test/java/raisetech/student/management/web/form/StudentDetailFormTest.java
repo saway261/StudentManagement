@@ -37,7 +37,7 @@ class StudentDetailFormTest {
   @DisplayName("バリデーションのテスト")
   class validation {
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] {0}グループ_受講生がnullのとき入力チェックにかかること")
     @ValueSource(strings = {"OnRegister", "OnUpdate"})
     @DisplayName("登録時および更新時_受講生がnullのとき入力チェックにかかること")
     void test_001(String groupName) {
@@ -58,7 +58,7 @@ class StudentDetailFormTest {
       // studentCourseでviolationが発生しても、studentでのviolationが確認できれば良いのでanyMatch
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] {0}グループ_受講生コースが空のとき入力チェックにかかること")
     @ValueSource(strings = {"OnRegister", "OnUpdate"})
     @DisplayName("登録時および更新時_受講生コースが空のとき入力チェックにかかること")
     void test_002(String groupName) {
@@ -78,7 +78,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseList"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 登録時_フィールド: {0} がnullでバリデーションエラー: {1}")
     @CsvSource({// trueはNotNull, falseはnull許容
         "studentId,false", //TC-3
         "fullname,true", //TC-4
@@ -132,7 +132,7 @@ class StudentDetailFormTest {
       }
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 登録時_{0}が文字数超過のときバリデーションエラー : true")
     @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
     @DisplayName("登録時_文字列超過のとき入力チェックにかかること")
     void test_004(String fieldName) throws Exception {
@@ -168,7 +168,7 @@ class StudentDetailFormTest {
           .allMatch(v -> v.getPropertyPath().toString().equals("student." + fieldName))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 登録時_emailの形式が {0} のときバリデーションエラー : true")
     @ValueSource(strings = {
         "plainaddress",        // @なし
         "@missingusername.com",// ユーザー名なし
@@ -197,7 +197,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.email"));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 登録時_電話番号の形式が {0} のときバリデーションエラー : true")
     @ValueSource(strings = {
         "09000000000",     // ハイフンなし
         "090-0000-000",    // 下4桁が3桁
@@ -238,7 +238,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 登録時_年齢が {0} のときバリデーションエラー : true")
     @ValueSource(ints = {14, 81})
     @DisplayName("登録時_年齢が15未満または80より大きいとき入力チェックにかかること")
     void test_007(int age)
@@ -272,7 +272,7 @@ class StudentDetailFormTest {
           .allMatch(v -> v.getPropertyPath().toString().equals("student.age"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "登録時_性別が {0} のときバリデーションエラー：{1}")
     @CsvSource({
         "男,false",
         "女,false",
@@ -307,7 +307,7 @@ class StudentDetailFormTest {
       }
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "登録時_コース名が {0} のときバリデーションエラー：{1}")
     @CsvSource({
         "Javaコース,false",
         "AWSコース,false",
@@ -348,7 +348,7 @@ class StudentDetailFormTest {
     }
 
     @Test
-    @DisplayName("登録時_すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと")
+    @DisplayName("登録時_すべてのフィールドが登録時に期待する値をもつときバリデーションエラー : false")
     void test_010() {
       // Arrange:
       Integer studentId = null;
@@ -365,7 +365,7 @@ class StudentDetailFormTest {
       assertThat(violations).isEmpty();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 更新時_フィールド: {0} がnullでバリデーションエラー: {1}")
     @CsvSource({// trueはNotNull, falseはnull許容
         "studentId,true", //TC-31
         "fullname,true", //TC-32
@@ -420,7 +420,7 @@ class StudentDetailFormTest {
     }
 
     @Test
-    @DisplayName("更新時_studentIdが1未満の数値の時入力チェックにかかること")
+    @DisplayName("更新時_studentIdが1未満の数値の時バリデーションエラー : true")
     void test_012() {
       Integer studentId = -3;
       Integer courseId = 1;
@@ -435,7 +435,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().contains("studentId"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 更新時_{0}が文字数超過のときバリデーションエラー : true")
     @ValueSource(strings = {"fullname", "kanaName", "nickname", "email", "area", "remark"})
     @DisplayName("更新時_文字列超過のとき入力チェックにかかること")
     void test_013(String fieldName) throws Exception {
@@ -472,7 +472,7 @@ class StudentDetailFormTest {
 
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 更新時_emailの形式が {0} のときバリデーションエラー : true")
     @ValueSource(strings = {
         "plainaddress",        // @なし
         "@missingusername.com",// ユーザー名なし
@@ -501,7 +501,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.email"));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 更新時_電話番号の形式が {0} のときバリデーションエラー : true")
     @ValueSource(strings = {
         "09000000000",     // ハイフンなし
         "090-0000-000",    // 下4桁が3桁
@@ -542,7 +542,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().equals("student.telephone"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] 更新時_年齢が {0} のときバリデーションエラー : true")
     @ValueSource(ints = {14, 81})
     @DisplayName("更新時_年齢が15未満または80より大きいとき入力チェックにかかること")
     void test_016(int age)
@@ -577,7 +577,7 @@ class StudentDetailFormTest {
     }
 
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "更新時_性別が {0} のときバリデーションエラー：{1}")
     @CsvSource({
         "男,false",
         "女,false",
@@ -613,7 +613,7 @@ class StudentDetailFormTest {
     }
 
     @Test
-    @DisplayName("更新時_courseIdが1未満の数値の時入力チェックにかかること")
+    @DisplayName("更新時_courseIdが1未満の数値の時バリデーションエラー : true")
     void test_018() {
       Integer studentId = 1;
       Integer courseId = -3;
@@ -628,7 +628,7 @@ class StudentDetailFormTest {
           .anyMatch(v -> v.getPropertyPath().toString().contains("courseId"))).isTrue();
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "更新時_コース名が {0} のときバリデーションエラー：{1}")
     @CsvSource({
         "Javaコース,false",
         "AWSコース,false",
@@ -670,7 +670,7 @@ class StudentDetailFormTest {
     }
 
     @Test
-    @DisplayName("更新時_すべてのフィールドが登録時に期待する値をもつとき入力チェックにかからないこと")
+    @DisplayName("更新時_すべてのフィールドが登録時に期待する値をもつときバリデーションエラー : false")
     void test_020() {
       // Arrange:
       Integer studentId = 1;
