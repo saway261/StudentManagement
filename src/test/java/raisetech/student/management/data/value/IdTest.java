@@ -9,7 +9,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import raisetech.student.management.data.domain.validation.OnRegister;
@@ -26,8 +25,7 @@ class IdTest {
   }
 
   @Nested
-  @DisplayName("コンストラクタのテスト")
-  class ConstructorTest {
+  class コンストラクタのテスト {
 
     @Test
     void nullを渡すと例外を投げずに生成されること() {
@@ -51,8 +49,7 @@ class IdTest {
   }
 
   @Nested
-  @DisplayName("バリデーション: OnRegisterグループ")
-  class OnRegisterValidation {
+  class バリデーションが機能しているかのテスト＿OnResisterグループ {
 
     @Test
     void nullは許容される() {
@@ -70,8 +67,7 @@ class IdTest {
   }
 
   @Nested
-  @DisplayName("バリデーション: OnUpdateグループ")
-  class OnUpdateValidation {
+  class バリデーションが機能しているかのテスト＿OnUpdateグループ {
 
     @Test
     void nullは許容される() {
