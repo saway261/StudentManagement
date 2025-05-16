@@ -34,8 +34,7 @@ class StudentDetailFormTest {
   }
 
   @Nested
-  @DisplayName("バリデーションのテスト")
-  class validation {
+  class バリデーションが機能しているかのテスト {
 
     @Test
     @DisplayName("登録時_受講生がnullのときバリデーションエラー : true")
@@ -723,8 +722,7 @@ class StudentDetailFormTest {
   }
 
   @Nested
-  @DisplayName("ドメインオブジェクトへの変換処理のテスト")
-  class converter {
+  class ドメインオブジェクトへの変換処理のテスト {
 
     @Test
     void 登録時_StudentDetailFormがStudentDetailに変換されstudentIdとcourseIdがId型に変換されていること() {
