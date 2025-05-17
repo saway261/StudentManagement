@@ -11,6 +11,7 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.value.Id;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -26,7 +27,7 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生の単一検索が行えること() {
-    Integer studentId = 1;
+    Id studentId = new Id(1);
     Student actual = sut.searchStudent(studentId);
 
     assertThat(actual.getStudentId()).isEqualTo(studentId);
@@ -34,7 +35,7 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生IDに紐づく受講生コースの一覧を検索できること() {
-    Integer studentId = 2;
+    Id studentId = new Id(2);
     List<StudentCourse> actual = sut.searchCourses(studentId);
 
     assertThat(actual.size()).isEqualTo(2);
@@ -44,8 +45,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生IDに紐づく受講生コースIDの一覧を検索できること() {
-    Integer studentId = 4;
-    List<Integer> actual = sut.searchCourseIdListLinkedStudentId(studentId);
+    Id studentId = new Id(4);
+    List<Id> actual = sut.searchCourseIdListLinkedStudentId(studentId);
 
     assertThat(actual.size()).isEqualTo(2);
   }
@@ -61,7 +62,7 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生コース登録が行えること() {
-    int studentId = 1;
+    Id studentId = new Id(1);
     sut.registerCourse(makeCompletedStudentCourse(studentId, null));
 
     List<StudentCourse> actual = sut.searchCourses(studentId);
@@ -72,8 +73,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生のプロフィール情報更新が行えること() {
-    Integer studentId = 1;
-    Integer courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     Student expected = new Student(
         studentId,
         "田中太郎",
@@ -106,8 +107,8 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生コース名およびコース終了予定日の更新を行うことができ受講生IDとコース開始日の更新はできないこと() {
-    Integer studentId = 1;
-    Integer courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     StudentCourse original = new StudentCourse(
         courseId,
         "Javaコース",
@@ -119,7 +120,7 @@ class StudentRepositoryTest {
     StudentCourse forUpdate = new StudentCourse(
         courseId,
         "AWSコース",
-        2,
+        new Id(2),
         LocalDate.of(2023, 10, 15),
         LocalDate.of(2025, 12, 15)
     );
@@ -143,7 +144,7 @@ class StudentRepositoryTest {
   @Test
   void 受講生の論理削除が行えること() {
 
-    Integer studentId = 1;
+    Id studentId = new Id(1);
     Student forLogicalDelete = new Student(
         studentId,
         "田中太郎",
