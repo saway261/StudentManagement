@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidAccessException;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorResponseBody;
 import raisetech.student.management.service.StudentService;
+import raisetech.student.management.web.form.StudentDetailForm;
+import raisetech.student.management.web.response.StudentDetailResponse;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるControllerです。
@@ -46,13 +49,17 @@ public class StudentController {
       description = "アクティブな受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません",
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
-              array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+              array = @ArraySchema(schema = @Schema(implementation = StudentDetailResponse.class))
           )
       )}
   )
   @GetMapping("/students")
-  public List<StudentDetail> getActiveStudentDetailList() {
-    return service.searchActiveStudentDetailList();
+  public List<StudentDetailResponse> getActiveStudentDetailList() {
+    List<StudentDetailResponse> responseList = new ArrayList<>();
+    for (StudentDetail studentDetail : service.searchActiveStudentDetailList()) {
+      responseList.add(StudentDetailResponse.fromDomain(studentDetail));
+    }
+    return responseList;
   }
 
   @Operation(
@@ -72,7 +79,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )),
           @ApiResponse(
               responseCode = "404", description = "指定された受講生IDが存在しなかったときのエラー",
@@ -89,9 +96,9 @@ public class StudentController {
       }
   )
   @GetMapping("/students/{studentId}")
-  public StudentDetail viewStudentDetail(@PathVariable("studentId") @Positive int studentId)
+  public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
       throws InvalidIdException {
-    return service.searchStudentDetail(studentId);
+    return StudentDetailResponse.fromDomain(service.searchStudentDetail(studentId));
   }
 
   @Operation(
@@ -117,7 +124,7 @@ public class StudentController {
           description = "新規に登録したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = StudentDetailForm.class)
           )
       ),
       responses = {
@@ -125,7 +132,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )
           ),
           @ApiResponse(
@@ -138,10 +145,12 @@ public class StudentController {
   )
   @PostMapping("/students")
   @Validated(OnRegister.class)
-  public ResponseEntity<StudentDetail> registerStudent(
-      @RequestBody @Valid StudentDetail studentDetail) {
-    StudentDetail responseStudentDetail = service.registerStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<StudentDetailResponse> registerStudent(
+      @RequestBody @Valid StudentDetailForm form) {
+    StudentDetail request = StudentDetailForm.toDomain(form);
+    StudentDetail resistered = service.registerStudent(request);
+    StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(resistered);
+    return ResponseEntity.ok(responseBody);
   }
 
   @Operation(
@@ -151,7 +160,7 @@ public class StudentController {
           description = "更新したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = StudentDetailForm.class)
           )
       ),
       responses = {
@@ -159,7 +168,7 @@ public class StudentController {
               responseCode = "200", description = "ok",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = StudentDetailResponse.class)
               )
           ),
           @ApiResponse(
@@ -178,11 +187,12 @@ public class StudentController {
   )
   @PutMapping("/students")
   @Validated(OnUpdate.class)
-  public ResponseEntity<StudentDetail> updateStudent(
-      @RequestBody @Valid StudentDetail studentDetail)
-      throws InvalidIdException {
-
-    StudentDetail responseStudentDetail = service.updateStudent(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<StudentDetailResponse> updateStudent(
+      @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
+    StudentDetail request = StudentDetailForm.toDomain(form);
+    StudentDetail updated = service.updateStudent(request);
+    StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(updated);
+    return ResponseEntity.ok(responseBody);
   }
+
 }

@@ -1,41 +1,22 @@
 package raisetech.student.management.data;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import raisetech.student.management.data.domain.validation.CourseName;
-import raisetech.student.management.data.domain.validation.OnRegister;
-import raisetech.student.management.data.domain.validation.OnUpdate;
+import raisetech.student.management.data.value.Id;
 
-@Schema(description = "受講生コース")
 @Getter
+@AllArgsConstructor
 public class StudentCourse {
 
-  @Schema(description = "コースID 自動採番を行う", example = "1")
-  @Positive(groups = OnUpdate.class)
-  @NotNull(groups = OnUpdate.class)
-  private final Integer courseId;
+  private final Id courseId;
 
-  @Schema(
-      description = "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンドコース'のみが入力可能",
-      example = "Javaコース"
-  )
-  @CourseName(groups = {OnRegister.class, OnUpdate.class})
-  @NotNull(groups = {OnRegister.class, OnUpdate.class})
   private final String courseName;
 
-  @Schema(description = "受講生ID", example = "1")
-  private final Integer studentId;
+  private final Id studentId;
 
-  @Schema(description = "コース開始日 登録処理が実行された日付", example = "2025-01-01")
   private final LocalDate courseStartAt;
 
-  @Schema(description = "コース終了予定日 コース開始日の6か月後の日付", example = "2025-07-01")
-  @NotNull(groups = OnUpdate.class)
   private final LocalDate courseEndAt;
 
   /**
@@ -45,7 +26,7 @@ public class StudentCourse {
    * @param courseName コース名
    * @param studentId  受講生ID
    */
-  public StudentCourse(String courseName, Integer studentId) {
+  public StudentCourse(String courseName, Id studentId) {
     this.courseId = null;
     this.courseName = courseName;
     this.studentId = studentId;
@@ -62,9 +43,9 @@ public class StudentCourse {
    * @param requestCourse 受講生コースコースオブジェクト
    * @param studentId     受講生ID
    */
-  public StudentCourse(StudentCourse requestCourse, Integer studentId) {
-    if (requestCourse.getCourseId() == null |
-        requestCourse.getCourseName().isEmpty() |
+  public StudentCourse(StudentCourse requestCourse, Id studentId) {
+    if (requestCourse.getCourseId() == null ||
+        requestCourse.getCourseName().isEmpty() ||
         requestCourse.getCourseEndAt() == null) {
       throw new NullPointerException();
 
@@ -75,19 +56,6 @@ public class StudentCourse {
       this.courseStartAt = requestCourse.courseStartAt;
       this.courseEndAt = requestCourse.getCourseEndAt();
     }
-
   }
 
-  @JsonCreator
-  public StudentCourse(@JsonProperty("courseId") Integer courseId,
-      @JsonProperty("courseName") String courseName,
-      @JsonProperty("studentId") Integer studentId,
-      @JsonProperty("courseStartAt") LocalDate courseStartAt,
-      @JsonProperty("courseEndAt") LocalDate courseEndAt) {
-    this.courseId = courseId;
-    this.courseName = courseName;
-    this.studentId = studentId;
-    this.courseStartAt = courseStartAt;
-    this.courseEndAt = courseEndAt;
-  }
 }
