@@ -3,13 +3,9 @@ package raisetech.student.management.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
-import static raisetech.student.management.testutil.TestDataFactory.makeEnoughStudentCourseOnRegister;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -21,9 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorDetailsBuilder;
 import raisetech.student.management.service.StudentService;
+import raisetech.student.management.testutil.TestDataFactory;
+import raisetech.student.management.web.form.StudentDetailForm;
 
 @WebMvcTest(StudentController.class)
 class StudentControllerTest {
@@ -66,9 +65,9 @@ class StudentControllerTest {
   void 受講生詳細単一検索成功_サービスの処理が適切に呼び出されること()
       throws Exception {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
     // Act & Assert
@@ -81,7 +80,7 @@ class StudentControllerTest {
   void 受講生詳細単一検索失敗_サービスから例外を受け取り404エラーを返していること()
       throws Exception {
     // Arrange
-    int studentId = 99;
+    Id studentId = new Id(99);
     Mockito.when(service.searchStudentDetail(studentId))
         .thenThrow(new InvalidIdException(studentId));
 
@@ -125,44 +124,47 @@ class StudentControllerTest {
   void 受講生詳細登録成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    int studentId = 0;//リクエスト時のIDは未入力のため0
-    int courseId = 0;//リクエスト時のIDは未入力のため0
-    StudentDetail requestStudentDetail = new StudentDetail(
-        makeCompletedStudent(studentId),
-        List.of(makeEnoughStudentCourseOnRegister(studentId, courseId))
-    );
-    StudentDetail responseStudentDetail = makeCompletedStudentDetail(1, 1);
-    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(responseStudentDetail);
+    StudentDetailForm form = TestDataFactory.makeDummyStudentDetailFormOnRegister(); // JSONにする対象
+    StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // サービスに渡る想定値
+    StudentDetail expectedResponse = TestDataFactory.makeCompletedStudentDetail(new Id(1),
+        new Id(1));
+    Mockito.when(service.registerStudent(Mockito.any(StudentDetail.class)))
+        .thenReturn(expectedResponse);
 
-    // Act & Assertion
+    // Act
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(requestStudentDetail))
-    ).andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(form)))
+        .andExpect(status().isOk());
+
+    // Assert
     Mockito.verify(service, times(1)).registerStudent(captor.capture());
-    assertThat(captor.getValue())
-        .usingRecursiveComparison()
-        .isEqualTo(requestStudentDetail);
+    assertThat(captor.getValue()).usingRecursiveComparison()
+        .isEqualTo(expectedDomain);
   }
 
   @Test
   void 受講生詳細更新成功_サービスの処理を呼び出す際に適切なリクエストボディが渡されていること()
       throws Exception {
     // Arrange
-    int studentId = 1;
-    int courseId = 1;
-    StudentDetail requestStudentDetail = makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.registerStudent(requestStudentDetail)).thenReturn(requestStudentDetail);
+    Integer studentId = 1;
+    Integer courseId = 1;
+    StudentDetailForm form = TestDataFactory.makeDummyStudentDetailFormOnUpdate(studentId,
+        courseId); // ← JSONにする対象
+    StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // ← サービスに渡る想定値
+    StudentDetail expectedResponse = expectedDomain;
+    Mockito.when(service.updateStudent(Mockito.any(StudentDetail.class)))
+        .thenReturn(expectedResponse);
 
     // Act & Assertion
     mockMvc.perform(MockMvcRequestBuilders.put("/students")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(requestStudentDetail))
+        .content(objectMapper.writeValueAsString(form))
     ).andExpect(status().isOk());
     Mockito.verify(service, times(1)).updateStudent(captor.capture());
     assertThat(captor.getValue())
         .usingRecursiveComparison()
-        .isEqualTo(requestStudentDetail);
+        .isEqualTo(expectedDomain);
   }
 
 }

@@ -4,9 +4,6 @@ package raisetech.student.management.service;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourse;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentDetail;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,8 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.testutil.TestDataFactory;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {
@@ -38,10 +37,10 @@ class StudentServiceTest {
   @Test
   void アクティブ受講生の一覧検索_リポジトリの処理とbuildStudentDetailを適切に呼び出していること() {
     //前提
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     List<Student> studentList = List.of(studentDetail.getStudent());
     Mockito.when(repository.searchActiveStudentList()).thenReturn(studentList);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
@@ -59,10 +58,10 @@ class StudentServiceTest {
   @Test
   void 受講生単一検索成功_buildStudentDetailを適切に呼び出していること() throws Exception {
     // 前提
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     //事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // 実際の実行結果
@@ -76,7 +75,7 @@ class StudentServiceTest {
   void 受講生単一検索失敗_buildStudentDetailを適切に呼び出し戻り値がnullの場合は例外を投げていること()
       throws Exception {
     // 前提
-    int studentId = 99;
+    Id studentId = new Id(99);
     // 事前準備
     StudentDetail studentDetail = new StudentDetail(null, null);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
@@ -90,39 +89,51 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細登録_リポジトリのメソッドを適切に呼び出していること() {
-    // 事前準備
-    int studentId = 1;
-    int courseId = 0;
-    Student student = makeCompletedStudent(studentId);
-    //コンストラクタでの初期化が行われているか判断するため、あえてstudentIdは0,courseStartAt, courseEndAtはnullとする。
-    StudentCourse course = new StudentCourse(courseId, "Javaコース", 0, null, null);
-    List<StudentCourse> courseList = List.of(course);
-    StudentDetail studentDetail = new StudentDetail(student, courseList);
+    // 前提
+    Id studentIdAfterRegister = new Id(1);/**クライアントから受け取るときはnullだが、
+     DBで自動採番された受講生IDをMyBatisが自動でインスタンスにセットする処理を再現できないため、
+     初めから1というIDを持っていることにする。*/
+    Id courseId = null;
     LocalDate now = LocalDate.now();
 
-    // 実際の実行結果
+    // ID付きの Student を用意（DB登録後の状態を模倣）
+    Student student = TestDataFactory.makeCompletedStudent(studentIdAfterRegister);
+
+    // 登録時に使う StudentDetail（IDあり前提）
+    StudentDetail studentDetail = new StudentDetail(
+        student,
+        List.of(new StudentCourse("Javaコース", studentIdAfterRegister))
+        // courseStartAtなどはコンストラクタで自動生成
+    );
+
+    // buildStudentDetail() で返す値をモック ここで引数がnullだと返り値がnullになってしまい正常な処理を再現できない
+    Mockito.when(repository.searchStudent(studentIdAfterRegister)).thenReturn(student);
+    Mockito.when(repository.searchCourses(studentIdAfterRegister))
+        .thenReturn(studentDetail.getStudentCourseList());
+
+    // 実行
     sut.registerStudent(studentDetail);
 
     // 検証
     Mockito.verify(repository, times(1)).registerStudent(student);
-    Mockito.verify(repository, times(courseList.size()))
-        .registerCourse(Mockito.argThat(sc ->
-            sc != null &&
-                course.getCourseName().equals(sc.getCourseName()) &&
-                sc.getStudentId() == studentId &&
-                now.equals(sc.getCourseStartAt()) &&
-                now.plusMonths(6).equals(sc.getCourseEndAt())
-        ));
+    Mockito.verify(repository, times(1)).registerCourse(Mockito.argThat(sc ->
+        sc != null &&
+            "Javaコース".equals(sc.getCourseName()) &&
+            studentIdAfterRegister.equals(sc.getStudentId()) &&
+            now.equals(sc.getCourseStartAt()) &&
+            now.plusMonths(6).equals(sc.getCourseEndAt())
+    ));
   }
+
 
   @Test
   void 受講生詳細更新成功_リポジトリのメソッドとisLinkedCourseIdWithStudentIdを呼び出していること()
       throws Exception {
     // 前提
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentCourseList();
     doReturn(true).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
@@ -141,10 +152,10 @@ class StudentServiceTest {
   @Test
   void 受講生詳細更新失敗_isLinkedCourseIdWithStudentIdを呼び出していること() throws Exception {
     // 前提
-    int studentId = 1;
-    int courseId = 99;
+    Id studentId = new Id(1);
+    Id courseId = new Id(99);
     // 事前準備
-    StudentDetail studentDetail = makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     doReturn(false).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
 
     // 実行と検証
@@ -156,12 +167,13 @@ class StudentServiceTest {
   @Test
   void 受講生組み上げ_リポジトリのメソッドを適切に呼び出してStudentDetailを生成できていること() {
     //前提
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
 
     //事前準備
-    Student student = makeCompletedStudent(studentId);
-    List<StudentCourse> courseList = List.of(makeCompletedStudentCourse(studentId, courseId));
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
+    List<StudentCourse> courseList = List.of(
+        TestDataFactory.makeCompletedStudentCourse(studentId, courseId));
 
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchCourses(studentId)).thenReturn(courseList);
@@ -181,14 +193,14 @@ class StudentServiceTest {
   void コースIDが受講生IDに紐づいていると判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていると判断しtrueを返していこと()
       throws InvalidIdException {
     //前提
-    int studentId = 1;
-    int courseId = 1;
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
 
     //事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
-    List<Integer> notContainCourseIdList = List.of(1);
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
+    List<Id> containCourseIdList = List.of(new Id(1));
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
-        notContainCourseIdList);
+        containCourseIdList);
 
     //検証
     Assertions.assertTrue(sut.isLinkedCourseIdWithStudentId(course));
@@ -200,12 +212,12 @@ class StudentServiceTest {
   void コースIDが受講生IDに紐づいていないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストにコースIDが含まれていないと判断しfalseを返していること()
       throws InvalidIdException {
     //前提
-    int studentId = 1;
-    int courseId = 99;
+    Id studentId = new Id(1);
+    Id courseId = new Id(99);
 
     //事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
-    List<Integer> notContainCourseIdList = List.of(30);
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
+    List<Id> notContainCourseIdList = List.of(new Id(30));
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(
         notContainCourseIdList);
 
@@ -218,12 +230,12 @@ class StudentServiceTest {
   @Test
   void 受講生IDがテーブルに存在しないと判断する_リポジトリのメソッドを適切に呼び出して返却されたリストが空と判断し例外を投げていること() {
     // 前提
-    int studentId = 99;
-    int courseId = 1;
+    Id studentId = new Id(99);
+    Id courseId = new Id(1);
 
     // 事前準備
-    StudentCourse course = makeCompletedStudentCourse(studentId, courseId);
-    List<Integer> emptyIntList = new ArrayList<>();
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, courseId);
+    List<Id> emptyIntList = new ArrayList<>();
     when(repository.searchCourseIdListLinkedStudentId(studentId)).thenReturn(emptyIntList);
 
     // 検証
