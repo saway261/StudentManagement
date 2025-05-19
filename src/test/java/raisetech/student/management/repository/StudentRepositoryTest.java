@@ -58,7 +58,7 @@ class StudentRepositoryTest {
 
     assertThat(actual.size()).isEqualTo(2);
     assertThat(actual.stream()
-        .allMatch(course -> course.getStudentId() == studentId)).isTrue();
+        .allMatch(course -> course.getStudentId().equals(studentId))).isTrue();
   }
 
   @Test
@@ -86,7 +86,7 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchCourses(studentId);
     assertThat(actual.size()).isEqualTo(2);
     assertThat(actual.stream()
-        .allMatch(course -> course.getStudentId() == studentId)).isTrue();
+        .allMatch(course -> course.getStudentId().equals(studentId))).isTrue();
   }
 
   @Test
