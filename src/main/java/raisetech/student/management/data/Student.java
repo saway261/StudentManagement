@@ -1,10 +1,12 @@
 package raisetech.student.management.data;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import raisetech.student.management.data.value.Id;
 
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor
 public class Student {
 
