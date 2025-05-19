@@ -110,16 +110,7 @@ class StudentRepositoryTest {
 
     Student actual = sut.searchStudent(studentId);
 
-    assertThat(actual.getFullname()).isEqualTo(expected.getFullname());
-    assertThat(actual.getKanaName()).isEqualTo(expected.getKanaName());
-    assertThat(actual.getNickname()).isEqualTo(expected.getNickname());
-    assertThat(actual.getEmail()).isEqualTo(expected.getEmail());
-    assertThat(actual.getArea()).isEqualTo(expected.getArea());
-    assertThat(actual.getTelephone()).isEqualTo(expected.getTelephone());
-    assertThat(actual.getAge()).isEqualTo(expected.getAge());
-    assertThat(actual.getSex()).isEqualTo(expected.getSex());
-    assertThat(actual.getRemark()).isEqualTo(expected.getRemark());
-    assertThat(actual.isDeleted()).isEqualTo(expected.isDeleted());
+    assertThat(actual).isEqualTo(expected);
 
   }
 
