@@ -7,14 +7,32 @@ import static raisetech.student.management.testutil.TestDataFactory.makeComplete
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.value.Id;
+import raisetech.student.management.mybatis.IdTypeHandler;
+
 
 @MybatisTest
+@Import(StudentRepositoryTest.MyBatisTestConfig.class)
 class StudentRepositoryTest {
+
+  @TestConfiguration
+  static class MyBatisTestConfig implements ConfigurationCustomizer {
+
+    @Override
+    public void customize(org.apache.ibatis.session.Configuration configuration) {
+      configuration.getTypeHandlerRegistry().register(
+          Id.class,
+          IdTypeHandler.class
+      );
+    }
+  }
 
   @Autowired
   private StudentRepository sut;
