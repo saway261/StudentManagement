@@ -54,11 +54,13 @@ class StudentRepositoryTest {
   @Test
   void 受講生IDに紐づく受講生コースの一覧を検索できること() {
     Id studentId = new Id(2);
+
     List<StudentCourse> actual = sut.searchCourses(studentId);
+    List<StudentCourse> expected = MyBatisTestDataFactory.createSatoHanako(false)
+        .getStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(2);
-    assertThat(actual.stream()
-        .allMatch(course -> course.getStudentId().equals(studentId))).isTrue();
+    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
 
   @Test
