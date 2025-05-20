@@ -135,16 +135,16 @@ class StudentRepositoryTest {
     Id courseId = new Id(1);
     Student expected = new Student(
         studentId,
-        "田中太郎",
-        "たなかたろう",
-        "タロー",
+        "高橋太郎",// もとは「田中太郎」
+        "たかはしたろう",// もとは「たなかたろう」
+        "タロウ",// 「タロー」
         "tarotarotaro@gmail.com",// もとは「tarotaro@gmail.com」
         "茨城県東茨城郡城里町",// もとは「茨城県かすみがうら市」
-        "080-1234-5678",
-        32,
-        "男",
+        "080-9876-5432",// もとは「080-1234-5678」
+        35,// もとは「32」
+        "その他",// もとは「男」
         "転職活動中",// もとは空文字
-        false
+        true // もとはfalse
     );
     sut.updateStudent(expected);
 
