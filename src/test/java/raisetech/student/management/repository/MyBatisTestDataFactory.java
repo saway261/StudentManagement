@@ -63,14 +63,14 @@ public class MyBatisTestDataFactory {
     return new StudentDetail(
         new Student(
             studentId,
-            "田中太郎",
-            "たなかたろう",
-            "タロー",
-            "tarotaro@gmail.com",
-            "茨城県かすみがうら市",
-            "080-1234-5678",
-            32,
-            "男",
+            "佐藤花子",
+            "さとうはなこ",
+            "ハナチャン",
+            "hanakko@gmail.com",
+            "奈良県大和郡山市",
+            "03-1234-5678",
+            23,
+            "女",
             "",
             false
         ),
