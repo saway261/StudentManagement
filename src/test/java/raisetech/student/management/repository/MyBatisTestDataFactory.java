@@ -9,7 +9,7 @@ import raisetech.student.management.data.value.Id;
 
 public class MyBatisTestDataFactory {
 
-  static StudentDetail createTanakaTaro(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail1(boolean isOnRegister) {
 
     Id studentId;
     Id courseId;
@@ -45,7 +45,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail createSatoHanako(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail2(boolean isOnRegister) {
 
     Id studentId;
     Id courseId1;
@@ -93,7 +93,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail createIdoMayumi(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail3(boolean isOnRegister) {
 
     Id studentId;
     Id courseId;
@@ -129,7 +129,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail createSuzukiYuichi(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail4(boolean isOnRegister) {
 
     Id studentId;
     Id courseId1;
@@ -177,7 +177,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail createHattoriJiro(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail5(boolean isOnRegister) {
 
     Id studentId;
     Id courseId;

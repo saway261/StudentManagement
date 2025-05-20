@@ -41,11 +41,11 @@ class StudentRepositoryTest {
   @Test
   void アクティブな受講生の全件検索が行えること() {
     List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail1(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail2(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail3(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail4(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail5(false).getStudent());
 
     List<Student> actual = sut.searchActiveStudentList();
 
@@ -57,7 +57,7 @@ class StudentRepositoryTest {
     Id studentId = new Id(1);
     Student actual = sut.searchStudent(studentId);
 
-    assertThat(actual).isEqualTo(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
+    assertThat(actual).isEqualTo(MyBatisTestDataFactory.makeStudentDetail1(false).getStudent());
   }
 
   @Test
@@ -65,7 +65,7 @@ class StudentRepositoryTest {
     Id studentId = new Id(2);
 
     List<StudentCourse> actual = sut.searchCourses(studentId);
-    List<StudentCourse> expected = MyBatisTestDataFactory.createSatoHanako(false)
+    List<StudentCourse> expected = MyBatisTestDataFactory.makeStudentDetail2(false)
         .getStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(2);
@@ -76,7 +76,7 @@ class StudentRepositoryTest {
   void 受講生IDに紐づく受講生コースIDの一覧を検索できること() {
     Id studentId = new Id(4);
     List<Id> actual = sut.searchCourseIdListLinkedStudentId(studentId);
-    List<Id> expected = MyBatisTestDataFactory.createSuzukiYuichi(false)
+    List<Id> expected = MyBatisTestDataFactory.makeStudentDetail4(false)
         .getStudentCourseList()
         .stream().map(course -> course.getCourseId()).toList();
 
@@ -92,11 +92,11 @@ class StudentRepositoryTest {
     Student afterResister = TestDataFactory.makeCompletedStudent(new Id(6));
 
     List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail1(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail2(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail3(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail4(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail5(false).getStudent());
     expected.add(afterResister);
 
     // Act
@@ -117,7 +117,7 @@ class StudentRepositoryTest {
     StudentCourse afterRegister = makeCompletedStudentCourse(studentId, new Id(8));
 
     List<StudentCourse> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudentCourseList().get(0));
+    expected.add(MyBatisTestDataFactory.makeStudentDetail1(false).getStudentCourseList().get(0));
     expected.add(afterRegister);
 
     // Act
@@ -209,10 +209,10 @@ class StudentRepositoryTest {
     );
 
     List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
-    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail2(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail3(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail4(false).getStudent());
+    expected.add(MyBatisTestDataFactory.makeStudentDetail5(false).getStudent());
 
     sut.updateStudent(forLogicalDelete);
 
