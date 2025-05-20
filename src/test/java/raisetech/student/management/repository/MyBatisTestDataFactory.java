@@ -9,17 +9,10 @@ import raisetech.student.management.data.value.Id;
 
 public class MyBatisTestDataFactory {
 
-  static StudentDetail makeStudentDetail1(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail1() {
 
-    Id studentId;
-    Id courseId;
-    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
-      studentId = null;
-      courseId = null;
-    } else {
-      studentId = new Id(1);
-      courseId = new Id(1);
-    }
+    Id studentId = new Id(1);
+    Id courseId = new Id(1);
 
     return new StudentDetail(
         new Student(
@@ -45,20 +38,11 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail2(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail2() {
 
-    Id studentId;
-    Id courseId1;
-    Id courseId2;
-    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
-      studentId = null;
-      courseId1 = null;
-      courseId2 = null;
-    } else {
-      studentId = new Id(2);
-      courseId1 = new Id(2);
-      courseId2 = new Id(6);
-    }
+    Id studentId = new Id(2);
+    Id courseId1 = new Id(2);
+    Id courseId2 = new Id(6);
 
     return new StudentDetail(
         new Student(
@@ -93,17 +77,10 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail3(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail3() {
 
-    Id studentId;
-    Id courseId;
-    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
-      studentId = null;
-      courseId = null;
-    } else {
-      studentId = new Id(3);
-      courseId = new Id(3);
-    }
+    Id studentId = new Id(3);
+    Id courseId = new Id(3);
 
     return new StudentDetail(
         new Student(
@@ -129,20 +106,11 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail4(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail4() {
 
-    Id studentId;
-    Id courseId1;
-    Id courseId2;
-    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
-      studentId = null;
-      courseId1 = null;
-      courseId2 = null;
-    } else {
-      studentId = new Id(4);
-      courseId1 = new Id(4);
-      courseId2 = new Id(7);
-    }
+    Id studentId = new Id(4);
+    Id courseId1 = new Id(4);
+    Id courseId2 = new Id(7);
 
     return new StudentDetail(
         new Student(
@@ -177,17 +145,10 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail5(boolean isOnRegister) {
+  static StudentDetail makeStudentDetail5() {
 
-    Id studentId;
-    Id courseId;
-    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
-      studentId = null;
-      courseId = null;
-    } else {
-      studentId = new Id(5);
-      courseId = new Id(5);
-    }
+    Id studentId = new Id(5);
+    Id courseId = new Id(5);
 
     return new StudentDetail(
         new Student(
