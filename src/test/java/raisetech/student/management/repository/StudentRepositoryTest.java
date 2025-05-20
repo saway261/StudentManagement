@@ -1,10 +1,10 @@
 package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudent;
 import static raisetech.student.management.testutil.TestDataFactory.makeCompletedStudentCourse;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
@@ -16,6 +16,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.value.Id;
 import raisetech.student.management.mybatis.IdTypeHandler;
+import raisetech.student.management.testutil.TestDataFactory;
 
 
 @MybatisTest
@@ -39,8 +40,16 @@ class StudentRepositoryTest {
 
   @Test
   void アクティブな受講生の全件検索が行えること() {
+    List<Student> expected = new ArrayList<>();
+    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+
     List<Student> actual = sut.searchActiveStudentList();
-    assertThat(actual.size()).isEqualTo(5);
+
+    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
 
   @Test
@@ -78,22 +87,46 @@ class StudentRepositoryTest {
 
   @Test
   void 受講生登録が行えること() {
-    sut.registerStudent(makeCompletedStudent(null));
+    // Arrange
+    Student beforResister = TestDataFactory.makeCompletedStudent(null);
+    Student afterResister = TestDataFactory.makeCompletedStudent(new Id(6));
 
+    List<Student> expected = new ArrayList<>();
+    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+    expected.add(afterResister);
+
+    // Act
+    sut.registerStudent(beforResister);
+
+    // Assert
     List<Student> actual = sut.searchActiveStudentList();
     assertThat(actual.size()).isEqualTo(6);
+    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
 
   }
 
   @Test
   void 受講生コース登録が行えること() {
+    // Arrange
     Id studentId = new Id(1);
-    sut.registerCourse(makeCompletedStudentCourse(studentId, null));
+    StudentCourse beforRegister = makeCompletedStudentCourse(studentId, null);
+    StudentCourse afterRegister = makeCompletedStudentCourse(studentId, new Id(8));
 
+    List<StudentCourse> expected = new ArrayList<>();
+    expected.add(MyBatisTestDataFactory.createTanakaTaro(false).getStudentCourseList().get(0));
+    expected.add(afterRegister);
+
+    // Act
+    sut.registerCourse(beforRegister);
+
+    // Assert
     List<StudentCourse> actual = sut.searchCourses(studentId);
     assertThat(actual.size()).isEqualTo(2);
-    assertThat(actual.stream()
-        .allMatch(course -> course.getStudentId().equals(studentId))).isTrue();
+    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
 
   @Test
@@ -175,14 +208,19 @@ class StudentRepositoryTest {
         true //もとはfalse
     );
 
+    List<Student> expected = new ArrayList<>();
+    expected.add(MyBatisTestDataFactory.createSatoHanako(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createIdoMayumi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createSuzukiYuichi(false).getStudent());
+    expected.add(MyBatisTestDataFactory.createHattoriJiro(false).getStudent());
+
     sut.updateStudent(forLogicalDelete);
 
     List<Student> actual = sut.searchActiveStudentList();
 
     assertThat(actual.size()).isEqualTo(4);
-    assertThat(
-        actual.stream().allMatch(student -> student.getStudentId().equals(studentId))).isFalse();
-
+    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+    assertThat(actual.contains(forLogicalDelete)).isFalse();
   }
 
 
