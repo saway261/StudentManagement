@@ -1,0 +1,215 @@
+package raisetech.student.management.repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.value.Id;
+
+public class MyBatisTestDataFactory {
+
+  static StudentDetail createTanakaTaro(boolean isOnRegister) {
+
+    Id studentId;
+    Id courseId;
+    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
+      studentId = null;
+      courseId = null;
+    } else {
+      studentId = new Id(1);
+      courseId = new Id(1);
+    }
+
+    return new StudentDetail(
+        new Student(
+            studentId,
+            "田中太郎",
+            "たなかたろう",
+            "タロー",
+            "tarotaro@gmail.com",
+            "茨城県かすみがうら市",
+            "080-1234-5678",
+            32,
+            "男",
+            "",
+            false
+        ),
+        List.of(new StudentCourse(
+            courseId,
+            "Javaコース",
+            new Id(1),
+            LocalDate.of(2024, 7, 15),
+            LocalDate.of(2025, 4, 15)
+        ))
+    );
+  }
+
+  static StudentDetail createSatoHanako(boolean isOnRegister) {
+
+    Id studentId;
+    Id courseId1;
+    Id courseId2;
+    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
+      studentId = null;
+      courseId1 = null;
+      courseId2 = null;
+    } else {
+      studentId = new Id(2);
+      courseId1 = new Id(2);
+      courseId2 = new Id(6);
+    }
+
+    return new StudentDetail(
+        new Student(
+            studentId,
+            "田中太郎",
+            "たなかたろう",
+            "タロー",
+            "tarotaro@gmail.com",
+            "茨城県かすみがうら市",
+            "080-1234-5678",
+            32,
+            "男",
+            "",
+            false
+        ),
+        List.of(
+            new StudentCourse(
+                courseId1,
+                "AWSコース",
+                new Id(2),
+                LocalDate.of(2024, 7, 20),
+                LocalDate.of(2025, 7, 20)
+            ),
+            new StudentCourse(
+                courseId2,
+                "Javaコース",
+                new Id(2),
+                LocalDate.of(2024, 9, 23),
+                LocalDate.of(2025, 3, 23)
+            )
+        )
+    );
+  }
+
+  static StudentDetail createIdoMayumi(boolean isOnRegister) {
+
+    Id studentId;
+    Id courseId;
+    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
+      studentId = null;
+      courseId = null;
+    } else {
+      studentId = new Id(3);
+      courseId = new Id(3);
+    }
+
+    return new StudentDetail(
+        new Student(
+            studentId,
+            "井戸真由美",
+            "いどまゆみ",
+            "まゆみ",
+            "mayumi456@gmail.com",
+            "北海道登別市",
+            "070-1244-5678",
+            27,
+            "女",
+            "",
+            false
+        ),
+        List.of(new StudentCourse(
+            courseId,
+            "デザインコース",
+            new Id(3),
+            LocalDate.of(2024, 8, 12),
+            LocalDate.of(2025, 2, 12)
+        ))
+    );
+  }
+
+  static StudentDetail createSuzukiYuichi(boolean isOnRegister) {
+
+    Id studentId;
+    Id courseId1;
+    Id courseId2;
+    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
+      studentId = null;
+      courseId1 = null;
+      courseId2 = null;
+    } else {
+      studentId = new Id(4);
+      courseId1 = new Id(4);
+      courseId2 = new Id(7);
+    }
+
+    return new StudentDetail(
+        new Student(
+            studentId,
+            "鈴木佑一",
+            "すずきゆういち",
+            "Yuu",
+            "yuyuyu@gmail.com",
+            "福島県会津若松市",
+            "080-1344-5678",
+            21,
+            "男",
+            "",
+            false
+        ),
+        List.of(
+            new StudentCourse(
+                courseId1,
+                "Webマーケティングコース",
+                new Id(4),
+                LocalDate.of(2024, 8, 30),
+                LocalDate.of(2025, 8, 30)
+            ),
+            new StudentCourse(
+                courseId2,
+                "デザインコース",
+                new Id(4),
+                LocalDate.of(2024, 7, 20),
+                LocalDate.of(2025, 7, 20)
+            )
+        )
+    );
+  }
+
+  static StudentDetail createHattoriJiro(boolean isOnRegister) {
+
+    Id studentId;
+    Id courseId;
+    if (isOnRegister) { //登録時に渡すインスタンスなら、idはnull
+      studentId = null;
+      courseId = null;
+    } else {
+      studentId = new Id(5);
+      courseId = new Id(5);
+    }
+
+    return new StudentDetail(
+        new Student(
+            studentId,
+            "服部次郎",
+            "はっとりじろう",
+            "ハットリくん",
+            "ninja@gmail.com",
+            "滋賀県甲賀市",
+            "080-1347-0678",
+            33,
+            "その他",
+            "",
+            false),
+        List.of(new StudentCourse(
+            courseId,
+            "フロントエンドコース",
+            new Id(5),
+            LocalDate.of(2024, 9, 9),
+            LocalDate.of(2025, 3, 9)
+        ))
+    );
+  }
+
+}
