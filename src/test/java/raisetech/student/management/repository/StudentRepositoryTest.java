@@ -48,7 +48,7 @@ class StudentRepositoryTest {
     Id studentId = new Id(1);
     Student actual = sut.searchStudent(studentId);
 
-    assertThat(actual.getStudentId()).isEqualTo(studentId);
+    assertThat(actual).isEqualTo(MyBatisTestDataFactory.createTanakaTaro(false).getStudent());
   }
 
   @Test
