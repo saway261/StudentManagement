@@ -1,186 +1,317 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: 受講生管理システム
   description: 受講生及び受講コースの登録・更新・検索を行います。
   version: "0.0"
-
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
 paths:
   /students:
-    post:
-      summary: 受講生と受講コースを登録する
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StudentDetailForm'
+    get:
+      tags:
+        - student-controller
+      summary: アクティブな受講生詳細一覧の検索
+      description: アクティブな受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません
+      operationId: getActiveStudentDetailList
       responses:
-        '200':
-          description: 登録成功
+        default:
+          description: default response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StudentDetailResponse'
-
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentDetailResponse"
     put:
-      summary: 受講生と受講コースを更新する
+      tags:
+        - student-controller
+      summary: 受講生詳細更新
+      description: 受講生詳細の更新を行います。キャンセルフラグの更新(アクティブ⇔非アクティブ)もここで行います。受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合はエラーを返します。
+      operationId: updateStudentDetail
       requestBody:
-        required: true
+        description: 更新したい受講生詳細
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StudentDetailForm'
+              $ref: "#/components/schemas/StudentDetailForm"
+        required: true
       responses:
-        '200':
-          description: 更新成功
+        "200":
+          description: ok
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StudentDetailResponse'
-
+                $ref: "#/components/schemas/StudentDetailResponse"
+        "400":
+          description: 入力値のバリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+        "404":
+          description: 指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+    post:
+      tags:
+        - student-controller
+      summary: 受講生詳細登録
+      description: 受講生の登録を行います
+      operationId: registerStudentDetail
+      requestBody:
+        description: 新規に登録したい受講生詳細
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentDetailForm"
+        required: true
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentDetailResponse"
+        "400":
+          description: 入力値のバリデーションエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
   /students/{studentId}:
     get:
-      summary: 受講生情報をIDで取得する
+      tags:
+        - student-controller
+      summary: 受講生詳細検索
+      description: アクティブ・非アクティブを問わず、受講生詳細の全件から受講生IDが一致する受講生の詳細を取得します。
+      operationId: viewStudentDetail
       parameters:
         - name: studentId
           in: path
+          description: 受講生ID
           required: true
           schema:
             type: integer
+            format: int32
       responses:
-        '200':
-          description: 検索成功
+        "200":
+          description: ok
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StudentDetailResponse'
-
+                $ref: "#/components/schemas/StudentDetailResponse"
+        "404":
+          description: 指定された受講生IDが存在しなかったときのエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+        "400":
+          description: 受講生IDの形式が不正であったときのエラー
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+  /studentAndCourses:
+    get:
+      tags:
+        - student-controller
+      summary: アクティブな受講生詳細一覧の検索(旧ver・非使用)
+      description: 現在使われていないURIです。エラーを返し、正しいアドレスへのアクセスを促します
+      operationId: pastGetStudentDetails
+      responses:
+        "404":
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
 components:
   schemas:
-    StudentDetailForm:
-      type: object
-      required: [ student, studentCourseList ]
-      properties:
-        student:
-          $ref: '#/components/schemas/StudentForm'
-        studentCourseList:
-          type: array
-          items:
-            $ref: '#/components/schemas/StudentCourseForm'
-
-    StudentForm:
-      type: object
-      properties:
-        studentId:
-          type: integer
-          example: 1
-        fullname:
-          type: string
-          example: 佐藤花子
-        kanaName:
-          type: string
-          example: さとうはなこ
-        nickname:
-          type: string
-          example: ハナ
-        email:
-          type: string
-          format: email
-          example: hanako@example.com
-        area:
-          type: string
-          example: 東京都品川区
-        telephone:
-          type: string
-          example: 090-1234-5678
-        age:
-          type: integer
-          example: 25
-        sex:
-          type: string
-          example: 女
-        remark:
-          type: string
-          example: 転職活動中
-        isDeleted:
-          type: boolean
-          example: false
-
     StudentCourseForm:
       type: object
+      description: 受講生コース登録・更新用フォーム
       properties:
         courseId:
           type: integer
+          format: int32
+          description: コースID 登録時は自動採番を行うため不要、更新時のみ必要
           example: 1
         courseName:
           type: string
+          description: "コース名 'Javaコース','AWSコース','デザインコース','Webマーケティングコース','フロントエンド\
+            コース'のみが入力可能"
           example: Javaコース
         courseEndAt:
           type: string
           format: date
+          description: コース終了予定日（更新時に設定）
           example: 2025-07-01
-
-    StudentDetailResponse:
+    StudentDetailForm:
       type: object
+      description: 受講生詳細登録・更新用フォーム
       properties:
         student:
-          $ref: '#/components/schemas/StudentResponse'
+          $ref: "#/components/schemas/StudentForm"
         studentCourseList:
           type: array
           items:
-            $ref: '#/components/schemas/StudentCourseResponse'
-
-    StudentResponse:
+            $ref: "#/components/schemas/StudentCourseForm"
+    StudentForm:
       type: object
+      description: 受講生登録・更新用フォーム
       properties:
         studentId:
           type: integer
+          format: int32
+          description: 受講生ID 登録時は自動採番を行うため不要、更新時のみ必要
           example: 1
         fullname:
           type: string
+          description: フルネーム
           example: 佐藤花子
         kanaName:
           type: string
+          description: かな
           example: さとうはなこ
         nickname:
           type: string
+          description: ニックネーム
           example: ハナ
         email:
           type: string
-          example: hana@example.com
+          description: Emailアドレス
+          example: hanako@example.com
         area:
           type: string
+          description: 居住地（市区町村まで）
           example: 東京都品川区
         telephone:
           type: string
+          description: 電話番号
           example: 090-1234-5678
         age:
           type: integer
+          format: int32
+          description: 年齢
           example: 25
         sex:
           type: string
+          description: 性別 '男''女''その他'のみが入力可能
           example: 女
         remark:
           type: string
+          description: 備考
           example: 転職活動中
-        isDeleted:
+        deleted:
           type: boolean
-          example: false
-
     StudentCourseResponse:
       type: object
+      description: 受講生が受講しているコース情報（出力用）
       properties:
         courseId:
           type: integer
+          format: int32
+          description: コースID
           example: 1
         courseName:
           type: string
+          description: コース名
           example: Javaコース
         courseStartAt:
           type: string
           format: date
+          description: コース開始日
           example: 2025-01-01
         courseEndAt:
           type: string
           format: date
+          description: コース終了予定日
           example: 2025-07-01
+    StudentDetailResponse:
+      type: object
+      description: 受講生詳細（出力用）
+      properties:
+        student:
+          $ref: "#/components/schemas/StudentResponse"
+          description: 受講生情報
+        studentCourseList:
+          type: array
+          description: 受講生が登録しているすべてのコース情報
+          items:
+            $ref: "#/components/schemas/StudentCourseResponse"
+    StudentResponse:
+      type: object
+      description: 受講生情報（出力用）
+      properties:
+        studentId:
+          type: integer
+          format: int32
+          description: 受講生ID
+          example: 1
+        fullname:
+          type: string
+          description: フルネーム
+          example: 佐藤花子
+        kanaName:
+          type: string
+          description: かな
+          example: さとうはなこ
+        nickname:
+          type: string
+          description: ニックネーム
+          example: ハナ
+        email:
+          type: string
+          description: メールアドレス
+          example: hana@example.com
+        area:
+          type: string
+          description: 居住地（市区町村まで）
+          example: 東京都品川区
+        telephone:
+          type: string
+          description: 電話番号
+          example: 090-1234-5678
+        age:
+          type: integer
+          format: int32
+          description: 年齢
+          example: 25
+        sex:
+          type: string
+          description: 性別
+          example: 女
+        remark:
+          type: string
+          description: 備考
+          example: 転職活動中
+        deleted:
+          type: boolean
+    ErrorResponseBody:
+      type: object
+      description: エラーレスポンス
+      properties:
+        status:
+          type: string
+          description: HTTPステータス
+          enum:
+            - 400 BAD_REQUEST
+            - 404 NOT_FOUND
+          example: BAD_REQUEST
+        message:
+          type: string
+          description: 簡潔なエラーメッセージ
+          example: validation error
+        errors:
+          type: array
+          description: エラー詳細 エラー発生個所とエラーメッセージを持ちます。
+          examples:
+            - "field : studentId \n message : 受講生IDが存在しません"
+          items:
+            type: object
+            additionalProperties:
+              type: string
