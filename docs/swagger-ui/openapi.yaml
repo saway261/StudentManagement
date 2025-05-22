@@ -60,7 +60,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "404 NOT_FOUND"
+                  message: "invalid id"
+                  errors:
+                    - field: "argument:"
+                      message: "受講生IDが存在しません。"
     post:
       tags:
         - student-controller
@@ -121,6 +126,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "404 NOT_FOUND"
+                  message: "invalid id"
+                  errors:
+                    - field: "argument:"
+                      message: "受講生IDが存在しません。"
         "400":
           description: 受講生IDの形式が不正であったときのエラー
           content:
