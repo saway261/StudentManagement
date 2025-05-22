@@ -11,6 +11,9 @@ import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.web.form.StudentCourseForm;
+import raisetech.student.management.web.form.StudentDetailForm;
+import raisetech.student.management.web.form.StudentForm;
 import raisetech.student.management.web.response.StudentDetailResponse;
 
 /**
@@ -62,36 +65,39 @@ public class StudentService {
    * 受講生詳細の登録を行います。受講生と受講生コースを個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了予定日を設定します。
    * コース開始日にはリクエストが実行された日付、コース終了日にはコース開始日の6か月後の日付が設定されます。
    *
-   * @param studentDetail 受講生詳細
+   * @param detailForm 受講生詳細
    * @return 登録された受講生詳細
    */
   @Transactional
-  public StudentDetail registerStudentDetail(StudentDetail studentDetail) {
-    Student student = studentDetail.getStudent();
-    List<StudentCourse> courseList = studentDetail.getStudentCourseList();
+  public StudentDetailResponse registerStudentDetail(StudentDetailForm detailForm) {
+    Student student = StudentForm.toDomain(detailForm.getStudent());
+    repository.registerStudent(student);
 
-    repository.registerStudent(studentDetail.getStudent());
-    for (StudentCourse course : courseList) {
-      repository.registerCourse(new StudentCourse(course.getCourseName(), student.getStudentId()));
+    List<StudentCourseForm> courseList = detailForm.getStudentCourseList();
+
+    for (StudentCourseForm course : courseList) {
+      repository.registerCourse(StudentCourseForm.toDomain(course, student.getStudentId()));
     }
 
-    return buildStudentDetail(student.getStudentId());
+    return StudentDetailResponse.fromDomain(buildStudentDetail(student.getStudentId()));
   }
 
   /**
    * 受講生詳細の更新を行います。受講生と受講生コースを個別に登録します。 受講生のキャンセルフラグの更新もここでおこないます。(論理削除)
    *
-   * @param studentDetail 更新後の受講生詳細
+   * @param detailForm 更新後の受講生詳細
    * @return 更新された受講生詳細
    */
   @Transactional
-  public StudentDetail updateStudentDetail(StudentDetail studentDetail) throws InvalidIdException {
-    Student requestStudent = studentDetail.getStudent();
-    List<StudentCourse> requestCourses = studentDetail.getStudentCourseList();
+  public StudentDetailResponse updateStudentDetail(StudentDetailForm detailForm)
+      throws InvalidIdException {
+    Student requestStudent = StudentForm.toDomain(detailForm.getStudent());
+    List<StudentCourseForm> requestCourses = detailForm.getStudentCourseList();
 
     // リクエストボディの受講生コースリストをループで回す
-    for (StudentCourse course : requestCourses) {
-      StudentCourse complementedCourse = new StudentCourse(course, requestStudent.getStudentId());
+    for (StudentCourseForm course : requestCourses) {
+      StudentCourse complementedCourse = StudentCourseForm.toDomain(course,
+          requestStudent.getStudentId());
       if (isLinkedCourseIdWithStudentId(complementedCourse)) {//受講生コースのコースIDが受講生IDと紐づくか判定
         repository.updateCourse(complementedCourse);//紐づくなら更新処理を行う
       } else {
@@ -100,8 +106,7 @@ public class StudentService {
     }
     //受講生の更新処理を行う
     repository.updateStudent(requestStudent);
-    StudentDetail responseStudentDetail = buildStudentDetail(requestStudent.getStudentId());
-    return responseStudentDetail;
+    return StudentDetailResponse.fromDomain(buildStudentDetail(requestStudent.getStudentId()));
   }
 
   /**
