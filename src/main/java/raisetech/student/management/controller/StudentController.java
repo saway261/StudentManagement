@@ -56,10 +56,7 @@ public class StudentController {
   @GetMapping("/students")
   public List<StudentDetailResponse> getActiveStudentDetailList() {
     List<StudentDetailResponse> responseList = new ArrayList<>();
-    for (StudentDetailResponse studentDetailResponse : service.searchActiveStudentDetailList()) {
-      responseList.add(studentDetailResponse);
-    }
-    return responseList;
+    return service.searchActiveStudentDetailList();
   }
 
   @Operation(
