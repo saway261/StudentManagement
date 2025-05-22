@@ -11,6 +11,7 @@ import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.web.response.StudentDetailResponse;
 
 /**
  * 受講生情報を取り扱うServiceです。受講生の検索や登録・更新処理を行います。
@@ -30,13 +31,13 @@ public class StudentService {
    *
    * @return アクティブ受講生詳細一覧
    */
-  public List<StudentDetail> searchActiveStudentDetailList() {
-    List<StudentDetail> activeStudentDetailList = new ArrayList<>();
+  public List<StudentDetailResponse> searchActiveStudentDetailList() {
+    List<StudentDetailResponse> activeStudentDetailList = new ArrayList<>();
     List<Student> activeStudents = repository.searchActiveStudentList();
 
     for (Student student : activeStudents) {
       StudentDetail studentDetail = buildStudentDetail(student.getStudentId());
-      activeStudentDetailList.add(studentDetail);
+      activeStudentDetailList.add(StudentDetailResponse.fromDomain(studentDetail));
     }
     return activeStudentDetailList;
   }

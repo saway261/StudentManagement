@@ -56,8 +56,8 @@ public class StudentController {
   @GetMapping("/students")
   public List<StudentDetailResponse> getActiveStudentDetailList() {
     List<StudentDetailResponse> responseList = new ArrayList<>();
-    for (StudentDetail studentDetail : service.searchActiveStudentDetailList()) {
-      responseList.add(StudentDetailResponse.fromDomain(studentDetail));
+    for (StudentDetailResponse studentDetailResponse : service.searchActiveStudentDetailList()) {
+      responseList.add(studentDetailResponse);
     }
     return responseList;
   }
