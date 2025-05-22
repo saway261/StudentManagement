@@ -112,7 +112,7 @@ class StudentServiceTest {
         .thenReturn(studentDetail.getStudentCourseList());
 
     // 実行
-    sut.registerStudent(studentDetail);
+    sut.registerStudentDetail(studentDetail);
 
     // 検証
     Mockito.verify(repository, times(1)).registerStudent(student);
@@ -139,7 +139,7 @@ class StudentServiceTest {
     doReturn(true).when(sut).isLinkedCourseIdWithStudentId(Mockito.any(StudentCourse.class));
 
     // 実際の実行
-    sut.updateStudent(studentDetail);
+    sut.updateStudentDetail(studentDetail);
 
     // 検証
     Mockito.verify(sut, times(courseList.size()))
@@ -160,7 +160,7 @@ class StudentServiceTest {
 
     // 実行と検証
     Assertions.assertThrows(InvalidIdException.class, () -> {
-      sut.updateStudent(studentDetail);
+      sut.updateStudentDetail(studentDetail);
     });
   }
 

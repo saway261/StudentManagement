@@ -15,7 +15,7 @@ APIです。このAPIは、以下の処理が可能です。
 ・受講生詳細の更新（論理削除を含む）
 
 詳細なAPI仕様は、以下のリンクから確認できます。  
-[受講生管理システム(Swagger UI)](https://saway261.github.io/StudentManagement/)
+[受講生管理システム(Swagger UI)](https://saway261.github.io/StudentManagement/swagger-ui/)
 
 ## 詳細
 
@@ -28,6 +28,8 @@ APIです。このAPIは、以下の処理が可能です。
 <img src="https://img.shields.io/badge/framework-springboot 3.4.3-6DB33F.svg?logo=springboot&logoColor=#000000">
 <img src="https://img.shields.io/badge/-MySQL-4479A1.svg?logo=mysql&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-MyBatis-990000.svg">
+<img src="https://img.shields.io/badge/-JUnit5-25A162.svg?logo=JUnit5&logoColor=FFFFFF">
+<img src="https://img.shields.io/badge/-h2database-09476B.svg?logo=h2database&logoColor=FFFFFF">
 
 **使用ツール**  
 <img src="https://img.shields.io/badge/-IntelliJ IDEA-000000.svg?logo=intellijidea&logoColor=FFFFFF">
@@ -40,8 +42,8 @@ APIです。このAPIは、以下の処理が可能です。
 
 ### E-R図(データモデル) Entity-Relation Diagram
 
-受講生と受講生コースは1対多の関係を持つ。受講生と、その受講生のすべてのコースの情報で受講生詳細(
-studentDetail)を組み立てる
+受講生と受講生コースは1対多の関係を持ちます。受講生と、その受講生のすべてのコースの情報で受講生詳細(
+studentDetail)を組み立てます。
 
 ```mermaid
 erDiagram
@@ -62,11 +64,150 @@ erDiagram
     STUDENTS_COURSES {
         INT course_id PK
         VARCHAR course_name PK
-        INT student_id FK  "外部キー (STUDENTS.student_id)"
+        INT student_id FK "外部キー (STUDENTS.student_id)"
         DATE course_start_at
         DATE course_end_at
     }
 ```
+
+### データ転送オブジェクト　Data Transfer Object
+
+#### 背景
+
+将来的な機能拡張を想定し、受講生ID(`studentId`)、受講生コースID(`courseId`)のため、バリューオブジェクト
+`Id`を設けました。
+現在はシンプルな整数値をIDとして設定していますが、UUIDやコース名のイニシャルを含む連番等への変更を検討しています。
+
+この際、クライアントと安全に値を受け渡すことができるよう、フォームオブジェクトとレスポンスオブジェクトを設けました。
+
+#### 役割
+
+- フォームオブジェクトとレスポンスオブジェクトは、
+  それぞれ自分自身のクラスにおいて、ドメインオブジェクトに変換するためのメソッド(`toDomain`,
+  `fromDomain`)を持ちます。
+- `toDomain`メソッド, `fromDomain`メソッドによって、`studentId`, `courseId`は`Integer`型から`Id`
+  型へ、あるいはその反対方向に変換されます。
+
+```mermaid
+---
+title: DTOとドメインオブジェクト
+---
+classDiagram
+    namespace Form Object {
+        class StudentDetailForm {
+            - StudentForm student
+            - List~StudentCourseForm~ studentCourseList
+            + static StudentDetailForm toDomain(StudentDetailForm form)
+        }
+        class StudentForm {
+            - Integer studentId;
+            - String fullname;
+            - String kanaName;
+            - String nickname;
+            - String email;
+            - String area;
+            - String telephone;
+            - Integer age;
+            - String sex;
+            - String remark;
+            - boolean isDeleted;
+            ~ toDomain(StudentForm form) Student
+        }
+        class StudentCourseForm {
+            - Integer courseId
+            - String courseName
+            - LocalDate courseEndAt
+            ~ toDomain(StudentCourse form) StudentCourse
+        }
+    }
+
+    namespace Domain Object {
+        class StudentDetail {
+            - final Student student
+            - final List~StudentCourse~ studentCourseList
+        }
+
+        class Student {
+            - final Id studentId;
+            - final String fullname;
+            - final String kanaName;
+            - final String nickname;
+            - final String email;
+            - final String area;
+            - final String telephone;
+            - final Integer age;
+            - final String sex;
+            - final String remark;
+            - final boolean isDeleted;
+        }
+
+        class StudentCourse {
+            - final Id courseId
+            - final String courseName
+            - final Id studentId
+            - final LocalDate courseStartAt
+            - final LocalDate courseEndAt
+        }
+        class Id {
+            - Integer value
+        }
+    }
+    Student *-- Id
+    StudentCourse *-- Id
+
+    namespace Response Object {
+        class StudentDetailResponse {
+            - final StudentResponse student
+            - final List~StudentCourseResponse~ studentCourseList
+            + getter()
+            - StudentDetailResponse(StudentDetail domain)
+            + static fromDomain(StudentDetail domain) StudentResponse
+        }
+
+        class StudentResponse {
+            - final Integer studentId;
+            - final String fullname;
+            - final String kanaName;
+            - final String nickname;
+            - final String email;
+            - final String area;
+            - final String telephone;
+            - final Integer age;
+            - final String sex;
+            - final String remark;
+            - final boolean isDeleted;
+            + getter()
+            ~ StudentResponse(Student domain)
+        }
+
+        class StudentCourseResponse {
+            - final Integer courseId
+            - final String courseName
+            - final LocalDate courseStartAt
+            - final LocalDate courseEndAt
+            + getter()
+            ~ StudentCourseResponse(StudentCourse domain)
+        }
+    }
+
+    StudentDetail "1" *.. "1..*" StudentCourse
+    StudentDetail "1" *.. "1" Student
+    StudentDetailForm "1" *.. "1..*" StudentCourseForm
+    StudentDetailForm "1" *.. "1" StudentForm
+    StudentDetailResponse "1" *.. "1..*" StudentCourseResponse
+    StudentDetailResponse "1" *.. "1" StudentResponse
+    StudentDetailForm ..> StudentDetail: return
+    StudentDetailResponse ..> StudentDetail: recieve
+
+```
+
+#### 補足
+
+- StudentCourseのstudentIdは、バッグエンド側でStudentのstudentIdから取得して設定するため、フォームオブジェクトではフィールドを持ちません。
+- StudentCourseのcourseStartAtとcourseEndAtは、バッグエンド側で登録処理実行日とその6か月後の日付を取得して設定します。
+    - courseStartAtは不変のため、常にクライアントから受け取らず、フォームオブジェクトはフィールドを持ちません。
+    - ただし、courseEndAtは受講期間延長を想定して、更新処理時には値を受け取ることがあるため、フォームオブジェクト自体はフィールドを持ちます。
+    - クライアントが値を確認できるよう、レスポンスオブジェクトはcourseStartAtとcourseEndAtのどちらのフィールドも持ちます。
 
 ---
 
@@ -89,16 +230,16 @@ sequenceDiagram
     User ->> API: GET /students/{studentId}
     break studentIdの形式が正しくない場合
         API -->> User: 400 BadRequest
-    end 
-            API ->> DB: SELECT 受講生<br>WHERE 受講生ID
-            API ->> DB: SELECT 受講生コース<br>WHERE 受講生ID
-            DB -->> API: 受講生を返す
-            DB -->> API: 受講生コースを返す
-            API ->> API: 受講生詳細をビルド
-        break 受講生詳細が空の場合 
-            API -->> User: 404 NotFound:受講生IDが存在しません
-        end 
-            API -->> User: 200 OK (受講生詳細詳細が返る)
+    end
+    API ->> DB: SELECT 受講生<br>WHERE 受講生ID
+    API ->> DB: SELECT 受講生コース<br>WHERE 受講生ID
+    DB -->> API: 受講生を返す
+    DB -->> API: 受講生コースを返す
+    API ->> API: 受講生詳細をビルド
+    break 受講生詳細が空の場合
+        API -->> User: 404 NotFound:受講生IDが存在しません
+    end
+    API -->> User: 200 OK (受講生詳細詳細が返る)
 
 ```
 
@@ -113,9 +254,9 @@ sequenceDiagram
     break 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
     end
-        API ->> DB: INSERT 受講生
-        API ->> DB: INSERT 受講生コース
-        API -->> User: 200 OK (テーブルに登録された受講生詳細が返る)
+    API ->> DB: INSERT 受講生
+    API ->> DB: INSERT 受講生コース
+    API -->> User: 200 OK (テーブルに登録された受講生詳細が返る)
 
 ```
 
@@ -130,12 +271,12 @@ sequenceDiagram
         API -->> User: 400 BadRequest
     end
     API ->> DB: SELECT 受講生コースID一覧<br>WHERE 受講生ID
-    DB -->> API:受講生IDに紐づく<br>受講生コースID一覧を返す
+    DB -->> API: 受講生IDに紐づく<br>受講生コースID一覧を返す
     API ->> API: 更新したい受講生コースが<br>受講生と紐づいたものか判定
     break 受講生IDに紐づく<br>受講生コースID一覧が空の場合
         API -->> User: 404 NotFound:受講生IDが存在しません
     end
-    break 受講生コースIDが受講生IDと紐づかない場合 
+    break 受講生コースIDが受講生IDと紐づかない場合
         API -->> User: 404 NotFound:受講生コースIDが受講生IDと紐づきません
     end
     API ->> DB: UPDATE 受講生コース<br>WHERE 受講生ID
@@ -171,24 +312,24 @@ classDiagram
         -StudentServise service
         +getActiveStudentDetailList() List~StudentDetail~
         +viewStudentDetail(int studentId) StudentDetail
-        +registerStudent(StudentDetail studentDetail) ResponseEntity~StudentDetail~
-        +updateStudent(StudentDetail studentDetail) ResponseEntity~StudentDetail~
+        +registerStudentDetail(StudentDetail studentDetail) ResponseEntity~StudentDetail~
+        +updateStudentDetail(StudentDetail studentDetail) ResponseEntity~StudentDetail~
     }
     class StudentService {
         -StudentRepository repository
         +searchActiveStudentDetailList() List~StudentDetail~
-        +searchstudentDetail(int studentId) StudentDetail
-        +registerStudent(StudentDetail studentDetail) StudentDetail
-        +updateStudent(StudentDetail studentDetail) StudentDetail
-        -buildStudentDetail(int studentId) StudentDetail
-        -isLinkedCourseIdWithStudentId(StudentCourse course) boolean
+        +searchstudentDetail(Id studentId) StudentDetail
+        +registerStudentDetail(StudentDetail studentDetail) StudentDetail
+        +updateStudentDetail(StudentDetail studentDetail) StudentDetail
+        ~ buildStudentDetail(int studentId) StudentDetail
+        ~ isLinkedCourseIdWithStudentId(StudentCourse course) boolean
     }
     class StudentRepository {
         +searchActiveStudentList()
-        +searchStudent(int studentId) Student
-        +searchCourses(int studentId) List~StudentCourses~
-        +searchStudentIdList() List~Integer~
-        +searchCourseIdListLinkedStudentId(int studentId) List~Integer~
+        +searchStudent(Id studentId) Student
+        +searchCourses(Id studentId) List~StudentCourses~
+        +searchStudentIdList() List~Id~
+        +searchCourseIdListLinkedStudentId(Id studentId) List~Id~
         +registerStudent(Student student)
         +registerCourse(StudentCourse course)
         +updateStudent(Student student)
@@ -198,7 +339,7 @@ classDiagram
         class StudentExceptionHandler {
         }
     }
-    StudentService ..> StudentExceptionHandler: throw exception
+
     StudentController ..> StudentExceptionHandler: throw exception
     USER <.. StudentExceptionHandler: error response
 
@@ -239,34 +380,38 @@ classDiagram
     StudentExceptionHandler ..> ErrorResponseBody: creates
     ErrorResponseBody *-- error: contains
 
-
 ```
 
-```mermaid
-classDiagram
-    namespace CustomException {
-        class StudentException {
-            <<abstract>>
-            # String field
-            # String message
-            + getField()
-            + getMessage()
-        }
-        class InvalidAccessException {
-            + getField()
-            + getMessage()
-        }
-        class InvalidIdException {
-            + getField()
-            + getMessage()
-        }
-    }
-    StudentException ..|> InvalidAccessException
-    StudentException ..|> InvalidIdException
+## テスト
 
-```
+JUnitを用いて単体テストを実装しました。
+
+#### テストを行ったクラス
+
+- StudentContoroller
+- StudentService
+- StudentRepository
+- StudentDetailForm
+    - バリデーションのテスト
+    - ドメインオブジェクトへの変換のテスト
+- Id
+    - equals, hashCode, toStringメソッドのテスト
+    - コンストラクタのテスト
+    - バリデーションのテスト
+
+![img.png](img.png)
 
 ## 今後の課題
 
-・テストの実施および現時点で想定できていないエラーハンドリングの実装  
-・柔軟な検索機能の実装（受講生ID以外による検索を可能にする）
+- フォームオブジェクト -> ドメインオブジェクトの変換の安全性を向上
+    - `StudentController`でフォームオブジェクトからドメインオブジェクトへの変換を行う現在の設計では、
+      `StudentCourse`の必要な項目が未初期化のままドメインオブジェクトのインスタンス生成が行われてしまいます。
+    - `StudentService`でフォームオブジェクト ->
+      ドメインオブジェクトの変換を行うようにすることで、ドメインオブジェクトのインスタンス生成は完全なフィールドを持つ状態でのみ行われることを目指します。
+
+- 受講生ID以外による検索機能の実装
+    - 受講生コースに受講ステータス項目（申し込み中、受講中、受講終了 等）を追加し、ステータスごとのリストを取得できるようにする
+    - フルネーム、ニックネーム等のフィールドに対する完全一致・部分一致検索を可能にする
+
+- GitHub Actionsを用いたテストの自動化
+- 認証認可機能の追加
