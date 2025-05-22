@@ -145,7 +145,7 @@ public class StudentController {
   )
   @PostMapping("/students")
   @Validated(OnRegister.class)
-  public ResponseEntity<StudentDetailResponse> registerStudent(
+  public ResponseEntity<StudentDetailResponse> registerStudentDetail(
       @RequestBody @Valid StudentDetailForm form) {
     StudentDetail request = StudentDetailForm.toDomain(form);
     StudentDetail resistered = service.registerStudent(request);
@@ -187,7 +187,7 @@ public class StudentController {
   )
   @PutMapping("/students")
   @Validated(OnUpdate.class)
-  public ResponseEntity<StudentDetailResponse> updateStudent(
+  public ResponseEntity<StudentDetailResponse> updateStudentDetail(
       @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
     StudentDetail request = StudentDetailForm.toDomain(form);
     StudentDetail updated = service.updateStudent(request);
