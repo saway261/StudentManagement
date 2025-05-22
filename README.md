@@ -70,6 +70,7 @@ erDiagram
     }
 ```
 
+---
 ### データ転送オブジェクト　Data Transfer Object
 
 #### 背景
@@ -381,7 +382,7 @@ classDiagram
     ErrorResponseBody *-- error: contains
 
 ```
-
+---
 ## テスト
 
 JUnitを用いて単体テストを実装しました。
