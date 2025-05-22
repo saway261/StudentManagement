@@ -179,18 +179,18 @@ classDiagram
     class StudentService {
         -StudentRepository repository
         +searchActiveStudentDetailList() List~StudentDetail~
-        +searchstudentDetail(int studentId) StudentDetail
-        +registerStudent(StudentDetail studentDetail) StudentDetail
-        +updateStudent(StudentDetail studentDetail) StudentDetail
-        -buildStudentDetail(int studentId) StudentDetail
-        -isLinkedCourseIdWithStudentId(StudentCourse course) boolean
+        +searchstudentDetail(Id studentId) StudentDetail
+        +registerStudentDetail(StudentDetail studentDetail) StudentDetail
+        +updateStudentDetail(StudentDetail studentDetail) StudentDetail
+        ~ buildStudentDetail(int studentId) StudentDetail
+        ~ isLinkedCourseIdWithStudentId(StudentCourse course) boolean
     }
     class StudentRepository {
         +searchActiveStudentList()
-        +searchStudent(int studentId) Student
-        +searchCourses(int studentId) List~StudentCourses~
-        +searchStudentIdList() List~Integer~
-        +searchCourseIdListLinkedStudentId(int studentId) List~Integer~
+        +searchStudent(Id studentId) Student
+        +searchCourses(Id studentId) List~StudentCourses~
+        +searchStudentIdList() List~Id~
+        +searchCourseIdListLinkedStudentId(Id studentId) List~Id~
         +registerStudent(Student student)
         +registerCourse(StudentCourse course)
         +updateStudent(Student student)
