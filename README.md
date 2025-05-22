@@ -42,8 +42,8 @@ APIです。このAPIは、以下の処理が可能です。
 
 ### E-R図(データモデル) Entity-Relation Diagram
 
-受講生と受講生コースは1対多の関係を持つ。受講生と、その受講生のすべてのコースの情報で受講生詳細(
-studentDetail)を組み立てる
+受講生と受講生コースは1対多の関係を持ちます。受講生と、その受講生のすべてのコースの情報で受講生詳細(
+studentDetail)を組み立てます。
 
 ```mermaid
 erDiagram
@@ -242,29 +242,7 @@ classDiagram
     ErrorResponseBody *-- error: contains
 
 
-```
 
-```mermaid
-classDiagram
-    namespace CustomException {
-        class StudentException {
-            <<abstract>>
-            # String field
-            # String message
-            + getField()
-            + getMessage()
-        }
-        class InvalidAccessException {
-            + getField()
-            + getMessage()
-        }
-        class InvalidIdException {
-            + getField()
-            + getMessage()
-        }
-    }
-    StudentException ..|> InvalidAccessException
-    StudentException ..|> InvalidIdException
 
 ```
 
