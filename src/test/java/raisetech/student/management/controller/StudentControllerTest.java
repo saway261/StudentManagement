@@ -128,7 +128,7 @@ class StudentControllerTest {
     StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // サービスに渡る想定値
     StudentDetail expectedResponse = TestDataFactory.makeCompletedStudentDetail(new Id(1),
         new Id(1));
-    Mockito.when(service.registerStudent(Mockito.any(StudentDetail.class)))
+    Mockito.when(service.registerStudentDetail(Mockito.any(StudentDetail.class)))
         .thenReturn(expectedResponse);
 
     // Act
@@ -138,7 +138,7 @@ class StudentControllerTest {
         .andExpect(status().isOk());
 
     // Assert
-    Mockito.verify(service, times(1)).registerStudent(captor.capture());
+    Mockito.verify(service, times(1)).registerStudentDetail(captor.capture());
     assertThat(captor.getValue()).usingRecursiveComparison()
         .isEqualTo(expectedDomain);
   }
@@ -153,7 +153,7 @@ class StudentControllerTest {
         courseId); // ← JSONにする対象
     StudentDetail expectedDomain = StudentDetailForm.toDomain(form); // ← サービスに渡る想定値
     StudentDetail expectedResponse = expectedDomain;
-    Mockito.when(service.updateStudent(Mockito.any(StudentDetail.class)))
+    Mockito.when(service.updateStudentDetail(Mockito.any(StudentDetail.class)))
         .thenReturn(expectedResponse);
 
     // Act & Assertion
@@ -161,7 +161,7 @@ class StudentControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(form))
     ).andExpect(status().isOk());
-    Mockito.verify(service, times(1)).updateStudent(captor.capture());
+    Mockito.verify(service, times(1)).updateStudentDetail(captor.capture());
     assertThat(captor.getValue())
         .usingRecursiveComparison()
         .isEqualTo(expectedDomain);

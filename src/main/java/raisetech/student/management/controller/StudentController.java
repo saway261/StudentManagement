@@ -148,7 +148,7 @@ public class StudentController {
   public ResponseEntity<StudentDetailResponse> registerStudentDetail(
       @RequestBody @Valid StudentDetailForm form) {
     StudentDetail request = StudentDetailForm.toDomain(form);
-    StudentDetail resistered = service.registerStudent(request);
+    StudentDetail resistered = service.registerStudentDetail(request);
     StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(resistered);
     return ResponseEntity.ok(responseBody);
   }
@@ -190,7 +190,7 @@ public class StudentController {
   public ResponseEntity<StudentDetailResponse> updateStudentDetail(
       @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
     StudentDetail request = StudentDetailForm.toDomain(form);
-    StudentDetail updated = service.updateStudent(request);
+    StudentDetail updated = service.updateStudentDetail(request);
     StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(updated);
     return ResponseEntity.ok(responseBody);
   }

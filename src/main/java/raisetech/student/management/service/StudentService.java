@@ -65,7 +65,7 @@ public class StudentService {
    * @return 登録された受講生詳細
    */
   @Transactional
-  public StudentDetail registerStudent(StudentDetail studentDetail) {
+  public StudentDetail registerStudentDetail(StudentDetail studentDetail) {
     Student student = studentDetail.getStudent();
     List<StudentCourse> courseList = studentDetail.getStudentCourseList();
 
@@ -84,7 +84,7 @@ public class StudentService {
    * @return 更新された受講生詳細
    */
   @Transactional
-  public StudentDetail updateStudent(StudentDetail studentDetail) throws InvalidIdException {
+  public StudentDetail updateStudentDetail(StudentDetail studentDetail) throws InvalidIdException {
     Student requestStudent = studentDetail.getStudent();
     List<StudentCourse> requestCourses = studentDetail.getStudentCourseList();
 
