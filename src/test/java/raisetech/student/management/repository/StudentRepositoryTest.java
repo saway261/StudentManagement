@@ -52,7 +52,7 @@ class StudentRepositoryTest {
     Id studentId = new Id(1);
     Student actual = sut.searchStudent(studentId);
 
-    assertThat(actual).isEqualTo(MyBatisTestDataFactory.makeStudentDetail1().getStudent());
+    assertThat(actual).isEqualTo(MyBatisTestDataFactory.makeDummyStudentDetail1().getStudent());
   }
 
   @Test
@@ -60,7 +60,7 @@ class StudentRepositoryTest {
     Id studentId = new Id(2);
 
     List<StudentCourse> actual = sut.searchCourses(studentId);
-    List<StudentCourse> expected = MyBatisTestDataFactory.makeStudentDetail2()
+    List<StudentCourse> expected = MyBatisTestDataFactory.makeDummyStudentDetail2()
         .getStudentCourseList();
 
     assertThat(actual.size()).isEqualTo(2);
@@ -71,7 +71,7 @@ class StudentRepositoryTest {
   void 受講生IDに紐づく受講生コースIDの一覧を検索できること() {
     Id studentId = new Id(4);
     List<Id> actual = sut.searchCourseIdListLinkedStudentId(studentId);
-    List<Id> expected = MyBatisTestDataFactory.makeStudentDetail4()
+    List<Id> expected = MyBatisTestDataFactory.makeDummyStudentDetail4()
         .getStudentCourseList()
         .stream().map(course -> course.getCourseId()).toList();
 
@@ -107,7 +107,7 @@ class StudentRepositoryTest {
     StudentCourse afterRegister = makeCompletedStudentCourse(studentId, new Id(8));
 
     List<StudentCourse> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.makeStudentDetail1().getStudentCourseList().get(0));
+    expected.add(MyBatisTestDataFactory.makeDummyStudentDetail1().getStudentCourseList().get(0));
     expected.add(afterRegister);
 
     // Act
@@ -209,5 +209,5 @@ class StudentRepositoryTest {
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     assertThat(actual.contains(forLogicalDelete)).isFalse();
   }
-  
+
 }

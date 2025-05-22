@@ -10,7 +10,7 @@ import raisetech.student.management.data.value.Id;
 
 public class MyBatisTestDataFactory {
 
-  static StudentDetail makeStudentDetail1() {
+  static StudentDetail makeDummyStudentDetail1() {
 
     Id studentId = new Id(1);
     Id courseId = new Id(1);
@@ -39,7 +39,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail2() {
+  static StudentDetail makeDummyStudentDetail2() {
 
     Id studentId = new Id(2);
     Id courseId1 = new Id(2);
@@ -78,7 +78,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail3() {
+  static StudentDetail makeDummyStudentDetail3() {
 
     Id studentId = new Id(3);
     Id courseId = new Id(3);
@@ -107,7 +107,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail4() {
+  static StudentDetail makeDummyStudentDetail4() {
 
     Id studentId = new Id(4);
     Id courseId1 = new Id(4);
@@ -146,7 +146,7 @@ public class MyBatisTestDataFactory {
     );
   }
 
-  static StudentDetail makeStudentDetail5() {
+  static StudentDetail makeDummyStudentDetail5() {
 
     Id studentId = new Id(5);
     Id courseId = new Id(5);
@@ -176,11 +176,11 @@ public class MyBatisTestDataFactory {
 
   static List<Student> makeDummyStudentList() {
     List<Student> dummyStudents = new ArrayList<>();
-    dummyStudents.add(makeStudentDetail1().getStudent());
-    dummyStudents.add(makeStudentDetail2().getStudent());
-    dummyStudents.add(makeStudentDetail3().getStudent());
-    dummyStudents.add(makeStudentDetail4().getStudent());
-    dummyStudents.add(makeStudentDetail5().getStudent());
+    dummyStudents.add(makeDummyStudentDetail1().getStudent());
+    dummyStudents.add(makeDummyStudentDetail2().getStudent());
+    dummyStudents.add(makeDummyStudentDetail3().getStudent());
+    dummyStudents.add(makeDummyStudentDetail4().getStudent());
+    dummyStudents.add(makeDummyStudentDetail5().getStudent());
 
     return dummyStudents;
   }
