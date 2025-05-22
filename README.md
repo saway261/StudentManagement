@@ -28,6 +28,8 @@ APIです。このAPIは、以下の処理が可能です。
 <img src="https://img.shields.io/badge/framework-springboot 3.4.3-6DB33F.svg?logo=springboot&logoColor=#000000">
 <img src="https://img.shields.io/badge/-MySQL-4479A1.svg?logo=mysql&logoColor=FFFFFF">
 <img src="https://img.shields.io/badge/-MyBatis-990000.svg">
+<img src="https://img.shields.io/badge/-JUnit5-25A162.svg?logo=JUnit5&logoColor=FFFFFF">
+<img src="https://img.shields.io/badge/-h2database-09476B.svg?logo=h2database&logoColor=FFFFFF">
 
 **使用ツール**  
 <img src="https://img.shields.io/badge/-IntelliJ IDEA-000000.svg?logo=intellijidea&logoColor=FFFFFF">
@@ -62,7 +64,7 @@ erDiagram
     STUDENTS_COURSES {
         INT course_id PK
         VARCHAR course_name PK
-        INT student_id FK  "外部キー (STUDENTS.student_id)"
+        INT student_id FK "外部キー (STUDENTS.student_id)"
         DATE course_start_at
         DATE course_end_at
     }
@@ -89,16 +91,16 @@ sequenceDiagram
     User ->> API: GET /students/{studentId}
     break studentIdの形式が正しくない場合
         API -->> User: 400 BadRequest
-    end 
-            API ->> DB: SELECT 受講生<br>WHERE 受講生ID
-            API ->> DB: SELECT 受講生コース<br>WHERE 受講生ID
-            DB -->> API: 受講生を返す
-            DB -->> API: 受講生コースを返す
-            API ->> API: 受講生詳細をビルド
-        break 受講生詳細が空の場合 
-            API -->> User: 404 NotFound:受講生IDが存在しません
-        end 
-            API -->> User: 200 OK (受講生詳細詳細が返る)
+    end
+    API ->> DB: SELECT 受講生<br>WHERE 受講生ID
+    API ->> DB: SELECT 受講生コース<br>WHERE 受講生ID
+    DB -->> API: 受講生を返す
+    DB -->> API: 受講生コースを返す
+    API ->> API: 受講生詳細をビルド
+    break 受講生詳細が空の場合
+        API -->> User: 404 NotFound:受講生IDが存在しません
+    end
+    API -->> User: 200 OK (受講生詳細詳細が返る)
 
 ```
 
@@ -113,9 +115,9 @@ sequenceDiagram
     break 受講生詳細の形式が正しくない場合
         API -->> User: 400 BadRequest
     end
-        API ->> DB: INSERT 受講生
-        API ->> DB: INSERT 受講生コース
-        API -->> User: 200 OK (テーブルに登録された受講生詳細が返る)
+    API ->> DB: INSERT 受講生
+    API ->> DB: INSERT 受講生コース
+    API -->> User: 200 OK (テーブルに登録された受講生詳細が返る)
 
 ```
 
@@ -130,12 +132,12 @@ sequenceDiagram
         API -->> User: 400 BadRequest
     end
     API ->> DB: SELECT 受講生コースID一覧<br>WHERE 受講生ID
-    DB -->> API:受講生IDに紐づく<br>受講生コースID一覧を返す
+    DB -->> API: 受講生IDに紐づく<br>受講生コースID一覧を返す
     API ->> API: 更新したい受講生コースが<br>受講生と紐づいたものか判定
     break 受講生IDに紐づく<br>受講生コースID一覧が空の場合
         API -->> User: 404 NotFound:受講生IDが存在しません
     end
-    break 受講生コースIDが受講生IDと紐づかない場合 
+    break 受講生コースIDが受講生IDと紐づかない場合
         API -->> User: 404 NotFound:受講生コースIDが受講生IDと紐づきません
     end
     API ->> DB: UPDATE 受講生コース<br>WHERE 受講生ID
