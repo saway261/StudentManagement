@@ -173,8 +173,8 @@ classDiagram
         -StudentServise service
         +getActiveStudentDetailList() List~StudentDetail~
         +viewStudentDetail(int studentId) StudentDetail
-        +registerStudent(StudentDetail studentDetail) ResponseEntity~StudentDetail~
-        +updateStudent(StudentDetail studentDetail) ResponseEntity~StudentDetail~
+        +registerStudentDetail(StudentDetail studentDetail) ResponseEntity~StudentDetail~
+        +updateStudentDetail(StudentDetail studentDetail) ResponseEntity~StudentDetail~
     }
     class StudentService {
         -StudentRepository repository
@@ -200,7 +200,7 @@ classDiagram
         class StudentExceptionHandler {
         }
     }
-    StudentService ..> StudentExceptionHandler: throw exception
+
     StudentController ..> StudentExceptionHandler: throw exception
     USER <.. StudentExceptionHandler: error response
 
