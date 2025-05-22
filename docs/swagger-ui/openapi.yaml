@@ -49,6 +49,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "400 BAD_REQUEST"
+                  message: "validation error"
+                  errors:
+                    - field: "updateStudentDetail.form.student.fullname"
+                      message: "null は許可されていません"
         "404":
           description: 指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー
           content:
@@ -81,6 +87,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "400 BAD_REQUEST"
+                  message: "validation error"
+                  errors:
+                    - field: "registerStudentDetail.form.student.fullname"
+                      message: "null は許可されていません"
   /students/{studentId}:
     get:
       tags:
@@ -115,6 +127,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "400 BAD_REQUEST"
+                  message: "コースIDが不正です。受講生IDに紐づけられたコースIDを入力してください。"
+                  errors:
+                    - field: "studentCourse.courseId："
+                      message: "無効なIDです"
   /studentAndCourses:
     get:
       tags:
@@ -129,6 +147,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponseBody"
+                example:
+                  status: "404 NOT_FOUND"
+                  message: "現在無効なURIです。受講生一覧を見るには /students にアクセスしてください。"
+                  errors:
+                    - field: "URI"
+                      message: "無効なURIです"
 components:
   schemas:
     StudentCourseForm:
