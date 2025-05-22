@@ -40,12 +40,7 @@ class StudentRepositoryTest {
 
   @Test
   void アクティブな受講生の全件検索が行えること() {
-    List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.makeStudentDetail1().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail2().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail3().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail4().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail5().getStudent());
+    List<Student> expected = MyBatisTestDataFactory.makeDummyStudentList();
 
     List<Student> actual = sut.searchActiveStudentList();
 
@@ -91,12 +86,7 @@ class StudentRepositoryTest {
     Student beforResister = TestDataFactory.makeCompletedStudent(null);
     Student afterResister = TestDataFactory.makeCompletedStudent(new Id(6));
 
-    List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.makeStudentDetail1().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail2().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail3().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail4().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail5().getStudent());
+    List<Student> expected = MyBatisTestDataFactory.makeDummyStudentList();
     expected.add(afterResister);
 
     // Act
@@ -208,11 +198,8 @@ class StudentRepositoryTest {
         true //もとはfalse
     );
 
-    List<Student> expected = new ArrayList<>();
-    expected.add(MyBatisTestDataFactory.makeStudentDetail2().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail3().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail4().getStudent());
-    expected.add(MyBatisTestDataFactory.makeStudentDetail5().getStudent());
+    List<Student> expected = MyBatisTestDataFactory.makeDummyStudentList();
+    expected.removeIf(student -> student.getStudentId().equals(new Id(1)));
 
     sut.updateStudent(forLogicalDelete);
 
@@ -222,6 +209,5 @@ class StudentRepositoryTest {
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     assertThat(actual.contains(forLogicalDelete)).isFalse();
   }
-
-
+  
 }

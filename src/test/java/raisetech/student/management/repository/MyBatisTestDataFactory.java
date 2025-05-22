@@ -1,6 +1,7 @@
 package raisetech.student.management.repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
@@ -171,6 +172,17 @@ public class MyBatisTestDataFactory {
             LocalDate.of(2025, 3, 9)
         ))
     );
+  }
+
+  static List<Student> makeDummyStudentList() {
+    List<Student> dummyStudents = new ArrayList<>();
+    dummyStudents.add(makeStudentDetail1().getStudent());
+    dummyStudents.add(makeStudentDetail2().getStudent());
+    dummyStudents.add(makeStudentDetail3().getStudent());
+    dummyStudents.add(makeStudentDetail4().getStudent());
+    dummyStudents.add(makeStudentDetail5().getStudent());
+
+    return dummyStudents;
   }
 
 }
