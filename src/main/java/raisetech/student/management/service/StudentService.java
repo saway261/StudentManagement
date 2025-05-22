@@ -49,12 +49,12 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
-  public StudentDetail searchStudentDetail(Id studentId) throws InvalidIdException {
+  public StudentDetailResponse searchStudentDetail(Id studentId) throws InvalidIdException {
     StudentDetail studentDetail = buildStudentDetail(studentId);
     if (studentDetail.getStudent() == null) {
       throw new InvalidIdException(studentId);
     }
-    return studentDetail;
+    return StudentDetailResponse.fromDomain(studentDetail);
   }
 
 

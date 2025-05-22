@@ -95,7 +95,7 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
       throws InvalidIdException {
-    return StudentDetailResponse.fromDomain(service.searchStudentDetail(studentId));
+    return service.searchStudentDetail(studentId);
   }
 
   @Operation(
