@@ -15,7 +15,7 @@ APIです。このAPIは、以下の処理が可能です。
 ・受講生詳細の更新（論理削除を含む）
 
 詳細なAPI仕様は、以下のリンクから確認できます。  
-[受講生管理システム(Swagger UI)](https://saway261.github.io/StudentManagement/)
+[受講生管理システム(Swagger UI)](https://saway261.github.io/StudentManagement/swagger-ui/)
 
 ## 詳細
 
@@ -69,6 +69,145 @@ erDiagram
         DATE course_end_at
     }
 ```
+
+### データ転送オブジェクト　Data Transfer Object
+
+#### 背景
+
+将来的な機能拡張を想定し、受講生ID(`studentId`)、受講生コースID(`courseId`)のため、バリューオブジェクト
+`Id`を設けました。
+現在はシンプルな整数値をIDとして設定していますが、UUIDやコース名のイニシャルを含む連番等への変更を検討しています。
+
+この際、クライアントと安全に値を受け渡すことができるよう、フォームオブジェクトとレスポンスオブジェクトを設けました。
+
+#### 役割
+
+-
+フォームオブジェクトとレスポンスオブジェクトは、それぞれ自分自身のクラスにおいて、ドメインオブジェクトに変換するためのメソッド(
+`toDomain`, `fromDomain`)を持ちます。
+- `toDomain`メソッド, `fromDomain`メソッドによって、`studentId`, `courseId`は`Integer`型から`Id`
+  型へ、あるいはその反対方向に変換されます。
+
+```mermaid
+---
+title: DTOとドメインオブジェクト
+---
+classDiagram
+    namespace Form Object {
+        class StudentDetailForm {
+            - StudentForm student
+            - List~StudentCourseForm~ studentCourseList
+            + static StudentDetailForm toDomain(StudentDetailForm form)
+        }
+        class StudentForm {
+            - Integer studentId;
+            - String fullname;
+            - String kanaName;
+            - String nickname;
+            - String email;
+            - String area;
+            - String telephone;
+            - Integer age;
+            - String sex;
+            - String remark;
+            - boolean isDeleted;
+            ~ toDomain(StudentForm form) Student
+        }
+        class StudentCourseForm {
+            - Integer courseId
+            - String courseName
+            - LocalDate courseEndAt
+            ~ toDomain(StudentCourse form) StudentCourse
+        }
+    }
+
+    namespace Domain Object {
+        class StudentDetail {
+            - final Student student
+            - final List~StudentCourse~ studentCourseList
+        }
+
+        class Student {
+            - final Id studentId;
+            - final String fullname;
+            - final String kanaName;
+            - final String nickname;
+            - final String email;
+            - final String area;
+            - final String telephone;
+            - final Integer age;
+            - final String sex;
+            - final String remark;
+            - final boolean isDeleted;
+        }
+
+        class StudentCourse {
+            - final Id courseId
+            - final String courseName
+            - final Id studentId
+            - final LocalDate courseStartAt
+            - final LocalDate courseEndAt
+        }
+        class Id {
+            - Integer value
+        }
+    }
+    Student *-- Id
+    StudentCourse *-- Id
+
+    namespace Response Object {
+        class StudentDetailResponse {
+            - final StudentResponse student
+            - final List~StudentCourseResponse~ studentCourseList
+            + getter()
+            - StudentDetailResponse(StudentDetail domain)
+            + static fromDomain(StudentDetail domain) StudentResponse
+        }
+
+        class StudentResponse {
+            - final Integer studentId;
+            - final String fullname;
+            - final String kanaName;
+            - final String nickname;
+            - final String email;
+            - final String area;
+            - final String telephone;
+            - final Integer age;
+            - final String sex;
+            - final String remark;
+            - final boolean isDeleted;
+            + getter()
+            ~ StudentResponse(Student domain)
+        }
+
+        class StudentCourseResponse {
+            - final Integer courseId
+            - final String courseName
+            - final LocalDate courseStartAt
+            - final LocalDate courseEndAt
+            + getter()
+            ~ StudentCourseResponse(StudentCourse domain)
+        }
+    }
+
+    StudentDetail "1" *.. "1..*" StudentCourse
+    StudentDetail "1" *.. "1" Student
+    StudentDetailForm "1" *.. "1..*" StudentCourseForm
+    StudentDetailForm "1" *.. "1" StudentForm
+    StudentDetailResponse "1" *.. "1..*" StudentCourseResponse
+    StudentDetailResponse "1" *.. "1" StudentResponse
+    StudentDetailForm ..> StudentDetail: return
+    StudentDetailResponse ..> StudentDetail: recieve
+
+```
+
+#### 補足
+
+- StudentCourseのstudentIdは、バッグエンド側でStudentのstudentIdから取得して設定するため、フォームオブジェクトではフィールドを持ちません。
+- StudentCourseのcourseStartAtとcourseEndAtは、バッグエンド側で登録処理実行日とその6か月後の日付を取得して設定します。
+    - courseStartAtは不変のため、常にクライアントから受け取らず、フォームオブジェクトはフィールドを持ちません。
+    - ただし、courseEndAtは受講期間延長を想定して、更新処理時には値を受け取ることがあるため、フォームオブジェクト自体はフィールドを持ちます。
+    - クライアントが値を確認できるよう、レスポンスオブジェクトはcourseStartAtとcourseEndAtのどちらのフィールドも持ちます。
 
 ---
 
@@ -240,9 +379,6 @@ classDiagram
     ErrorDetailBuilder ..> error: returns
     StudentExceptionHandler ..> ErrorResponseBody: creates
     ErrorResponseBody *-- error: contains
-
-
-
 
 ```
 
