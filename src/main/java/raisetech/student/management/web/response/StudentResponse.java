@@ -1,8 +1,10 @@
 package raisetech.student.management.web.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Optional;
 import lombok.Getter;
 import raisetech.student.management.data.Student;
+import raisetech.student.management.data.value.Id;
 
 @Schema(description = "受講生情報（出力用）")
 @Getter
@@ -42,7 +44,9 @@ public class StudentResponse {
   private final boolean isDeleted;
 
   StudentResponse(Student domain) { //package private
-    this.studentId = domain.getStudentId().getValue(); // Id → int
+    this.studentId = Optional.ofNullable(domain.getStudentId())// Id → int
+        .map(Id::getValue)
+        .orElseThrow(() -> new IllegalArgumentException("studentIdは必須です"));
     this.fullname = domain.getFullname();
     this.kanaName = domain.getKanaName();
     this.nickname = domain.getNickname();
