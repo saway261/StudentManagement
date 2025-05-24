@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +54,6 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetailResponse> getActiveStudentDetailList() {
-    List<StudentDetailResponse> responseList = new ArrayList<>();
     return service.searchActiveStudentDetailList();
   }
 
