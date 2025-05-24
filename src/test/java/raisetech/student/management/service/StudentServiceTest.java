@@ -96,12 +96,13 @@ class StudentServiceTest {
   }
 
   @Test
-  void 受講生詳細登録_リポジトリのメソッドを適切に呼び出しその際StudentCourseインスタンスのフィールドが補完されていること() {
+  void 受講生詳細登録_リポジトリのメソッドを適切に呼び出され_その際StudentCourseインスタンスのstudentIdとcourseStartAtとcourseEndAtフィールドが補完されていること() {
     // Arrange
     Id expectedStudentId = new Id(1);
+
     LocalDate now = LocalDate.now();
 
-    // 入力データ（courseId=null で補完を有効に）
+    // 入力データ
     StudentDetailForm form = new StudentDetailForm(
         new StudentForm(
             expectedStudentId.getValue(),
@@ -110,8 +111,7 @@ class StudentServiceTest {
             20, "男", "特になし", false
         ),
         List.of(
-            new StudentCourseForm(null, "Javaコース", null),
-            new StudentCourseForm(null, "AWSコース", null)
+            new StudentCourseForm(null, "Javaコース", null)
         )
     );
 
@@ -133,13 +133,15 @@ class StudentServiceTest {
     // 1. registerStudent が1回呼ばれたこと
     verify(repository, times(1)).registerStudent(expectedStudent);
 
-    // 2. registerCourse が2回呼ばれたこと（コース数と一致）
+    // 2. registerCourse が1回呼ばれたこと（コース数と一致）
     ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
-    verify(repository, times(2)).registerCourse(captor.capture());
+    verify(repository, times(form.getStudentCourseList().size())).registerCourse(captor.capture());
 
     // 3. 各引数の中身をチェック（補完されているか）
     List<StudentCourse> registeredCourses = captor.getAllValues();
     for (StudentCourse course : registeredCourses) {
+      // courseIdの同値検証は行わない（自動採番された値をMyBatis側がインスタンスにセットする動きを再現できないため。また、本検証の目的から反れるため）
+      assertThat(course.getCourseName()).isEqualTo("Javaコース");
       assertThat(course.getStudentId()).isEqualTo(expectedStudentId);
       assertThat(course.getCourseStartAt()).isEqualTo(now);
       assertThat(course.getCourseEndAt()).isEqualTo(now.plusMonths(6));
