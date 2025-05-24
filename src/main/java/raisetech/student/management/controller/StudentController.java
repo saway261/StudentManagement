@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +54,7 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetailResponse> getActiveStudentDetailList() {
-    List<StudentDetailResponse> responseList = new ArrayList<>();
-    for (StudentDetail studentDetail : service.searchActiveStudentDetailList()) {
-      responseList.add(StudentDetailResponse.fromDomain(studentDetail));
-    }
-    return responseList;
+    return service.searchActiveStudentDetailList();
   }
 
   @Operation(
@@ -98,7 +93,7 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
       throws InvalidIdException {
-    return StudentDetailResponse.fromDomain(service.searchStudentDetail(studentId));
+    return service.searchStudentDetail(studentId);
   }
 
   @Operation(
@@ -147,10 +142,7 @@ public class StudentController {
   @Validated(OnRegister.class)
   public ResponseEntity<StudentDetailResponse> registerStudentDetail(
       @RequestBody @Valid StudentDetailForm form) {
-    StudentDetail request = StudentDetailForm.toDomain(form);
-    StudentDetail resistered = service.registerStudentDetail(request);
-    StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(resistered);
-    return ResponseEntity.ok(responseBody);
+    return ResponseEntity.ok(service.registerStudentDetail(form));
   }
 
   @Operation(
@@ -189,10 +181,7 @@ public class StudentController {
   @Validated(OnUpdate.class)
   public ResponseEntity<StudentDetailResponse> updateStudentDetail(
       @RequestBody @Valid StudentDetailForm form) throws InvalidIdException {
-    StudentDetail request = StudentDetailForm.toDomain(form);
-    StudentDetail updated = service.updateStudentDetail(request);
-    StudentDetailResponse responseBody = StudentDetailResponse.fromDomain(updated);
-    return ResponseEntity.ok(responseBody);
+    return ResponseEntity.ok(service.updateStudentDetail(form));
   }
 
 }
