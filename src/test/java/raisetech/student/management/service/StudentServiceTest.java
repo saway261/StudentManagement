@@ -66,14 +66,15 @@ class StudentServiceTest {
   @Test
   void 受講生単一検索成功_buildStudentDetailを適切に呼び出していること() throws Exception {
     // Arrange
-    Id studentId = new Id(1);
+    int studentIdNumber = 1;
+    Id studentId = new Id(studentIdNumber);
     Id courseId = new Id(1);
 
     StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // Act
-    StudentDetailResponse actual = sut.searchStudentDetail(studentId);
+    StudentDetailResponse actual = sut.searchStudentDetail(studentIdNumber);
 
     // Assert
     verify(sut, times(1)).buildStudentDetail(studentId);
@@ -83,14 +84,15 @@ class StudentServiceTest {
   void 受講生単一検索失敗_buildStudentDetailを適切に呼び出し戻り値がnullの場合は例外を投げていること()
       throws Exception {
     // Arrange
-    Id studentId = new Id(99);
+    int studentIdNumber = 99;
+    Id studentId = new Id(studentIdNumber);
 
     StudentDetail studentDetail = new StudentDetail(null, null);
     doReturn(studentDetail).when(sut).buildStudentDetail(studentId);
 
     // Act&Assert
     Assertions.assertThrows(InvalidIdException.class, () -> {
-      sut.searchStudentDetail(studentId);
+      sut.searchStudentDetail(studentIdNumber);
     });
     verify(sut, times(1)).buildStudentDetail(studentId);
   }

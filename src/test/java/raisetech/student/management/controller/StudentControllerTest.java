@@ -66,9 +66,10 @@ class StudentControllerTest {
   void 受講生詳細単一検索成功_サービスの処理が呼び出せていること()
       throws Exception {
     // Arrange
-    Id studentId = new Id(1);
+    int studentId = 1;
     Id courseId = new Id(1);
-    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(new Id(studentId),
+        courseId);
     Mockito.when(service.searchStudentDetail(studentId))
         .thenReturn(StudentDetailResponse.fromDomain(studentDetail));
 
@@ -82,9 +83,9 @@ class StudentControllerTest {
   void 受講生詳細単一検索失敗_サービスから例外を受け取り404エラーを返していること()
       throws Exception {
     // Arrange
-    Id studentId = new Id(99);
+    int studentId = 99;
     Mockito.when(service.searchStudentDetail(studentId))
-        .thenThrow(new InvalidIdException(studentId));
+        .thenThrow(new InvalidIdException(new Id(studentId)));
 
     // Act
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + studentId))
