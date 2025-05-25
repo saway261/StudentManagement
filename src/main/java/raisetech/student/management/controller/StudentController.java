@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +91,8 @@ public class StudentController {
       }
   )
   @GetMapping("/students/{studentId}")
-  public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") int studentIdNumber)
+  public StudentDetailResponse viewStudentDetail(
+      @PathVariable("studentId") @Positive int studentIdNumber)
       throws InvalidIdException {
     return service.searchStudentDetail(studentIdNumber);
   }
