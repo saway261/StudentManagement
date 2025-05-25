@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.data.domain.validation.OnRegister;
 import raisetech.student.management.data.domain.validation.OnUpdate;
-import raisetech.student.management.data.value.Id;
 import raisetech.student.management.exception.InvalidAccessException;
 import raisetech.student.management.exception.InvalidIdException;
 import raisetech.student.management.exception.handling.ErrorResponseBody;
@@ -91,9 +90,9 @@ public class StudentController {
       }
   )
   @GetMapping("/students/{studentId}")
-  public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") Id studentId)
+  public StudentDetailResponse viewStudentDetail(@PathVariable("studentId") int studentIdNumber)
       throws InvalidIdException {
-    return service.searchStudentDetail(studentId);
+    return service.searchStudentDetail(studentIdNumber);
   }
 
   @Operation(

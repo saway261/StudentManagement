@@ -49,10 +49,12 @@ public class StudentService {
    * 受講生検索です。 IDに基づく受講生情報を取得した後、その受講生に紐づく受講生コース情報を取得して受講生詳細を返します。
    * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。該当する受講生IDが登録されていない場合は例外を投げます。
    *
-   * @param studentId 受講生ID
+   * @param studentIdNumber 受講生ID
    * @return 受講生詳細
    */
-  public StudentDetailResponse searchStudentDetail(Id studentId) throws InvalidIdException {
+  public StudentDetailResponse searchStudentDetail(int studentIdNumber) throws InvalidIdException {
+    Id studentId = new Id(studentIdNumber);
+
     StudentDetail studentDetail = buildStudentDetail(studentId);
     if (studentDetail.getStudent() == null) {
       throw new InvalidIdException(studentId);
