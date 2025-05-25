@@ -32,7 +32,7 @@ public class StudentService {
   /**
    * アクティブ受講生詳細一覧検索です。 全件検索を行うので、条件指定は行いません。
    *
-   * @return アクティブ受講生詳細一覧
+   * @return アクティブ受講生詳細一覧（レスポンスオブジェクト）
    */
   public List<StudentDetailResponse> searchActiveStudentDetailList() {
     List<StudentDetailResponse> activeStudentDetailList = new ArrayList<>();
@@ -50,7 +50,7 @@ public class StudentService {
    * アクティブ・非アクティブにかかわらず、すべての受講生から検索します。該当する受講生IDが登録されていない場合は例外を投げます。
    *
    * @param studentIdNumber 受講生ID
-   * @return 受講生詳細
+   * @return 受講生詳細（レスポンスオブジェクト）
    */
   public StudentDetailResponse searchStudentDetail(int studentIdNumber) throws InvalidIdException {
     Id studentId = new Id(studentIdNumber);
@@ -67,8 +67,8 @@ public class StudentService {
    * 受講生詳細の登録を行います。受講生と受講生コースを個別に登録し、受講生コース情報には受講生情報を紐づける値と、コース開始日、コース終了予定日を設定します。
    * コース開始日にはリクエストが実行された日付、コース終了日にはコース開始日の6か月後の日付が設定されます。
    *
-   * @param detailForm 受講生詳細
-   * @return 登録された受講生詳細
+   * @param detailForm 受講生詳細（フォームオブジェクト）
+   * @return 登録された受講生詳細（レスポンスオブジェクト）
    */
   @Transactional
   public StudentDetailResponse registerStudentDetail(StudentDetailForm detailForm) {
@@ -87,8 +87,8 @@ public class StudentService {
   /**
    * 受講生詳細の更新を行います。受講生と受講生コースを個別に登録します。 受講生のキャンセルフラグの更新もここでおこないます。(論理削除)
    *
-   * @param detailForm 更新後の受講生詳細
-   * @return 更新された受講生詳細
+   * @param detailForm 更新後の受講生詳細（フォームオブジェクト）
+   * @return 更新された受講生詳細（レスポンスオブジェクト）
    */
   @Transactional
   public StudentDetailResponse updateStudentDetail(StudentDetailForm detailForm)
@@ -112,10 +112,10 @@ public class StudentService {
   }
 
   /**
-   * テーブルから受講生IDに紐づく受講生と受講生コースを取得し、受講生詳細として組み上げます。
+   * テーブルから受講生IDに紐づく受講生と受講生コースを取得し、受講生詳細として組み上げます。このメソッドは自クラスからのみ呼び出されます。
    *
    * @param studentId 受講生ID
-   * @return 受講生詳細
+   * @return 受講生詳細（ドメインオブジェクト）
    */
   StudentDetail buildStudentDetail(Id studentId) {
     Student student = repository.searchStudent(studentId);
@@ -126,9 +126,9 @@ public class StudentService {
 
   /**
    * 受講生コーステーブルから、引数で渡された受講生IDと一致する値をもつレコードを検索してコースIDリストを取得し、引数で渡されたコースIDがテーブルにおいて受講生IDと紐づいているかを判定します。
-   * テーブルから取得したコースIDリストが空の場合は、受講生IDが存在しないと判断し、例外を投げます。
+   * テーブルから取得したコースIDリストが空の場合は、受講生IDが存在しないと判断し、例外を投げます。このメソッドは自クラスからのみ呼び出されます。
    *
-   * @param course 受講生コース
+   * @param course 受講生コース（ドメインオブジェクト）
    * @return 受講生コースIDが紐づいている場合はtrue
    */
   boolean isLinkedCourseIdWithStudentId(StudentCourse course) throws InvalidIdException {
