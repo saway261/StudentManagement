@@ -2,6 +2,7 @@ package raisetech.student.management.web.form;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.value.Id;
@@ -18,17 +19,7 @@ class StudentFormTest {
     Student domain = StudentForm.toDomain(form);
 
     // Assert
-    assertThat(domain.getStudentId()).isNull();
-    assertThat(domain.getFullname()).isEqualTo(form.getFullname());
-    assertThat(domain.getKanaName()).isEqualTo(form.getKanaName());
-    assertThat(domain.getNickname()).isEqualTo(form.getNickname());
-    assertThat(domain.getEmail()).isEqualTo(form.getEmail());
-    assertThat(domain.getArea()).isEqualTo(form.getArea());
-    assertThat(domain.getTelephone()).isEqualTo(form.getTelephone());
-    assertThat(domain.getSex()).isEqualTo(form.getSex());
-    assertThat(domain.getRemark()).isEqualTo(form.getRemark());
-    assertThat(domain.isDeleted()).isEqualTo(form.isDeleted());
-
+    assertThat(isDomainEqualToForm(domain, form)).isTrue();
   }
 
   @Test
@@ -41,16 +32,23 @@ class StudentFormTest {
     Student domain = StudentForm.toDomain(form);
 
     // Assert
-    assertThat(domain.getStudentId()).isEqualTo(new Id(studentId));
-    assertThat(domain.getFullname()).isEqualTo(form.getFullname());
-    assertThat(domain.getKanaName()).isEqualTo(form.getKanaName());
-    assertThat(domain.getNickname()).isEqualTo(form.getNickname());
-    assertThat(domain.getEmail()).isEqualTo(form.getEmail());
-    assertThat(domain.getArea()).isEqualTo(form.getArea());
-    assertThat(domain.getTelephone()).isEqualTo(form.getTelephone());
-    assertThat(domain.getSex()).isEqualTo(form.getSex());
-    assertThat(domain.getRemark()).isEqualTo(form.getRemark());
-    assertThat(domain.isDeleted()).isEqualTo(form.isDeleted());
+    assertThat(isDomainEqualToForm(domain, form)).isTrue();
+  }
+
+  private boolean isDomainEqualToForm(Student domain, StudentForm form) {
+
+    return
+        Objects.equals(domain.getStudentId(),
+            form.getStudentId() == null ? null : new Id(form.getStudentId())) &&
+            Objects.equals(domain.getFullname(), form.getFullname()) &&
+            Objects.equals(domain.getKanaName(), form.getKanaName()) &&
+            Objects.equals(domain.getNickname(), form.getNickname()) &&
+            Objects.equals(domain.getEmail(), form.getEmail()) &&
+            Objects.equals(domain.getTelephone(), form.getTelephone()) &&
+            Objects.equals(domain.getAge(), form.getAge()) &&
+            Objects.equals(domain.getSex(), form.getSex()) &&
+            Objects.equals(domain.getRemark(), form.getRemark()) &&
+            domain.isDeleted() == form.isDeleted();
 
   }
 
