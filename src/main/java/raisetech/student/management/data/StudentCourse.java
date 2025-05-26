@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import raisetech.student.management.data.value.Id;
+import raisetech.student.management.web.form.StudentCourseForm;
 
 @Getter
 @EqualsAndHashCode
@@ -20,6 +21,32 @@ public class StudentCourse {
   private final LocalDate courseStartAt;
 
   private final LocalDate courseEndAt;
+
+  public StudentCourse(StudentCourseForm form, Id studentId) {
+    if (studentId == null) {
+      throw new IllegalArgumentException(
+          "studentIdがnullの場合、StudentCourseインスタンスが生成できません。");
+    }
+
+    if (form.getCourseId() == null) {
+      LocalDate now = LocalDate.now();
+
+      this.courseId = null;
+      this.courseName = form.getCourseName();
+      this.studentId = studentId;
+      this.courseStartAt = now;
+      this.courseEndAt = now.plusMonths(6);
+
+    } else {
+
+      this.courseId = new Id(form.getCourseId());
+      this.courseName = form.getCourseName();
+      this.studentId = studentId;
+      this.courseStartAt = null;
+      this.courseEndAt = form.getCourseEndAt();
+    }
+
+  }
 
 
 }

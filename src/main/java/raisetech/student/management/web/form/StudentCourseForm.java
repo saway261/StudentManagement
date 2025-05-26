@@ -37,30 +37,8 @@ public class StudentCourseForm {
   private LocalDate courseEndAt;
 
   public static StudentCourse toDomain(StudentCourseForm form, Id studentId) { //package private
-    if (studentId == null) {
-      throw new IllegalArgumentException(
-          "studentIdがnullの場合、StudentCourseインスタンスが生成できません。");
-    }
 
-    if (form.getCourseId() == null) {
-      LocalDate now = LocalDate.now();
-
-      return new StudentCourse(
-          null,
-          form.getCourseName(),
-          studentId,
-          now,
-          now.plusMonths(6)
-      );
-    } else {
-      return new StudentCourse(
-          new Id(form.getCourseId()),
-          form.getCourseName(),
-          studentId,
-          null,
-          form.getCourseEndAt()
-      );
-    }
+    return new StudentCourse(form, studentId);
 
   }
 
