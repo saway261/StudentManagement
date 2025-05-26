@@ -92,9 +92,9 @@ public class StudentController {
   )
   @GetMapping("/students/{studentId}")
   public StudentDetailResponse viewStudentDetail(
-      @PathVariable("studentId") @Positive int studentIdNumber)
+      @PathVariable("studentId") @Positive int studentId)
       throws InvalidIdException {
-    return service.searchStudentDetail(studentIdNumber);
+    return service.searchStudentDetail(studentId);
   }
 
   @Operation(
