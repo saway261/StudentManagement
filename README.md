@@ -342,6 +342,7 @@ classDiagram
         }
     }
 
+    note for StudentService "DTO⇔ドメインオブジェクトの変換を担う"
     StudentController ..> StudentExceptionHandler: throw exception
     USER <.. StudentExceptionHandler: error response
 
