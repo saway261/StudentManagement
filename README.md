@@ -396,37 +396,20 @@ JUnitを用いて単体テストを実装しました。
 - StudentContoroller
 - StudentService
 - StudentRepository
-- StudentDetailForm
-    - バリデーションのテスト
-    - ドメインオブジェクトへの変換のテスト
 - Id
     - equals, hashCode, toStringメソッドのテスト
     - コンストラクタのテスト
     - バリデーションのテスト
+- StudentDetailForm：バリデーションのテスト
+- StudentForm：toDomainメソッドのテスト
+- StudentCourseForm：toDomainメソッドのテスト
+- StudentDetailResponse：fromDomainメソッドのテスト
 
-![img.png](img.png)
+![img_2.png](img_2.png)
 
-## テスト一覧
+## 力を入れたところ
 
-JUnitを使用して、単体テストを実装しました。リポジトリ層に対するテストでは、MyBatisTest,
-H2databaseも組み合わせました。
-
-### 単体テストを行ったクラス
-
-- StudentController
-- StudentService
-- StudentRepository
-- StudentDetailForm
-    - バリデーションのテスト
-    - ドメインオブジェクトへの変換処理のテスト
-- Id
-    - equals, hashCode, toStringメソッドのテスト
-    - コンストラクタのテスト
-    - バリデーションのテスト
-
-[テストサマリー](https://saway261.github.io/StudentManagement/test-report/)
-
-## 力を入れたところ　
+　
 
 ## 今後の課題
 
