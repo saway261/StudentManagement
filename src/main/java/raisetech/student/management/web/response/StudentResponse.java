@@ -46,7 +46,7 @@ public class StudentResponse {
   StudentResponse(Student domain) { //package private
     this.studentId = Optional.ofNullable(domain.getStudentId())// Id → int
         .map(Id::getValue)
-        .orElseThrow(() -> new IllegalArgumentException("studentIdは必須です"));
+        .orElseThrow(() -> new NullPointerException("studentIdは必須です"));
     this.fullname = domain.getFullname();
     this.kanaName = domain.getKanaName();
     this.nickname = domain.getNickname();

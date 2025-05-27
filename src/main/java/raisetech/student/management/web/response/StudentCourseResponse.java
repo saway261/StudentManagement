@@ -26,7 +26,7 @@ public class StudentCourseResponse {
   StudentCourseResponse(StudentCourse domain) { //package private
     this.courseId = Optional.ofNullable(domain.getCourseId())// Id → int
         .map(Id::getValue)
-        .orElseThrow(() -> new IllegalArgumentException("courseIdは必須です"));
+        .orElseThrow(() -> new NullPointerException("courseIdは必須です"));
     this.courseName = domain.getCourseName();
     this.courseStartAt = domain.getCourseStartAt();
     this.courseEndAt = domain.getCourseEndAt();
