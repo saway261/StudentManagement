@@ -78,12 +78,12 @@ class StudentDetailResponseTest {
 
   @ParameterizedTest
   @MethodSource("provideInvalidIdCombinations")
-  void idフィールドがnullのとき_StudentDetailがStudentDetailResponseに変換されずIllegalArgumentExceptionが投げられること(
+  void idフィールドがnullのとき_StudentDetailがStudentDetailResponseに変換されずNullPointerExceptionが投げられること(
       Id studentId, Id courseId) {
 
     StudentDetail domain = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
 
-    assertThrows(IllegalArgumentException.class, () ->
+    assertThrows(NullPointerException.class, () ->
         StudentDetailResponse.fromDomain(domain)
     );
   }
