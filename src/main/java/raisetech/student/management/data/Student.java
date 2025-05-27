@@ -32,4 +32,10 @@ public class Student {
 
   private final boolean isDeleted;
 
+  public Id getStudentId() {
+    if (this.studentId == null) {
+      throw new NullPointerException("studentIdがnullのため、getStudentId()を実行できません");
+    }
+    return studentId;
+  }
 }

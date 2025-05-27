@@ -48,5 +48,19 @@ public class StudentCourse {
 
   }
 
+  public Id getCourseId() {
+    if (this.courseId == null) {
+      throw new NullPointerException("courseIdがnullのため、getCourseId()を実行できません");
+    }
+    return courseId;
+  }
+
+  public Id getStudentId() {
+    if (this.studentId == null) {
+      throw new NullPointerException("studentIdがnullのため、getStudentId()を実行できません");
+    }
+    return studentId;
+  }
+
 
 }
