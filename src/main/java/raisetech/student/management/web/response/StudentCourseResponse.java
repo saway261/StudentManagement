@@ -2,8 +2,10 @@ package raisetech.student.management.web.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import java.util.Optional;
 import lombok.Getter;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.data.value.Id;
 
 @Schema(description = "受講生が受講しているコース情報（出力用）")
 @Getter
@@ -22,7 +24,9 @@ public class StudentCourseResponse {
   private final LocalDate courseEndAt;
 
   StudentCourseResponse(StudentCourse domain) { //package private
-    this.courseId = domain.getCourseId().getValue();
+    this.courseId = Optional.ofNullable(domain.getCourseId())// Id → int
+        .map(Id::getValue)
+        .orElseThrow(() -> new NullPointerException("courseIdは必須です"));
     this.courseName = domain.getCourseName();
     this.courseStartAt = domain.getCourseStartAt();
     this.courseEndAt = domain.getCourseEndAt();

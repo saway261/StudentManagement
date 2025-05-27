@@ -71,6 +71,7 @@ erDiagram
 ```
 
 ---
+
 ### データ転送オブジェクト　Data Transfer Object
 
 #### 背景
@@ -94,11 +95,12 @@ erDiagram
 title: DTOとドメインオブジェクト
 ---
 classDiagram
-    namespace Form Object {
+    note "アクセサメソッド等、lombok @Dataのメソッド等は割愛"
+
+    namespace フォームオブジェクト {
         class StudentDetailForm {
             - StudentForm student
             - List~StudentCourseForm~ studentCourseList
-            + static StudentDetailForm toDomain(StudentDetailForm form)
         }
         class StudentForm {
             - Integer studentId;
@@ -122,7 +124,7 @@ classDiagram
         }
     }
 
-    namespace Domain Object {
+    namespace ドメインオブジェクト {
         class StudentDetail {
             - final Student student
             - final List~StudentCourse~ studentCourseList
@@ -156,13 +158,12 @@ classDiagram
     Student *-- Id
     StudentCourse *-- Id
 
-    namespace Response Object {
+    namespace レスポンスオブジェクト {
         class StudentDetailResponse {
             - final StudentResponse student
             - final List~StudentCourseResponse~ studentCourseList
-            + getter()
             - StudentDetailResponse(StudentDetail domain)
-            + static fromDomain(StudentDetail domain) StudentResponse
+            + static fromDomain(StudentDetail domain) StudentDetailResponse
         }
 
         class StudentResponse {
@@ -177,7 +178,6 @@ classDiagram
             - final String sex;
             - final String remark;
             - final boolean isDeleted;
-            + getter()
             ~ StudentResponse(Student domain)
         }
 
@@ -186,7 +186,6 @@ classDiagram
             - final String courseName
             - final LocalDate courseStartAt
             - final LocalDate courseEndAt
-            + getter()
             ~ StudentCourseResponse(StudentCourse domain)
         }
     }
@@ -197,8 +196,10 @@ classDiagram
     StudentDetailForm "1" *.. "1" StudentForm
     StudentDetailResponse "1" *.. "1..*" StudentCourseResponse
     StudentDetailResponse "1" *.. "1" StudentResponse
-    StudentDetailForm ..> StudentDetail: return
-    StudentDetailResponse ..> StudentDetail: recieve
+    StudentForm ..> Student: return
+    StudentCourseForm ..> StudentCourse: convert
+    StudentDetailResponse ..> StudentDetail: convert
+
 
 ```
 
@@ -341,6 +342,7 @@ classDiagram
         }
     }
 
+    note for StudentService "DTO⇔ドメインオブジェクトの変換を担う"
     StudentController ..> StudentExceptionHandler: throw exception
     USER <.. StudentExceptionHandler: error response
 
@@ -382,7 +384,9 @@ classDiagram
     ErrorResponseBody *-- error: contains
 
 ```
+
 ---
+
 ## テスト
 
 JUnitを用いて単体テストを実装しました。
@@ -392,23 +396,26 @@ JUnitを用いて単体テストを実装しました。
 - StudentContoroller
 - StudentService
 - StudentRepository
-- StudentDetailForm
-    - バリデーションのテスト
-    - ドメインオブジェクトへの変換のテスト
 - Id
     - equals, hashCode, toStringメソッドのテスト
     - コンストラクタのテスト
     - バリデーションのテスト
+- StudentDetailForm：バリデーションのテスト
+- StudentForm：toDomainメソッドのテスト
+- StudentCourseForm：toDomainメソッドのテスト
+- StudentDetailResponse：fromDomainメソッドのテスト
 
-![img.png](img.png)
+![img_2.png](img_2.png)
+
+## 力を入れたところ
+
+### DTO（Data Transfer Object）設計の導入による責務の分離
+
+- クライアントから受け取る入力（フォーム）と、レスポンスとして返す出力を明確に分離するため、DTOを導入しました。
+
+- これにより、サービス層以降では不完全なドメインオブジェクトが扱われることがなくなり、ビジネスロジックの安全性が向上しました。
 
 ## 今後の課題
-
-- フォームオブジェクト -> ドメインオブジェクトの変換の安全性を向上
-    - `StudentController`でフォームオブジェクトからドメインオブジェクトへの変換を行う現在の設計では、
-      `StudentCourse`の必要な項目が未初期化のままドメインオブジェクトのインスタンス生成が行われてしまいます。
-    - `StudentService`でフォームオブジェクト ->
-      ドメインオブジェクトの変換を行うようにすることで、ドメインオブジェクトのインスタンス生成は完全なフィールドを持つ状態でのみ行われることを目指します。
 
 - 受講生ID以外による検索機能の実装
     - 受講生コースに受講ステータス項目（申し込み中、受講中、受講終了 等）を追加し、ステータスごとのリストを取得できるようにする

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import raisetech.student.management.data.value.Id;
+import raisetech.student.management.web.form.StudentCourseForm;
 
 @Getter
 @EqualsAndHashCode
@@ -21,43 +22,45 @@ public class StudentCourse {
 
   private final LocalDate courseEndAt;
 
-  /**
-   * 受講生詳細登録で呼び出されるコンストラクタです。コース名,受講生IDを受け取り、コンストラクタが呼び出された日付をもとに、受講開始日と受講終了予定日を自動的にセットします。
-   * 受講生詳細更新で呼び出すと、courseIdがnullなのでのちの処理でInvalidIdExceptionが投げられます。これにより、受講生詳細更新で子のコンストラクタを呼び出し、意図せず受講終了予定日が書き替えられることを防ぎます。
-   *
-   * @param courseName コース名
-   * @param studentId  受講生ID
-   */
-  public StudentCourse(String courseName, Id studentId) {
-    this.courseId = null;
-    this.courseName = courseName;
-    this.studentId = studentId;
+  public StudentCourse(StudentCourseForm form, Id studentId) {
+    if (studentId == null) {
+      throw new IllegalArgumentException(
+          "studentIdがnullの場合、StudentCourseインスタンスが生成できません。");
+    }
 
-    LocalDate now = LocalDate.now();
-    this.courseStartAt = now;
-    this.courseEndAt = now.plusMonths(6);
-  }
+    if (form.getCourseId() == null) {
+      LocalDate now = LocalDate.now();
 
-  /**
-   * 受講生詳細更新で呼び出されるコンストラクタです。受講生コースオブジェクトと受講生IDを受け取ります。
-   * 受講生IDが0またはコース名,コース終了予定日がnullのStudentCourseオブジェクトを受け取った場合はNullPointerExceptionを投げます。
-   *
-   * @param requestCourse 受講生コースコースオブジェクト
-   * @param studentId     受講生ID
-   */
-  public StudentCourse(StudentCourse requestCourse, Id studentId) {
-    if (requestCourse.getCourseId() == null ||
-        requestCourse.getCourseName().isEmpty() ||
-        requestCourse.getCourseEndAt() == null) {
-      throw new NullPointerException();
+      this.courseId = null;
+      this.courseName = form.getCourseName();
+      this.studentId = studentId;
+      this.courseStartAt = now;
+      this.courseEndAt = now.plusMonths(6);
 
     } else {
-      this.courseId = requestCourse.getCourseId();
-      this.courseName = requestCourse.getCourseName();
+
+      this.courseId = new Id(form.getCourseId());
+      this.courseName = form.getCourseName();
       this.studentId = studentId;
-      this.courseStartAt = requestCourse.courseStartAt;
-      this.courseEndAt = requestCourse.getCourseEndAt();
+      this.courseStartAt = null;
+      this.courseEndAt = form.getCourseEndAt();
     }
+
   }
+
+  public Id getCourseId() {
+    if (this.courseId == null) {
+      throw new NullPointerException("courseIdがnullのため、getCourseId()を実行できません");
+    }
+    return courseId;
+  }
+
+  public Id getStudentId() {
+    if (this.studentId == null) {
+      throw new NullPointerException("studentIdがnullのため、getStudentId()を実行できません");
+    }
+    return studentId;
+  }
+
 
 }

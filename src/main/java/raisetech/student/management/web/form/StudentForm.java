@@ -73,7 +73,7 @@ public class StudentForm {
   @Schema(description = "キャンセルフラグ", example = "false")
   private boolean isDeleted;
 
-  Student toDomain(StudentForm form) { //package private
+  public static Student toDomain(StudentForm form) { //package private
     return new Student(
         form.getStudentId() == null ? null : new Id(form.getStudentId()),
         form.getFullname(),

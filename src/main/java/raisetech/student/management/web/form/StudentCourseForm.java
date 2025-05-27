@@ -36,16 +36,10 @@ public class StudentCourseForm {
   @NotNull(groups = OnUpdate.class)
   private LocalDate courseEndAt;
 
-  StudentCourse toDomain(StudentCourseForm form) { //package private
-    return new StudentCourse(
-        form.getCourseId() == null ? null : new Id(form.getCourseId()),
-        //登録時にはcourseIdはDBで自動採番され、クライアントから受け取らないためnullになりうる
-        form.getCourseName(),
-        null,//バッグエンドでStudentから持ってきたstudentIdをセットするため、クライアントから受け取らないためnull
-        null,//バッグエンドで登録処理実行時の日付がセットされるため、クライアントから受け取らない。また、更新もしない。
-        form.getCourseEndAt() == null ? null : form.getCourseEndAt()
-//バッグエンドで登録処理実行時の日付がセットされるため登録時はnullになる。更新時は任意の日付を受け取る。
-    );
+  public static StudentCourse toDomain(StudentCourseForm form, Id studentId) { //package private
+
+    return new StudentCourse(form, studentId);
+
   }
 
 }
