@@ -71,6 +71,7 @@ erDiagram
 ```
 
 ---
+
 ### データ転送オブジェクト　Data Transfer Object
 
 #### 背景
@@ -94,11 +95,12 @@ erDiagram
 title: DTOとドメインオブジェクト
 ---
 classDiagram
-    namespace Form Object {
+    note "アクセサメソッド等、lombok @Dataのメソッド等は割愛"
+
+    namespace フォームオブジェクト {
         class StudentDetailForm {
             - StudentForm student
             - List~StudentCourseForm~ studentCourseList
-            + static StudentDetailForm toDomain(StudentDetailForm form)
         }
         class StudentForm {
             - Integer studentId;
@@ -122,7 +124,7 @@ classDiagram
         }
     }
 
-    namespace Domain Object {
+    namespace ドメインオブジェクト {
         class StudentDetail {
             - final Student student
             - final List~StudentCourse~ studentCourseList
@@ -156,13 +158,12 @@ classDiagram
     Student *-- Id
     StudentCourse *-- Id
 
-    namespace Response Object {
+    namespace レスポンスオブジェクト {
         class StudentDetailResponse {
             - final StudentResponse student
             - final List~StudentCourseResponse~ studentCourseList
-            + getter()
             - StudentDetailResponse(StudentDetail domain)
-            + static fromDomain(StudentDetail domain) StudentResponse
+            + static fromDomain(StudentDetail domain) StudentDetailResponse
         }
 
         class StudentResponse {
@@ -177,7 +178,6 @@ classDiagram
             - final String sex;
             - final String remark;
             - final boolean isDeleted;
-            + getter()
             ~ StudentResponse(Student domain)
         }
 
@@ -186,7 +186,6 @@ classDiagram
             - final String courseName
             - final LocalDate courseStartAt
             - final LocalDate courseEndAt
-            + getter()
             ~ StudentCourseResponse(StudentCourse domain)
         }
     }
@@ -197,8 +196,10 @@ classDiagram
     StudentDetailForm "1" *.. "1" StudentForm
     StudentDetailResponse "1" *.. "1..*" StudentCourseResponse
     StudentDetailResponse "1" *.. "1" StudentResponse
-    StudentDetailForm ..> StudentDetail: return
-    StudentDetailResponse ..> StudentDetail: recieve
+    StudentForm ..> Student: return
+    StudentCourseForm ..> StudentCourse: convert
+    StudentDetailResponse ..> StudentDetail: convert
+
 
 ```
 
@@ -382,7 +383,9 @@ classDiagram
     ErrorResponseBody *-- error: contains
 
 ```
+
 ---
+
 ## テスト
 
 JUnitを用いて単体テストを実装しました。
