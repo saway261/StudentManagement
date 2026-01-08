@@ -19,4 +19,9 @@ public class Application {
 		return "Hello, World!";
 	}
 
+	@GetMapping("/help")
+	public String help(){
+		return "お困りの方は、下記の連絡先にお問い合わせください。\nsawa.y918@gmail.com";
+	}
+
 }
