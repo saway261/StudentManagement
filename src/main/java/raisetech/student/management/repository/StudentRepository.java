@@ -10,7 +10,7 @@ import raisetech.student.management.data.StudentCourse;
 public interface StudentRepository {
 
   @Select("SELECT * FROM students")
-  List<Student> search();
+  List<Student> searchStudents();
 
   @Select("SELECT * FROM students_courses")
   List<StudentCourse> searchStudentCourses();

@@ -4,8 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.student.management.data.Student;
-import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
 @RestController
@@ -19,15 +18,8 @@ public class StudentController {
   }
 
   @GetMapping("/students")
-  public List<Student> getStudentList(){
+  public List<StudentDetail> getStudentList(){
     return service.serchStudentList();
   }
-
-  @GetMapping("/studentCourses")
-  public List<StudentCourse> getStudentCourseList(){
-    return service.searchStudentCourseList();
-  }
-
-
 
 }
