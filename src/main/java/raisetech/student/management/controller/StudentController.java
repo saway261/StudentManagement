@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,12 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable int studentId){
     return service.searchStudentDetail(studentId);
+  }
+
+  @PostMapping("/students")
+  public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail){
+    service.registerStudentDetail(studentDetail);
+    return ResponseEntity.ok("登録処理が成功しました。");
   }
 
   @PutMapping("/students")
