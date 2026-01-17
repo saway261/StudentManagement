@@ -21,11 +21,22 @@ public class StudentService {
     this.converter = converter;
   }
 
-  public List<StudentDetail> serchStudentList(){
-    List<Student> students = repository.searchStudents();
-    List<StudentCourse> studentCourses = repository.searchStudentCourses();
+  public List<StudentDetail> serchStudentDetailList(){
+    List<Student> students = repository.searchAllStudentList();
+    List<StudentCourse> studentCourses = repository.searchAllStudentCourseList();
 
     return converter.convertStudentDetails(students,studentCourses);
+  }
+
+  public StudentDetail searchStudentDetail(int studentId){
+    Student student = repository.searchStudent(studentId);
+    List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
+
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentCourses(studentCourses);
+
+    return studentDetail;
   }
 
 }
