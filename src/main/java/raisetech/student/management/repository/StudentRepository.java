@@ -13,13 +13,10 @@ public interface StudentRepository {
   @Select("SELECT * FROM students")
   List<Student> searchAllStudentList();
 
-  @Select("SELECT * FROM students_courses")
-  List<StudentCourse> searchAllStudentCourseList();
-
   @Select("SELECT * FROM students WHERE student_id=#{studentId}")
   Student searchStudent(int studentId);
 
-  @Select("SELECT * FROM students_courses WHERE student_id=#{studentId}")
+  @Select("SELECT * FROM student_courses WHERE student_id=#{studentId}")
   List<StudentCourse> searchStudentCourses(int studentId);
 
   @Update("UPDATE students SET full_name=#{fullName}, kana_name=#{kanaName}, nickname=#{nickname},"

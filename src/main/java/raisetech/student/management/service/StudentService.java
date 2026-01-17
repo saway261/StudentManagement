@@ -1,6 +1,7 @@
 package raisetech.student.management.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,36 +9,26 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.StudentRepository;
-import raisetech.student.management.service.converter.StudentConverter;
 
 @Service
 public class StudentService {
 
   private StudentRepository repository;
-  private StudentConverter converter;
 
   @Autowired
-  public StudentService(StudentRepository repository, StudentConverter converter) {
+  public StudentService(StudentRepository repository) {
     this.repository = repository;
-    this.converter = converter;
   }
 
   public List<StudentDetail> serchStudentDetailList(){
     List<Student> students = repository.searchAllStudentList();
-    List<StudentCourse> studentCourses = repository.searchAllStudentCourseList();
 
-    return converter.convertStudentDetails(students,studentCourses);
+    return students.stream()
+        .map(student -> buildStudentDetail(student.getStudentId())).collect(Collectors.toList());
   }
 
   public StudentDetail searchStudentDetail(int studentId){
-    Student student = repository.searchStudent(studentId);
-    List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
-
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentCourses(studentCourses);
-
-    return studentDetail;
+    return buildStudentDetail(studentId);
   }
 
   @Transactional
@@ -46,6 +37,17 @@ public class StudentService {
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
       repository.updateStudentCourse(studentCourse);
     }
+  }
+
+  private StudentDetail buildStudentDetail(int studentId){
+    Student student = repository.searchStudent(studentId);
+    List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
+
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentCourses(studentCourses);
+
+    return studentDetail;
   }
 
 }
