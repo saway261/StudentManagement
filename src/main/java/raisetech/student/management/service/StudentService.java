@@ -33,7 +33,7 @@ public class StudentService {
   }
 
   @Transactional
-  public void registerStudentDetail(StudentDetail studentDetail){
+  public StudentDetail registerStudentDetail(StudentDetail studentDetail){
     Student student = studentDetail.getStudent();
     repository.registerStudent(student);
 
@@ -43,14 +43,16 @@ public class StudentService {
       studentCourse.setCourseEndAt(LocalDate.now().plusYears(1));
       repository.registerStudentCourse(studentCourse);
     }
+    return studentDetail;
   }
 
   @Transactional
-  public void updateStudentDetail(StudentDetail studentDetail){
+  public StudentDetail updateStudentDetail(StudentDetail studentDetail){
     repository.updateStudent(studentDetail.getStudent());
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
       repository.updateStudentCourse(studentCourse);
     }
+    return studentDetail;
   }
 
   private StudentDetail buildStudentDetail(int studentId){

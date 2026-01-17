@@ -33,15 +33,15 @@ public class StudentController {
   }
 
   @PostMapping("/students")
-  public ResponseEntity<String> registerStudent(@RequestBody StudentDetail studentDetail){
-    service.registerStudentDetail(studentDetail);
-    return ResponseEntity.ok("登録処理が成功しました。");
+  public ResponseEntity<StudentDetail> registerStudent(@RequestBody StudentDetail studentDetail){
+    StudentDetail responseStudentDetail = service.registerStudentDetail(studentDetail);
+    return ResponseEntity.ok(responseStudentDetail);
   }
 
   @PutMapping("/students")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail){
-    service.updateStudentDetail(studentDetail);
-    return ResponseEntity.ok("更新処理が成功しました！");
+  public ResponseEntity<StudentDetail> updateStudent(@RequestBody StudentDetail studentDetail){
+    StudentDetail responseStudentDetail = service.updateStudentDetail(studentDetail);
+    return ResponseEntity.ok(responseStudentDetail);
   }
 
 }
