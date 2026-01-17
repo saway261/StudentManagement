@@ -2,8 +2,11 @@ package raisetech.student.management.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
@@ -26,6 +29,12 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable int studentId){
     return service.searchStudentDetail(studentId);
+  }
+
+  @PutMapping("/students")
+  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail){
+    service.updateStudentDetail(studentDetail);
+    return ResponseEntity.ok("更新処理が成功しました！");
   }
 
 }
