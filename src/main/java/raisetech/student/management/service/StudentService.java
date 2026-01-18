@@ -38,13 +38,12 @@ public class StudentService {
     repository.registerStudent(student);
 
     for(StudentCourse studentCourse : studentDetail.getStudentCourses()){
-      studentCourse.setStudentId(student.getStudentId());
-      studentCourse.setCourseStartAt(LocalDate.now());
-      studentCourse.setCourseEndAt(LocalDate.now().plusYears(1));
+      initStudentCourse(studentCourse, student);
       repository.registerStudentCourse(studentCourse);
     }
     return studentDetail;
   }
+
 
   @Transactional
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
@@ -53,6 +52,14 @@ public class StudentService {
       repository.updateStudentCourse(studentCourse);
     }
     return studentDetail;
+  }
+
+  private static void initStudentCourse(StudentCourse studentCourse, Student student) {
+    LocalDate now = LocalDate.now();
+
+    studentCourse.setStudentId(student.getStudentId());
+    studentCourse.setCourseStartAt(now);
+    studentCourse.setCourseEndAt(now.plusYears(1));
   }
 
   private StudentDetail buildStudentDetail(int studentId){
