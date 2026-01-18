@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- 受講生の全件検索 -->
-  <select id="searchAllStudentList" resultType="raisetech.student.management.data.Student">
-  SELECT * FROM students
+  <!-- アクティブな受講生の全件検索 -->
+  <select id="searchActiveStudentList" resultType="raisetech.student.management.data.Student">
+  SELECT * FROM students WHERE is_deleted=false
   </select>
 
  <!-- 受講生の単一検索 -->

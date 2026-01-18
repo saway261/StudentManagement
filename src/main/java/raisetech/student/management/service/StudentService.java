@@ -26,16 +26,21 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の一覧検索を行います。
+   * アクティブな受講生詳細の一覧検索を行います。
    * @return 受講生詳細の一覧
    */
   public List<StudentDetail> serchStudentDetailList(){
-    List<Student> students = repository.searchAllStudentList();
+    List<Student> students = repository.searchActiveStudentList();
 
     return students.stream()
         .map(student -> buildStudentDetail(student.getStudentId())).collect(Collectors.toList());
   }
 
+  /**
+   * アクティブかどうかを問わず受講生IDに紐づく受講生詳細を検索します。
+   * @param studentId 受講生ID
+   * @return 受講生詳細
+   */
   public StudentDetail searchStudentDetail(int studentId){
     return buildStudentDetail(studentId);
   }

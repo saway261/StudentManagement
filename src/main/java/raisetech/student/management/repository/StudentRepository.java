@@ -2,7 +2,6 @@ package raisetech.student.management.repository;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Update;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 
@@ -15,9 +14,9 @@ public interface StudentRepository {
 
   /**
    * 受講生の全件検索を行います。
-   * @return 受講生一覧(全件)
+   * @return 受講生一覧(アクティブな全件)
    */
-  List<Student> searchAllStudentList();
+  List<Student> searchActiveStudentList();
 
   /**
    * 受講生の検索を行います。

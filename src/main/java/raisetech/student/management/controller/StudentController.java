@@ -26,7 +26,7 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の一覧検索です。全件検索を行うので条件指定は行いません。
+   * 受講生詳細の一覧検索です。アクティブな受講生の実を一覧取得します。
    * @return 受講生詳細一覧
    */
   @GetMapping("/students")
@@ -35,7 +35,7 @@ public class StudentController {
   }
 
   /**
-   * 受講生詳細の検索です。IDに紐づく任意の受講生詳細を取得します。
+   * 受講生詳細の検索です。アクティブ/非アクティブ問わずIDに紐づく任意の受講生詳細を取得します。
    * @param studentId 受講生ID
    * @return 受講生詳細
    */
