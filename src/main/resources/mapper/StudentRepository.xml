@@ -21,8 +21,8 @@
 
   <!-- 受講生新規登録 -->
   <insert id="registerStudent" useGeneratedKeys="true" keyProperty="studentId">
-    INSERT INTO students(full_name, kana_name, nickname, email, area, age, sex, remark, is_deleted)
-    VALUES(#{fullName}, #{kanaName}, #{nickname}, #{email}, #{area}, #{age}, #{sex}, #{remark}, false)
+    INSERT INTO students(full_name, kana_name, nickname, email, area, telephone, age, sex, remark, is_deleted)
+    VALUES(#{fullName}, #{kanaName}, #{nickname}, #{email}, #{area}, #{telephone}, #{age}, #{sex}, #{remark}, false)
   </insert>
 
   <!-- 受講生コース新規登録 -->
@@ -34,7 +34,7 @@
   <!-- 受講生更新 -->
   <update id="updateStudent">
     UPDATE students
-    SET full_name=#{fullName}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, area=#{area}, age=#{age}, sex=#{sex}, remark=#{remark}, is_deleted=#{isDeleted}
+    SET full_name=#{fullName}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, area=#{area}, telephone=#{telephone}, age=#{age}, sex=#{sex}, remark=#{remark}, is_deleted=#{isDeleted}
     WHERE student_id=#{studentId}
   </update>
 
