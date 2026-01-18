@@ -11,6 +11,10 @@ import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.repository.StudentRepository;
 
+/**
+ * 受講生情報を取り扱うサービスです。
+ * 受講取得の検索や登録・更新処理を行います。
+ */
 @Service
 public class StudentService {
 
@@ -21,6 +25,10 @@ public class StudentService {
     this.repository = repository;
   }
 
+  /**
+   * 受講生詳細の一覧検索を行います。
+   * @return 受講生詳細の一覧
+   */
   public List<StudentDetail> serchStudentDetailList(){
     List<Student> students = repository.searchAllStudentList();
 
@@ -32,6 +40,12 @@ public class StudentService {
     return buildStudentDetail(studentId);
   }
 
+  /**
+   * 受講生詳細の登録を行います。
+   * 受講生と受講生コース情報を個別に登録し、受講生コース情報には受講生情報を紐づける値とコース開始日とコース終了日をセットします。
+   * @param studentDetail 受講生詳細
+   * @return 登録後の受講生詳細
+   */
   @Transactional
   public StudentDetail registerStudentDetail(StudentDetail studentDetail){
     Student student = studentDetail.getStudent();
@@ -44,7 +58,11 @@ public class StudentService {
     return studentDetail;
   }
 
-
+  /**
+   * 受講生詳細の更新を行います。受講生と受講生コース情報を個別に更新します。
+   * @param studentDetail 受講生詳細
+   * @return 更新後の受講生詳細
+   */
   @Transactional
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
     repository.updateStudent(studentDetail.getStudent());
@@ -54,7 +72,12 @@ public class StudentService {
     return studentDetail;
   }
 
-  private static void initStudentCourse(StudentCourse studentCourse, Student student) {
+  /**
+   * 受講生コース情報を登録する際の初期情報を設定する。
+   * @param studentCourse 受講生コース情報
+   * @param student 受講生
+   */
+  private void initStudentCourse(StudentCourse studentCourse, Student student) {
     LocalDate now = LocalDate.now();
 
     studentCourse.setStudentId(student.getStudentId());
@@ -62,6 +85,11 @@ public class StudentService {
     studentCourse.setCourseEndAt(now.plusYears(1));
   }
 
+  /**
+   * 受講生IDに紐づく受講生とコース情報を検索し、受講生詳細情報として組み上げます。
+   * @param studentId 受講生ID
+   * @return 受講生詳細
+   */
   private StudentDetail buildStudentDetail(int studentId){
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
