@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="raisetech.student.management.repository.StudentRepository">
+
+  <!-- アクティブな受講生の全件検索 -->
+  <select id="searchActiveStudentList" resultType="raisetech.student.management.data.Student">
+  SELECT * FROM students WHERE is_deleted=false
+  </select>
+
+ <!-- 受講生の単一検索 -->
+  <select id="searchStudent" resultType="raisetech.student.management.data.Student">
+    SELECT * FROM students
+    WHERE student_id=#{studentId}
+  </select>
+
+  <!-- 受講生IDに紐づく受講生コースの検索 -->
+  <select id="searchStudentCourses" resultType="raisetech.student.management.data.StudentCourse">
+    SELECT * FROM student_courses
+    WHERE student_id=#{studentId}
+  </select>
+
+  <!-- 受講生新規登録 -->
+  <insert id="registerStudent" useGeneratedKeys="true" keyProperty="studentId">
+    INSERT INTO students(full_name, kana_name, nickname, email, area, telephone, age, sex, remark, is_deleted)
+    VALUES(#{fullName}, #{kanaName}, #{nickname}, #{email}, #{area}, #{telephone}, #{age}, #{sex}, #{remark}, false)
+  </insert>
+
+  <!-- 受講生コース新規登録 -->
+  <insert id="registerStudentCourse" useGeneratedKeys="true" keyProperty="courseId">
+    INSERT INTO student_courses(student_id, course_name, course_start_at, course_end_at)
+    VALUES(#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
+  </insert>
+
+  <!-- 受講生更新 -->
+  <update id="updateStudent">
+    UPDATE students
+    SET full_name=#{fullName}, kana_name=#{kanaName}, nickname=#{nickname}, email=#{email}, area=#{area}, telephone=#{telephone}, age=#{age}, sex=#{sex}, remark=#{remark}, is_deleted=#{isDeleted}
+    WHERE student_id=#{studentId}
+  </update>
+
+  <!-- 受講生コース更新 -->
+  <update id="updateStudentCourse">
+    UPDATE student_courses
+    SET course_name=#{courseName}
+    WHERE course_id=#{courseId}
+  </update>
+</mapper>
