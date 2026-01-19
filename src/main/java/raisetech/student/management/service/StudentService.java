@@ -99,11 +99,7 @@ public class StudentService {
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
 
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentCourses(studentCourses);
-
-    return studentDetail;
+    return new StudentDetail(student, studentCourses);
   }
 
 }
