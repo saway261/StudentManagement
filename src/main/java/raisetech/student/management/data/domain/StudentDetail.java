@@ -1,4 +1,4 @@
-package raisetech.student.management.domain;
+package raisetech.student.management.data.domain;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
