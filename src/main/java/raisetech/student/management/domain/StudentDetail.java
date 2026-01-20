@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
-import raisetech.student.management.domain.validation.CreateGroup;
-import raisetech.student.management.domain.validation.UpdateGroup;
+import raisetech.student.management.validation.CreateGroup;
+import raisetech.student.management.validation.UpdateGroup;
 
 @Getter
 @Setter

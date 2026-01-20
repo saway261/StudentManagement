@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import raisetech.student.management.domain.validation.CreateGroup;
-import raisetech.student.management.domain.validation.UpdateGroup;
+import raisetech.student.management.validation.CreateGroup;
+import raisetech.student.management.validation.UpdateGroup;
 
 @Getter
 @Setter

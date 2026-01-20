@@ -1,4 +1,4 @@
-package raisetech.student.management.domain.validation;
+package raisetech.student.management.validation;
 
 /**
  * 登録時のバリデーション用グループ

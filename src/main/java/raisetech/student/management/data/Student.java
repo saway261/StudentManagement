@@ -9,8 +9,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import raisetech.student.management.domain.validation.CreateGroup;
-import raisetech.student.management.domain.validation.UpdateGroup;
+import raisetech.student.management.validation.CreateGroup;
+import raisetech.student.management.validation.UpdateGroup;
 
 @Getter
 @Setter
@@ -45,7 +45,7 @@ public class Student {
   )
   private String telephone;
 
-  @Min(value = 15, groups = {CreateGroup.class, UpdateGroup.class})//null非許容なんだ...
+  @Min(value = 15, groups = {CreateGroup.class, UpdateGroup.class})
   @Max(value = 80, groups = {CreateGroup.class, UpdateGroup.class})
   private Integer age;
 
