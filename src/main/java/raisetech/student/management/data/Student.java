@@ -60,6 +60,5 @@ public class Student {
   @Size(max = 200,groups = {CreateGroup.class, UpdateGroup.class})
   private String remark;
 
-  @NotNull(groups = UpdateGroup.class)
   private boolean isDeleted;
 }
