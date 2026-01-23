@@ -16,8 +16,9 @@ import raisetech.student.management.validation.UpdateGroup;
 @Setter
 public class Student {
 
+  @NotNull(groups = UpdateGroup.class)
   @Positive(groups = UpdateGroup.class)
-  private int studentId;
+  private Integer studentId;
 
   @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
   @Size(max = 50,groups = {CreateGroup.class, UpdateGroup.class})
