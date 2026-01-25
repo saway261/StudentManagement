@@ -30,10 +30,10 @@ public class StudentExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
       MethodArgumentNotValidException ex) {
 
-    ErrorResponse ErrorResponse =
+    ErrorResponse errorResponse =
         new ErrorResponse(HttpStatus.BAD_REQUEST, "validation error",
             errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(ErrorResponse);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 
   /**
@@ -46,10 +46,10 @@ public class StudentExceptionHandler {
   public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
       MethodArgumentTypeMismatchException ex) {
 
-    ErrorResponse ErrorResponse =
+    ErrorResponse errorResponse =
         new ErrorResponse(HttpStatus.BAD_REQUEST, "validation error",
             errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(ErrorResponse);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 
   /**
@@ -62,9 +62,9 @@ public class StudentExceptionHandler {
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(
       ConstraintViolationException ex) {
 
-    ErrorResponse ErrorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
         "validation error", errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(ErrorResponse);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 
   /**
@@ -77,8 +77,8 @@ public class StudentExceptionHandler {
   public ResponseEntity<ErrorResponse> handleUpdateTargetNotFoundException(
       UpdateTargetNotFoundException ex) {
 
-    ErrorResponse ErrorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
         "validation error", errorDetailsBuilder.buildErrorDetails(ex));
-    return ResponseEntity.badRequest().body(ErrorResponse);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 }
