@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
-import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.UpdateTargetNotFoundException;
 import raisetech.student.management.repository.StudentRepository;
+
 
 /**
  * 受講生情報を取り扱うサービスです。
@@ -70,9 +72,15 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
-    repository.updateStudent(studentDetail.getStudent());
+    int updatedStudent = repository.updateStudent(studentDetail.getStudent());
+    if(updatedStudent == 0){
+      throw new UpdateTargetNotFoundException("Student.studentId");
+    }
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
-      repository.updateStudentCourse(studentCourse);
+      int updatedStudentCourse = repository.updateStudentCourse(studentCourse);
+      if(updatedStudentCourse == 0){
+        throw new UpdateTargetNotFoundException("StudentCourse.courseId");
+      }
     }
     return studentDetail;
   }
@@ -99,11 +107,7 @@ public class StudentService {
     Student student = repository.searchStudent(studentId);
     List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
 
-    StudentDetail studentDetail = new StudentDetail();
-    studentDetail.setStudent(student);
-    studentDetail.setStudentCourses(studentCourses);
-
-    return studentDetail;
+    return new StudentDetail(student, studentCourses);
   }
 
 }

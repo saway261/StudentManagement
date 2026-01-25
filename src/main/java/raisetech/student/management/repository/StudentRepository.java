@@ -48,12 +48,12 @@ public interface StudentRepository {
    * 受講生の更新を行います。削除フラグの更新（論理削除）もここで行います。
    * @param student 受講生
    */
-  void updateStudent(Student student);
+  int updateStudent(Student student);
 
   /**
    * 受講生コースの更新を行います。
    * @param studentCourse 受講生コース
    */
-  void updateStudentCourse(StudentCourse studentCourse);
+  int updateStudentCourse(StudentCourse studentCourse);
 
 }
