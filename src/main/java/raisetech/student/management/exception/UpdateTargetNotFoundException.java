@@ -1,8 +1,14 @@
 package raisetech.student.management.exception;
 
+import lombok.Getter;
+
+@Getter
 public class UpdateTargetNotFoundException extends RuntimeException {
 
-  public UpdateTargetNotFoundException(String message) {
-    super(message);
+  private String field;
+
+  public UpdateTargetNotFoundException(String field) {
+    super("更新対象のインスタンスが見つかりませんでした");
+    this.field = field;
   }
 }

@@ -74,12 +74,12 @@ public class StudentService {
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
     int updatedStudent = repository.updateStudent(studentDetail.getStudent());
     if(updatedStudent == 0){
-      throw new UpdateTargetNotFoundException("更新対象の受講生が見つかりませんでした");
+      throw new UpdateTargetNotFoundException("Student.studentId");
     }
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
       int updatedStudentCourse = repository.updateStudentCourse(studentCourse);
       if(updatedStudentCourse == 0){
-        throw new UpdateTargetNotFoundException("更新対象の受講生コースが見つかりませんでした");
+        throw new UpdateTargetNotFoundException("StudentCourse.courseId");
       }
     }
     return studentDetail;
