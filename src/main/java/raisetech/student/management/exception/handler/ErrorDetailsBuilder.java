@@ -71,9 +71,9 @@ public class ErrorDetailsBuilder {
   }
 
   /**
-   * MethodArgumentNotValidExceptionを受け取り、すべてのエラー発生個所とエラーメッセージをリストで返します。
+   * UpdateTargetNotFoundExceptionを受け取り、エラー発生個所とエラーメッセージをリストで返します。
    *
-   * @param ex MethodArgumentNotValidException
+   * @param ex UpdateTargetNotFoundException
    * @return エラー発生個所とエラーメッセージ
    */
   public List<Map<String, String>> buildErrorDetails(UpdateTargetNotFoundException ex) {
