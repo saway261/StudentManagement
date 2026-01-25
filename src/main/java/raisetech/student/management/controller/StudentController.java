@@ -66,7 +66,6 @@ public class StudentController {
    * @return 更新後の受講生詳細
    */
   @PutMapping("/students")
-  @Validated(UpdateGroup.class)
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Validated(UpdateGroup.class) StudentDetail studentDetail){
     StudentDetail responseStudentDetail = service.updateStudentDetail(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
