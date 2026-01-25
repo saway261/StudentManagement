@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import raisetech.student.management.exception.UpdateTargetNotFoundException;
 
 @RestControllerAdvice
 public class StudentExceptionHandler {
@@ -35,6 +36,12 @@ public class StudentExceptionHandler {
     return ResponseEntity.badRequest().body(ErrorResponse);
   }
 
+  /**
+   * バリデーションエラー(引数の型不一致)の発生をクライアントに返します。
+   *
+   * @param ex MethodArgumentTypeMismatchException
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
+   */
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
       MethodArgumentTypeMismatchException ex) {
@@ -54,6 +61,21 @@ public class StudentExceptionHandler {
   @ExceptionHandler(ConstraintViolationException.class)
   public ResponseEntity<ErrorResponse> handleConstraintViolationException(
       ConstraintViolationException ex) {
+
+    ErrorResponse ErrorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+        "validation error", errorDetailsBuilder.buildErrorDetails(ex));
+    return ResponseEntity.badRequest().body(ErrorResponse);
+  }
+
+  /**
+   * 更新処理においてstudentId,courseIdで指定するレコードが見つからなかったこと（null含む）をクライアントに返します。
+   *
+   * @param ex UpdateTargetNotFoundException
+   * @return HTTPステータス(BAD REQUEST), エラー詳細
+   */
+  @ExceptionHandler(UpdateTargetNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleUpdateTargetNotFoundException(
+      UpdateTargetNotFoundException ex) {
 
     ErrorResponse ErrorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
         "validation error", errorDetailsBuilder.buildErrorDetails(ex));

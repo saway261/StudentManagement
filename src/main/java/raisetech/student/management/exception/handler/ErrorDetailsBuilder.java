@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import raisetech.student.management.exception.UpdateTargetNotFoundException;
 
 @Component
 public class ErrorDetailsBuilder {
@@ -66,6 +67,23 @@ public class ErrorDetailsBuilder {
     error.put("field", fieldName);
     error.put("message", message);
     errors.add(error);
+    return errors;
+  }
+
+  /**
+   * MethodArgumentNotValidExceptionを受け取り、すべてのエラー発生個所とエラーメッセージをリストで返します。
+   *
+   * @param ex MethodArgumentNotValidException
+   * @return エラー発生個所とエラーメッセージ
+   */
+  public List<Map<String, String>> buildErrorDetails(UpdateTargetNotFoundException ex) {
+    List<Map<String, String>> errors = new ArrayList<>();
+
+    Map<String, String> error = new HashMap<>();
+    error.put("field", ex.getField());
+    error.put("message", ex.getMessage());
+    errors.add(error);
+
     return errors;
   }
 }
