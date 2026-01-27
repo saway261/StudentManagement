@@ -1,5 +1,6 @@
 package raisetech.student.management.data.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
 
+@Schema(description = "受講生詳細情報")
 @Getter
 @Setter
 @AllArgsConstructor
