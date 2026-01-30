@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
-import raisetech.student.management.exception.UpdateTargetNotFoundException;
+import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.StudentRepository;
 
 
@@ -44,7 +44,11 @@ public class StudentService {
    * @return 受講生詳細
    */
   public StudentDetail searchStudentDetail(int studentId){
-    return buildStudentDetail(studentId);
+    StudentDetail response = buildStudentDetail(studentId);
+    if(response.getStudent() == null){
+      throw new TargetNotFoundException("studentId","指定したIDの受講生は見つかりませんでした");
+    }
+    return response;
   }
 
   /**
@@ -74,12 +78,12 @@ public class StudentService {
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
     int updatedStudent = repository.updateStudent(studentDetail.getStudent());
     if(updatedStudent == 0){
-      throw new UpdateTargetNotFoundException("Student.studentId");
+      throw new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした");
     }
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
       int updatedStudentCourse = repository.updateStudentCourse(studentCourse);
       if(updatedStudentCourse == 0){
-        throw new UpdateTargetNotFoundException("StudentCourse.courseId");
+        throw new TargetNotFoundException("StudentCourse.courseId","更新対象のインスタンスが見つかりませんでした");
       }
     }
     return studentDetail;

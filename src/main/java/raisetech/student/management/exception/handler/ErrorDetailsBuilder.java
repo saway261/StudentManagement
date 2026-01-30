@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import raisetech.student.management.exception.UpdateTargetNotFoundException;
+import raisetech.student.management.exception.TargetNotFoundException;
 
 @Component
 public class ErrorDetailsBuilder {
@@ -76,7 +76,7 @@ public class ErrorDetailsBuilder {
    * @param ex UpdateTargetNotFoundException
    * @return エラー発生個所とエラーメッセージ
    */
-  public List<Map<String, String>> buildErrorDetails(UpdateTargetNotFoundException ex) {
+  public List<Map<String, String>> buildErrorDetails(TargetNotFoundException ex) {
     List<Map<String, String>> errors = new ArrayList<>();
 
     Map<String, String> error = new HashMap<>();

@@ -1,5 +1,12 @@
 package raisetech.student.management.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +19,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.handler.ErrorResponse;
+import raisetech.student.management.service.StudentService;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
-import raisetech.student.management.service.StudentService;
 
 /**
  * 受講生の検索や登録、更新などを行うREST APIとして実行されるControllerです。
@@ -30,41 +38,122 @@ public class StudentController {
     this.service = service;
   }
 
-  /**
-   * 受講生詳細の一覧検索です。アクティブな受講生の実を一覧取得します。
-   * @return 受講生詳細一覧
-   */
+  @Operation(
+      summary = "アクティブな受講生詳細一覧の検索",
+      description = "アクティブな受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません",
+      responses = {@ApiResponse(
+          content = @Content(mediaType = "application/json",
+              array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+          )
+      )}
+  )
   @GetMapping("/students")
   public List<StudentDetail> getStudentList(){
     return service.serchStudentDetailList();
   }
 
-  /**
-   * 受講生詳細の検索です。アクティブ/非アクティブ問わずIDに紐づく任意の受講生詳細を取得します。
-   * @param studentId 受講生ID
-   * @return 受講生詳細
-   */
+  @Operation(
+      summary = "受講生詳細検索",
+      description = "アクティブ・非アクティブを問わず、受講生詳細の全件から受講生IDが一致する受講生の詳細を取得します。",
+      parameters = {
+          @Parameter(in = ParameterIn.PATH,
+              name = "studentId", required = true,
+              description = "受講生ID",
+              schema = @Schema(
+                  type = "integer",
+                  format = "int32"
+              )
+          )},
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )),
+          @ApiResponse(
+              responseCode = "404", description = "指定された受講生IDが存在しなかったときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              )),
+          @ApiResponse(
+              responseCode = "400", description = "受講生IDの形式が不正であったときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              ))
+      }
+  )
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable @Positive int studentId){
     return service.searchStudentDetail(studentId);
   }
 
-  /**
-   * 受講生詳細の新規登録です。リクエストボディとして受講生詳細を受け取ります。
-   * @param studentDetail 受講生詳細
-   * @return 登録後の受講生詳細
-   */
+  @Operation(
+      summary = "受講生詳細登録",
+      description = "受講生の登録を行います",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "新規に登録したい受講生詳細",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          )
+      }
+  )
   @PostMapping("/students")
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Validated(CreateGroup.class) StudentDetail studentDetail){
     StudentDetail responseStudentDetail = service.registerStudentDetail(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
   }
 
-  /**
-   * 受講生詳細の更新です。リクエストボディとして受講生詳細を受け取ります。削除フラグの更新(論理削除)もここで行います。
-   * @param studentDetail 受講生詳細
-   * @return 更新後の受講生詳細
-   */
+  @Operation(
+      summary = "受講生詳細更新",
+      description = "受講生詳細の更新を行います。キャンセルフラグの更新(アクティブ⇔非アクティブ)もここで行います。受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合はエラーを返します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "更新したい受講生詳細",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          )
+      }
+  )
   @PutMapping("/students")
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Validated(UpdateGroup.class) StudentDetail studentDetail){
     StudentDetail responseStudentDetail = service.updateStudentDetail(studentDetail);
