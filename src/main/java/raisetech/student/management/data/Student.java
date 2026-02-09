@@ -8,7 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
@@ -16,6 +18,8 @@ import raisetech.student.management.validation.UpdateGroup;
 @Schema(description = "受講生情報")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Student {
 
   @Schema(description = "受講生ID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")
