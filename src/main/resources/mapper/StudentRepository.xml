@@ -3,8 +3,8 @@
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
   <!-- アクティブな受講生の全件検索 -->
-  <select id="searchActiveStudentList" resultType="raisetech.student.management.data.Student">
-  SELECT * FROM students WHERE is_deleted=false
+  <select id="searchActiveStudentIdList" resultType="Integer">
+  SELECT student_id FROM students WHERE is_deleted=false
   </select>
 
  <!-- 受講生の単一検索 -->

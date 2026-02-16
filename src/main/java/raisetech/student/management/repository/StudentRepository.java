@@ -13,10 +13,10 @@ import raisetech.student.management.data.StudentCourse;
 public interface StudentRepository {
 
   /**
-   * 受講生の全件検索を行います。
-   * @return 受講生一覧(アクティブな全件)
+   * 受講生IDの全件検索を行います。serachStudentメソッド,searchStudentCoursesメソッドと組み合わせて使われる想定です。
+   * @return 受講生ID一覧(アクティブな全件)
    */
-  List<Student> searchActiveStudentList();
+  List<Integer> searchActiveStudentIdList();
 
   /**
    * 受講生の検索を行います。

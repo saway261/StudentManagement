@@ -32,10 +32,11 @@ public class StudentService {
    * @return 受講生詳細の一覧
    */
   public List<StudentDetail> serchStudentDetailList(){
-    List<Student> students = repository.searchActiveStudentList();
+    List<Integer> studentIdList = repository.searchActiveStudentIdList();
 
-    return students.stream()
-        .map(student -> buildStudentDetail(student.getStudentId())).collect(Collectors.toList());
+    return studentIdList.stream()
+        .map(studentId -> buildStudentDetail(studentId))
+        .collect(Collectors.toList());
   }
 
   /**
