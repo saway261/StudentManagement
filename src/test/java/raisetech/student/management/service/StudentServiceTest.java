@@ -1,12 +1,15 @@
 package raisetech.student.management.service;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -100,6 +103,106 @@ class StudentServiceTest {
       sut.searchStudentDetail(studentId);
     });
     verify(repository, times(1)).searchStudent(studentId);
+  }
+
+  /**
+   * registerStudentDetail(StudentDetail studentDetail)のテスト
+   */
+  @Test
+  void 受講生新規登録_StudentCourseのフィールドを初期化しリポジトリの処理を呼び出していること(){
+    // Arrange
+    int studentId = 1;
+
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
+    StudentCourse rawCourse = new StudentCourse(null,null,"Javaコース",null,null);
+    List<StudentCourse> rawCourseList = List.of(rawCourse);
+
+    StudentDetail input = new StudentDetail(student, rawCourseList);
+
+    LocalDate today = LocalDate.now();
+
+    // Act
+    sut.registerStudentDetail(input);
+
+    // Assert
+    ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
+    verify(repository, times(1)).registerStudent(student);
+    verify(repository, times(rawCourseList.size())).registerStudentCourse(captor.capture());
+
+    StudentCourse registered = captor.getValue();
+    Assertions.assertEquals(studentId, registered.getStudentId()); // studentIdをセットされている
+    Assertions.assertEquals(today, registered.getCourseStartAt()); // courseStartAtに今日の日付をセットされている
+    Assertions.assertEquals(today.plusYears(1), registered.getCourseEndAt()); // courseEndAtに今日の日付をセットされている
+  }
+
+  /**
+   * updateStudentDetail(StudentDetail studentDetail)の正常系テスト
+   */
+  @Test
+  void 受講生更新成功_リポジトリの処理を呼び出していること(){
+    // Arrange
+    Integer studentId = 1;
+    Integer courseId = 1;
+
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    Student student = input.getStudent();
+    List<StudentCourse> studentCourse = input.getStudentCourses();
+
+    Mockito.when(repository.updateStudent(student)).thenReturn(1);
+    Mockito.when(repository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(1);
+
+    // Act
+    sut.updateStudentDetail(input);
+
+    // Assert
+    verify(repository, times(1)).updateStudent(student);
+    verify(repository, times(studentCourse.size())).updateStudentCourse(Mockito.any(StudentCourse.class));
+  }
+
+  /**
+   * updateStudentDetail(StudentDetail studentDetail)の異常系テスト
+   */
+  @Test
+  void 受講生更新失敗_リポジトリのupdateStudentの返り値が0なら例外を投げてupdateStudentCourseを呼ばないこと(){
+    Integer studentId = 99;
+    Integer courseId = 99;
+
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    Student student = input.getStudent();
+
+    Mockito.when(repository.updateStudent(student)).thenReturn(0); // 更新件数が0件=更新失敗
+
+    // Act & Assert
+    Assertions.assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateStudentDetail(input);
+    });
+    verify(repository, never()).updateStudentCourse(Mockito.any(StudentCourse.class));
+
+  }
+
+  /**
+   * updateStudentDetail(StudentDetail studentDetail)の異常系テスト
+   */
+  @Test
+  void 受講生更新失敗_リポジトリのupdateStudentCourseの返り値が0なら例外を投げること(){
+    Integer studentId = 99;
+    Integer courseId = 99;
+
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    Student student = input.getStudent();
+    StudentCourse studentCourse = input.getStudentCourses().getFirst();
+
+    Mockito.when(repository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
+    Mockito.when(repository.updateStudentCourse(studentCourse)).thenReturn(0);
+
+    // Act & Assert
+    Assertions.assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateStudentDetail(input);
+    });
+    verify(repository, times(1)).updateStudent(student);
+    verify(repository, times(1)).updateStudentCourse(studentCourse);
+
+
   }
 
 }
