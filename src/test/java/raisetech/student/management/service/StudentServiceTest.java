@@ -49,7 +49,10 @@ class StudentServiceTest {
     List<StudentCourse> studentCourses1 = studentDetail1.getStudentCourses();
     List<StudentCourse> studentCourses2 = studentDetail2.getStudentCourses();
 
+    // スタブ
     Mockito.when(repository.searchActiveStudentIdList()).thenReturn(studentIdList);
+    Mockito.when(repository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
+    Mockito.when(repository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
     Mockito.when(repository.searchStudentCourses(studentId1)).thenReturn(studentCourses1);
     Mockito.when(repository.searchStudentCourses(studentId2)).thenReturn(studentCourses2);
 
@@ -60,8 +63,7 @@ class StudentServiceTest {
     verify(repository, times(1)).searchActiveStudentIdList();
     verify(repository, times(studentIdList.size())).searchStudent(Mockito.anyInt());
     verify(repository, times(studentIdList.size())).searchStudentCourses(Mockito.anyInt());
-    Assertions.assertInstanceOf(List.class, actual);
-    Assertions.assertEquals(expected.size(), actual.size());
+    Assertions.assertEquals(expected, actual);
   }
 
   /**
@@ -73,8 +75,11 @@ class StudentServiceTest {
     Integer studentId = 1;
     Integer courseId = 1;
 
-    Student student = TestDataFactory.makeCompletedStudent(studentId);
-    List<StudentCourse> studentCourseList = List.of(TestDataFactory.makeCompletedStudentCourse(studentId, courseId));
+    StudentDetail expected = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    Student student = expected.getStudent();
+    List<StudentCourse> studentCourseList = expected.getStudentCourses();
+
+    // スタブ
     Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
     Mockito.when(repository.searchStudentCourses(studentId)).thenReturn(studentCourseList);
 
@@ -84,7 +89,7 @@ class StudentServiceTest {
     // Assert
     verify(repository, times(1)).searchStudent(studentId);
     verify(repository, times(1)).searchStudentCourses(studentId);
-    Assertions.assertInstanceOf(StudentDetail.class, actual);
+    Assertions.assertEquals(expected, actual);
   }
 
   /**
