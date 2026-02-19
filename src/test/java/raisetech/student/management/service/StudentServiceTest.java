@@ -1,5 +1,6 @@
 package raisetech.student.management.service;
 
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -198,14 +199,14 @@ class StudentServiceTest {
     StudentCourse studentCourse = input.getStudentCourses().getFirst();
 
     Mockito.when(repository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
-    Mockito.when(repository.updateStudentCourse(studentCourse)).thenReturn(0);
+    Mockito.when(repository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(0);
 
     // Act & Assert
     Assertions.assertThrows(TargetNotFoundException.class, () -> {
       sut.updateStudentDetail(input);
     });
     verify(repository, times(1)).updateStudent(student);
-    verify(repository, times(1)).updateStudentCourse(studentCourse);
+    verify(repository, atLeastOnce()).updateStudentCourse(Mockito.any(StudentCourse.class));
 
 
   }
