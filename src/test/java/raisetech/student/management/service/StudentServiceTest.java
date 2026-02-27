@@ -196,7 +196,6 @@ class StudentServiceTest {
 
     StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
     Student student = input.getStudent();
-    StudentCourse studentCourse = input.getStudentCourses().getFirst();
 
     Mockito.when(repository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
     Mockito.when(repository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(0);
