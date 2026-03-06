@@ -58,7 +58,7 @@ class StudentServiceTest {
     Mockito.when(repository.searchStudentCourses(studentId2)).thenReturn(studentCourses2);
 
     // Act
-    List<StudentDetail> actual = sut.serchStudentDetailList();
+    List<StudentDetail> actual = sut.searchStudentDetailList();
 
     // Assert
     verify(repository, times(1)).searchActiveStudentIdList();

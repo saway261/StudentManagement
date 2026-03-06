@@ -31,7 +31,7 @@ public class StudentService {
    * アクティブな受講生詳細の一覧検索を行います。
    * @return 受講生詳細の一覧
    */
-  public List<StudentDetail> serchStudentDetailList(){
+  public List<StudentDetail> searchStudentDetailList(){
     List<Integer> studentIdList = repository.searchActiveStudentIdList();
 
     return studentIdList.stream()

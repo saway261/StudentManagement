@@ -49,7 +49,7 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetail> getStudentList(){
-    return service.serchStudentDetailList();
+    return service.searchStudentDetailList();
   }
 
   @Operation(
