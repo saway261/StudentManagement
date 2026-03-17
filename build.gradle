@@ -61,4 +61,25 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 	jvmArgs "-javaagent:${configurations.mockitoAgent.singleFile.absolutePath}"
+
+	testLogging {
+		events "passed", "failed", "skipped"
+		exceptionFormat "full"
+		showExceptions true
+		showCauses true
+		showStackTraces true
+	}
+
+	afterSuite { desc, result ->
+		if (!desc.parent) {
+			println ""
+			println "========== Test Summary =========="
+			println "Result   : ${result.resultType}"
+			println "Total    : ${result.testCount}"
+			println "Passed   : ${result.successfulTestCount}"
+			println "Failed   : ${result.failedTestCount}"
+			println "Skipped  : ${result.skippedTestCount}"
+			println "=================================="
+		}
+	}
 }
