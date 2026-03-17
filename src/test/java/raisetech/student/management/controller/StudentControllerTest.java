@@ -89,7 +89,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと渡すと400エラーが返されること()
+  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと400エラーが返されること()
       throws Exception {
     int notPositiveStudentId = 0;
 
@@ -123,6 +123,19 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生詳細登録失敗_不正なリクエストボディを受け取ると400エラーが返されること()
+      throws Exception {
+    // Arrange
+    StudentDetail inValidRequest = new StudentDetail();
+
+    // Act & Assert
+    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inValidRequest)))
+        .andExpect(status().isBadRequest()); // 400 BAD_REQUESTが返ること
+  }
+
+  @Test
   void 受講生詳細更新成功_サービスにリクエストボディが正しく渡されていること()
       throws Exception {
     // Arrange
@@ -144,6 +157,37 @@ class StudentControllerTest {
     assertThat(captor.getValue())
         .usingRecursiveComparison()
         .isEqualTo(studentDetail);
+  }
+
+  @Test
+  void 受講生詳細更新失敗_不正なリクエストボディを受け取ると400エラーが返されること()
+      throws Exception {
+    // Arrange
+    StudentDetail inValidRequest = new StudentDetail();
+
+    // Act & Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(inValidRequest)))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void 受講生詳細更新失敗_サービスから例外を受け取り404エラーを返していること()
+      throws Exception {
+    // Arrange
+    Integer studentId = 99;
+    Integer courseId = 99;
+
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
+    Mockito.when(service.updateStudentDetail(studentDetail))
+        .thenThrow(new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした"));
+
+    // Act & Assert
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(studentDetail))
+    ).andExpect(status().isNotFound());
   }
 
 }
