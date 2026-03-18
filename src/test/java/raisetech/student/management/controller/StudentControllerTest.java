@@ -180,7 +180,7 @@ class StudentControllerTest {
     Integer courseId = 99;
 
     StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.updateStudentDetail(studentDetail))
+    Mockito.when(service.updateStudentDetail(Mockito.any(StudentDetail.class)))
         .thenThrow(new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした"));
 
     // Act & Assert
