@@ -192,7 +192,7 @@ class StudentCourseTest {
     StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
 
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
-        CreateGroup.class);
+        UpdateGroup.class);
 
     assertThat(violations).isEmpty();
   }
