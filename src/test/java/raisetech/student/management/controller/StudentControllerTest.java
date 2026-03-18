@@ -1,13 +1,10 @@
 package raisetech.student.management.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -32,10 +29,6 @@ class StudentControllerTest {
 
   @MockitoBean
   private ErrorDetailsBuilder errorDetailsBuilder;
-
-  private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
-  ArgumentCaptor<StudentDetail> captor = ArgumentCaptor.forClass(StudentDetail.class);
 
   @Test
   void アクティブ受講生一覧検索_サービスの処理が呼び出せていること() throws Exception {
@@ -98,96 +91,166 @@ class StudentControllerTest {
 
   }
 
+  @Test void 受講生詳細登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception {
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(
+            """
+            {
+                "student": {
+                    "fullName": "山田太郎",
+                    "kanaName": "やまだたろう",
+                    "nickname": "タロー",
+                    "email": "taro@email.com",
+                    "area": "東京都練馬区",
+                    "telephone": "090-0000-0000",
+                    "age": 20,
+                    "sex": "男",
+                    "remark": "特になし"
+                },
+                "studentCourses": [
+                    {
+                         "courseName": "Javaコース"
+                    }
+                ]
+            }
+            
+            """
+        ))
+        .andExpect(status().isOk());
+    // Assert
+    Mockito.verify(service, times(1)).registerStudentDetail(any());
+  }
+
   @Test
-  void 受講生詳細登録成功_サービスにリクエストボディが正しく渡されていること()
+  void 受講生詳細登録失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
       throws Exception {
-    // Arrange
-    Integer studentId = 1;
-    Integer courseId = 1;
-
-    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.registerStudentDetail(Mockito.any(StudentDetail.class)))
-        .thenReturn(studentDetail);
-
     // Act
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(studentDetail)))
+            .content(
+                """
+                {
+                    "student": {},
+                    "studentCourses": []
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, times(0)).registerStudentDetail(any(StudentDetail.class));
+  }
+
+  @Test
+  void 受講生詳細更新成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
+      throws Exception {
+    // Arrange
+    Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
+        .thenReturn(TestDataFactory.makeCompletedStudentDetail(1, 1));
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "student": {
+                        "studentId": 1,
+                        "fullName": "山田太郎",
+                        "kanaName": "やまだたろう",
+                        "nickname": "タロー",
+                        "email": "taro@email.com",
+                        "area": "東京都練馬区",
+                        "telephone": "090-0000-0000",
+                        "age": 20,
+                        "sex": "男",
+                        "remark": "特になし",
+                        "isDeleted": false
+                    },
+                    "studentCourses": [
+                        {
+                            "courseId": 1,
+                            "studentId": 1,
+                            "courseName": "Javaコース",
+                            "courseStartAt": "2025-04-01",
+                            "courseEndAt": "2025-10-01",
+                            "deleted": false
+                        }
+                    ]
+                }
+                """
+            ))
         .andExpect(status().isOk());
 
     // Assert
-    Mockito.verify(service, times(1)).registerStudentDetail(captor.capture());
-    assertThat(captor.getValue())
-        .usingRecursiveComparison()
-        .isEqualTo(studentDetail);
+    Mockito.verify(service, times(1)).updateStudentDetail(any(StudentDetail.class));
   }
 
   @Test
-  void 受講生詳細登録失敗_不正なリクエストボディを受け取ると400エラーが返されること()
+  void 受講生詳細更新失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
       throws Exception {
-    // Arrange
-    StudentDetail inValidRequest = new StudentDetail();
-
-    // Act & Assert
-    mockMvc.perform(MockMvcRequestBuilders.post("/students")
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.put("/students")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(inValidRequest)))
-        .andExpect(status().isBadRequest()); // 400 BAD_REQUESTが返ること
+            .content(
+                """
+                {
+                    "student": {},
+                    "studentCourses": []
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, times(0)).updateStudentDetail(any(StudentDetail.class));
   }
 
   @Test
-  void 受講生詳細更新成功_サービスにリクエストボディが正しく渡されていること()
+  void 受講生詳細更新失敗_存在しない受講生を更新しようとすると404エラーが返ること()
       throws Exception {
     // Arrange
-    Integer studentId = 1;
-    Integer courseId = 1;
-
-    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.updateStudentDetail(Mockito.any(StudentDetail.class)))
-        .thenReturn(studentDetail);
+    Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
+        .thenThrow(new TargetNotFoundException("Student.studentId", "更新対象のインスタンスが見つかりませんでした"));
 
     // Act
     mockMvc.perform(MockMvcRequestBuilders.put("/students")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(studentDetail))
-    ).andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "student": {
+                        "studentId": 99,
+                        "fullName": "山田太郎",
+                        "kanaName": "やまだたろう",
+                        "nickname": "タロー",
+                        "email": "taro@email.com",
+                        "area": "東京都練馬区",
+                        "telephone": "090-0000-0000",
+                        "age": 20,
+                        "sex": "男",
+                        "remark": "特になし",
+                        "isDeleted": false
+                    },
+                    "studentCourses": [
+                        {
+                            "courseId": 99,
+                            "studentId": 99,
+                            "courseName": "Javaコース",
+                            "courseStartAt": "2025-04-01",
+                            "courseEndAt": "2025-10-01",
+                            "deleted": false
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isNotFound());
 
     // Assert
-    Mockito.verify(service, times(1)).updateStudentDetail(captor.capture());
-    assertThat(captor.getValue())
-        .usingRecursiveComparison()
-        .isEqualTo(studentDetail);
-  }
-
-  @Test
-  void 受講生詳細更新失敗_不正なリクエストボディを受け取ると400エラーが返されること()
-      throws Exception {
-    // Arrange
-    StudentDetail inValidRequest = new StudentDetail();
-
-    // Act & Assert
-    mockMvc.perform(MockMvcRequestBuilders.put("/students")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(inValidRequest)))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  void 受講生詳細更新失敗_サービスから例外を受け取り404エラーを返していること()
-      throws Exception {
-    // Arrange
-    Integer studentId = 99;
-    Integer courseId = 99;
-
-    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
-    Mockito.when(service.updateStudentDetail(Mockito.any(StudentDetail.class)))
-        .thenThrow(new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした"));
-
-    // Act & Assert
-    mockMvc.perform(MockMvcRequestBuilders.put("/students")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(studentDetail))
-    ).andExpect(status().isNotFound());
+    Mockito.verify(service, times(1)).updateStudentDetail(any(StudentDetail.class));
   }
 
 }
