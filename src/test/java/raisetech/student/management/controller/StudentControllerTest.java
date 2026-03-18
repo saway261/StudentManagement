@@ -31,7 +31,7 @@ class StudentControllerTest {
   private ErrorDetailsBuilder errorDetailsBuilder;
 
   @Test
-  void アクティブ受講生一覧検索_サービスの処理が呼び出せていること() throws Exception {
+  void アクティブ受講生一覧検索_リクエスト時に200OKが返りサービスが呼び出されること() throws Exception {
     // Act
     mockMvc.perform(MockMvcRequestBuilders.get("/students"))
         .andExpect(status().isOk());
@@ -41,7 +41,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索成功_サービスの処理が呼び出せていること()
+  void 受講生詳細単一検索成功_存在するstudentIdを指定すると200OKが返りサービスが呼び出されること()
       throws Exception {
     // Arrange
     Integer studentId = 1;
@@ -71,7 +71,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに数値以外を渡すと400エラーが返されること()
+  void 受講生詳細単一検索失敗_studentIdに数値以外を渡すと400エラーが返されサービスが呼び出されないこと()
       throws Exception {
     // Arrange
     String studentId = "test";
@@ -79,16 +79,17 @@ class StudentControllerTest {
     // Act & Assert
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + studentId)) // 文字列を渡す
         .andExpect(status().isBadRequest()); // 400 BAD_REQUESTが返ること
+    Mockito.verify(service, times(0)).searchStudentDetail(Mockito.anyInt());
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと400エラーが返されること()
+  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと400エラーが返されサービスが呼び出されないこと()
       throws Exception {
     int notPositiveStudentId = 0;
 
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + notPositiveStudentId))
         .andExpect(status().isBadRequest());
-
+    Mockito.verify(service, times(0)).searchStudentDetail(Mockito.anyInt());
   }
 
   @Test void 受講生詳細登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception {
