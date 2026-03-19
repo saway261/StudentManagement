@@ -31,6 +31,7 @@ repositories {
 }
 
 dependencies {
+	//Webアプリケーション基盤
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	// Apache Commons Lang ユーティリティ
 	implementation 'org.apache.commons:commons-lang3'
@@ -50,11 +51,17 @@ dependencies {
 	// MyBatis
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.1'
 
+	// APサーバー(Tomcat)
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat-runtime'
+
+	// SpringBoot Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+
+	// テスト実行基盤（JUnit Platformランチャー）
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// Mockitoのインラインモック用エージェント（ByteBuddy）
 	mockitoAgent "net.bytebuddy:byte-buddy-agent:1.17.8"
 }
 
