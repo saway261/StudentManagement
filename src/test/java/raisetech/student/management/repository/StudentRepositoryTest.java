@@ -141,6 +141,16 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 存在しない受講生IDを更新しようとすると更新件数が0件であること() {
+    Integer studentId = 999;
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
+
+    int actual = sut.updateStudent(student);
+
+    assertThat(actual).isZero();
+  }
+
+  @Test
   void 受講生コース名の更新を行うことができ受講生IDとコース開始日とコース終了予定日の更新はできないこと() {
     Integer studentId = 1;
     Integer courseId = 1;
@@ -178,5 +188,14 @@ class StudentRepositoryTest {
 
   }
 
+  @Test
+  void 存在しない受講生コースIDを更新しようとすると更新件数が0件であること() {
+    int courseId = 999;
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, courseId);
+
+    int actual = sut.updateStudentCourse(course);
+
+    assertThat(actual).isZero();
+  }
 
 }
