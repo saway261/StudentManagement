@@ -69,46 +69,43 @@ class StudentRepositoryTest {
     // Arrange
     List<Student> existing = MyBatisTestDataFactory.makeDummyStudentList();
     int existingSize = existing.size();
-    Student beforeResister = TestDataFactory.makeCompletedStudent(null);
-    Student afterResister = TestDataFactory.makeCompletedStudent(existingSize + 1);
-
-    List<Student> expected = new ArrayList<>(existing);
-    expected.add(afterResister);
+    Student beforeRegister = TestDataFactory.makeCompletedStudent(null);
 
     // Act
-    sut.registerStudent(beforeResister);
+    sut.registerStudent(beforeRegister);
 
     // Assert
+    List<Student> expected = new ArrayList<>(existing);
+    expected.add(beforeRegister);
+
     List<Student> actual = sut.searchActiveStudentIdList().stream()
         .map(sut::searchStudent)
         .toList();
+
+    assertThat(beforeRegister.getStudentId()).isNotNull();
     assertThat(actual.size()).isEqualTo(existingSize + 1);
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
-
   }
 
   @Test
   void 受講生コース登録が行えること() {
     // Arrange
     Integer studentId = 1;
-    int existingCoursesSize =
-        MyBatisTestDataFactory.makeDummyStudentDetailList().stream()
-            .mapToInt(sd -> sd.getStudentCourses().size())
-            .sum();
-
-    StudentCourse beforeRegister = TestDataFactory.makeCompletedStudentCourse(studentId, null);
-    StudentCourse afterRegister = TestDataFactory.makeCompletedStudentCourse(studentId, existingCoursesSize + 1);
     List<StudentCourse> expected = new ArrayList<>(
         MyBatisTestDataFactory.makeDummyStudentDetail1().getStudentCourses()
     );
     int originalSize = expected.size();
-    expected.add(afterRegister);
+
+    StudentCourse beforeRegister = TestDataFactory.makeCompletedStudentCourse(studentId, null);
 
     // Act
     sut.registerStudentCourse(beforeRegister);
 
     // Assert
     List<StudentCourse> actual = sut.searchStudentCourses(studentId);
+    expected.add(beforeRegister);
+
+    assertThat(beforeRegister.getCourseId()).isNotNull();
     assertThat(actual.size()).isEqualTo(originalSize + 1);
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
