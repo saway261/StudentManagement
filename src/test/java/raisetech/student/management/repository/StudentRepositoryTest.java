@@ -55,7 +55,7 @@ class StudentRepositoryTest {
     Student beforeResister = TestDataFactory.makeCompletedStudent(null);
     Student afterResister = TestDataFactory.makeCompletedStudent(existingSize + 1);
 
-    List<Student> expected = existing;
+    List<Student> expected = new ArrayList<>(existing);
     expected.add(afterResister);
 
     // Act
