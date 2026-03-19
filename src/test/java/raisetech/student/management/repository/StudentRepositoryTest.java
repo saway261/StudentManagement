@@ -1,5 +1,6 @@
 package raisetech.student.management.repository;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 import java.time.LocalDate;
@@ -88,6 +89,50 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 必須項目がnullの受講生を登録しようとすると例外が発生すること() {
+    // Arrange
+    Student student = new Student(
+        null, // studentId（自動採番）
+        null, // fullName ← NOT NULL違反
+        "テストカナ",
+        "テスト",
+        "test@example.com",
+        "東京都",
+        "090-0000-0000",
+        20,
+        "男",
+        "",
+        false
+    );
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerStudent(student))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 重複したメールアドレスの受講生を登録しようとすると例外が発生すること() {
+    // Arrange
+    Student student = new Student(
+        null,
+        "テスト太郎",
+        "テストタロウ",
+        "テスト",
+        "tarotaro@gmail.com", // data.sql に存在
+        "東京都",
+        "090-0000-0000",
+        20,
+        "男",
+        "",
+        false
+    );
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerStudent(student))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
   void 受講生コース登録が行えること() {
     // Arrange
     Integer studentId = 1;
@@ -108,6 +153,17 @@ class StudentRepositoryTest {
     assertThat(beforeRegister.getCourseId()).isNotNull();
     assertThat(actual.size()).isEqualTo(originalSize + 1);
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+  }
+
+  @Test
+  void 存在しない受講生IDを持つ受講生コースを登録しようとすると例外が発生すること() {
+    // Arrange
+    Integer studentId = 999;
+    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId, null);
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
+        .isInstanceOf(Exception.class);
   }
 
   @Test
