@@ -36,6 +36,14 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 存在しない受講生IDを指定したときnullが返ること() {
+    int studentId = 999;
+    Student actual = sut.searchStudent(studentId);
+
+    assertThat(actual).isNull();
+  }
+
+  @Test
   void 受講生IDに紐づく受講生コースの一覧を検索できること() {
     int studentId = 2;
 
@@ -45,6 +53,15 @@ class StudentRepositoryTest {
 
     assertThat(actual.size()).isEqualTo(expected.size());
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+  }
+
+  @Test
+  void 存在しない受講生IDを指定したとき空のリストが返ること() {
+    int studentId = 999;
+    List<StudentCourse> actual = sut.searchStudentCourses(studentId);
+
+    assertThat(actual).isNotNull();
+    assertThat(actual).isEmpty();
   }
 
   @Test
