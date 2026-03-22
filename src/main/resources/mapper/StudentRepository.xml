@@ -27,8 +27,8 @@
 
   <!-- 受講生コース新規登録 -->
   <insert id="registerStudentCourse" useGeneratedKeys="true" keyProperty="courseId">
-    INSERT INTO student_courses(student_id, course_name, course_start_at, course_end_at)
-    VALUES(#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
+    INSERT INTO student_courses(student_id, course_code, course_start_at, course_end_at)
+    VALUES(#{studentId}, #{courseCode}, #{courseStartAt}, #{courseEndAt})
   </insert>
 
   <!-- 受講生更新 -->
@@ -41,7 +41,7 @@
   <!-- 受講生コース更新 -->
   <update id="updateStudentCourse">
     UPDATE student_courses
-    SET course_name=#{courseName}
+    SET course_code=#{courseCode}
     WHERE course_id=#{courseId}
   </update>
 </mapper>
