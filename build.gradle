@@ -58,6 +58,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 
+	//MyBatis Test
+	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:4.0.1'
+
+	//InMemoryDB(H2)
+	testImplementation 'com.h2database:h2:2.4.240'
+
 	// テスト実行基盤（JUnit Platformランチャー）
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
