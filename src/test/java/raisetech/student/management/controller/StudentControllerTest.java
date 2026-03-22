@@ -112,7 +112,7 @@ class StudentControllerTest {
                 },
                 "studentCourses": [
                     {
-                         "courseName": "Javaコース"
+                         "courseCode": "JA"
                     }
                 ]
             }
@@ -174,7 +174,7 @@ class StudentControllerTest {
                         {
                             "courseId": 1,
                             "studentId": 1,
-                            "courseName": "Javaコース",
+                            "courseCode": "JA",
                             "courseStartAt": "2025-04-01",
                             "courseEndAt": "2025-10-01"
                         }
@@ -238,7 +238,7 @@ class StudentControllerTest {
                         {
                             "courseId": 99,
                             "studentId": 99,
-                            "courseName": "Javaコース",
+                            "courseCode": "JA",
                             "courseStartAt": "2025-04-01",
                             "courseEndAt": "2025-10-01"
                         }

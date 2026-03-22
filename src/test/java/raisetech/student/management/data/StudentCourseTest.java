@@ -28,7 +28,7 @@ class StudentCourseTest {
   @CsvSource({// trueはNotNull, falseはnull許容
       "courseId,false",
       "studentId,false",
-      "courseName,true",
+      "courseCode,true",
       "courseStartAt,false",
       "courseEndAt,false"
   })
@@ -39,7 +39,7 @@ class StudentCourseTest {
     StudentCourse studentCourse = new StudentCourse(
         fieldName.equals("courseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
-        fieldName.equals("courseName") ? null : "Javaコース",
+        fieldName.equals("courseCode") ? null : "JA",
         fieldName.equals("courseStartAt") ? null : now,
         fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
     );
@@ -57,13 +57,13 @@ class StudentCourseTest {
     }
   }
 
-  @ParameterizedTest(name = "[{index}] 登録時 courseNameが{0}文字のとき violation={1}")
+  @ParameterizedTest(name = "[{index}] 登録時 courseCodeが{0}文字のとき violation={1}")
   @CsvSource({
-      "9,false",
-      "10,false",
-      "11,true"
+      "4,false",
+      "5,false",
+      "6,true"
   })
-  void 登録時_コース名の文字数の境界値テスト(int size, boolean expectViolation)throws Exception{
+  void 登録時_コースコードの文字数の境界値テスト(int size, boolean expectViolation)throws Exception{
     // Arrange
     Integer studentId = null;
     Integer courseId = null;
@@ -85,7 +85,7 @@ class StudentCourseTest {
     if (expectViolation) {
       assertThat(violations).isNotEmpty();
       assertThat(violations.stream()
-          .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
+          .anyMatch(v -> v.getPropertyPath().toString().equals("courseCode"))).isTrue();
     } else {
       assertThat(violations).isEmpty();
     }
@@ -108,7 +108,7 @@ class StudentCourseTest {
   @CsvSource({// trueはNotNull, falseはnull許容
       "courseId,true",
       "studentId,false",
-      "courseName,true",
+      "courseCode,true",
       "courseStartAt,false",
       "courseEndAt,false"
   })
@@ -119,7 +119,7 @@ class StudentCourseTest {
     StudentCourse studentCourse = new StudentCourse(
         fieldName.equals("courseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
-        fieldName.equals("courseName") ? null : "Javaコース",
+        fieldName.equals("courseCode") ? null : "JA",
         fieldName.equals("courseStartAt") ? null : now,
         fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
     );
@@ -150,13 +150,13 @@ class StudentCourseTest {
         .anyMatch(v -> v.getPropertyPath().toString().equals("courseId"))).isTrue();
   }
 
-  @ParameterizedTest(name = "[{index}] 更新時 courseNameが{0}文字のとき violation={1}")
+  @ParameterizedTest(name = "[{index}] 更新時 courseCodeが{0}文字のとき violation={1}")
   @CsvSource({
-      "9,false",
-      "10,false",
-      "11,true"
+      "4,false",
+      "5,false",
+      "6,true"
   })
-  void 更新時_コース名の文字数の境界値テスト(int size, boolean expectViolation)throws Exception{
+  void 更新時_コースコードの文字数の境界値テスト(int size, boolean expectViolation)throws Exception{
     // Arrange
     Integer studentId = 1;
     Integer courseId = 1;
@@ -178,7 +178,7 @@ class StudentCourseTest {
     if (expectViolation) {
       assertThat(violations).isNotEmpty();
       assertThat(violations.stream()
-          .anyMatch(v -> v.getPropertyPath().toString().equals("courseName"))).isTrue();
+          .anyMatch(v -> v.getPropertyPath().toString().equals("courseCode"))).isTrue();
     } else {
       assertThat(violations).isEmpty();
     }
