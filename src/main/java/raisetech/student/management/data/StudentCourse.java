@@ -27,10 +27,10 @@ public class StudentCourse {
   @Schema(description = "紐づく受講生を指定する受講生ID プログラム側が値をセットするため常に入力不要", example = "1")
   private Integer studentId;
 
-  @Schema(description = "コース名", example = "Javaコース")
+  @Schema(description = "コースコード", example = "JA")
   @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
-  @Size(max = 10, groups = {CreateGroup.class, UpdateGroup.class})
-  private String courseName;
+  @Size(max = 5, groups = {CreateGroup.class, UpdateGroup.class})
+  private String courseCode;
 
   @Schema(description = "受講開始日 プログラム側が値をセットするため常に入力不要", example = "2026/01/01")
   private LocalDate courseStartAt;
