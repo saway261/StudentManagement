@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.validation.CreateGroup;
@@ -17,7 +16,6 @@ import raisetech.student.management.validation.UpdateGroup;
 
 @Schema(description = "受講生詳細情報")
 @Getter
-@Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor

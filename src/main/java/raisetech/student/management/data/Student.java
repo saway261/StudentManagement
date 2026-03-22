@@ -12,13 +12,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
 
 @Schema(description = "受講生情報")
 @Getter
-@Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
@@ -79,5 +77,6 @@ public class Student {
   private String remark;
 
   @Schema(description = "削除フラグ", example = "false")
+  @NotNull(groups = UpdateGroup.class)
   private Boolean isDeleted;
 }

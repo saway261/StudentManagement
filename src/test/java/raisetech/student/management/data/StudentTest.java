@@ -35,7 +35,8 @@ class StudentTest {
       "telephone,false",
       "age,false",
       "sex,false",
-      "remark,false"
+      "remark,false",
+      "isDeleted,false"
   })
   void 登録時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
@@ -51,7 +52,7 @@ class StudentTest {
         fieldName.equals("age") ? null : 20,
         fieldName.equals("sex") ? null : "男",
         fieldName.equals("remark") ? null : "特になし",
-        false
+        fieldName.equals("isDeleted") ? null :false
     );
 
     // Act
@@ -324,7 +325,8 @@ class StudentTest {
       "telephone,false",
       "age,false",
       "sex,false",
-      "remark,false"
+      "remark,false",
+      "isDeleted,true"
   })
   void 更新時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
@@ -340,7 +342,7 @@ class StudentTest {
         fieldName.equals("age") ? null : 20,
         fieldName.equals("sex") ? null : "男",
         fieldName.equals("remark") ? null : "特になし",
-        false
+        fieldName.equals("isDeleted") ? null :false
     );
 
     // Act
