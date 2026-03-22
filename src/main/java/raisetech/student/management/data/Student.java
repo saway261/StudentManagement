@@ -77,5 +77,6 @@ public class Student {
   private String remark;
 
   @Schema(description = "削除フラグ", example = "false")
+  @NotNull(groups = UpdateGroup.class)
   private Boolean isDeleted;
 }
