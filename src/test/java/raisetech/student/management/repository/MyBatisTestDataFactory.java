@@ -37,7 +37,7 @@ public class MyBatisTestDataFactory {
         List.of(new StudentCourse(
             courseId,
             1,
-            "Javaコース",
+            "JA",
             LocalDate.of(2024, 7, 15),
             LocalDate.of(2025, 4, 15)
         ))
@@ -68,14 +68,14 @@ public class MyBatisTestDataFactory {
             new StudentCourse(
                 courseId1,
                 2,
-                "AWSコース",
+                "AW",
                 LocalDate.of(2024, 7, 20),
                 LocalDate.of(2025, 7, 20)
             ),
             new StudentCourse(
                 courseId2,
                 2,
-                "Javaコース",
+                "JA",
                 LocalDate.of(2024, 9, 23),
                 LocalDate.of(2025, 3, 23)
             )
@@ -105,7 +105,7 @@ public class MyBatisTestDataFactory {
         List.of(new StudentCourse(
             courseId,
             3,
-            "デザインコース",
+            "DE",
             LocalDate.of(2024, 8, 12),
             LocalDate.of(2025, 2, 12)
         ))
@@ -136,14 +136,14 @@ public class MyBatisTestDataFactory {
             new StudentCourse(
                 courseId1,
                 4,
-                "Webマーケティングコース",
+                "WM",
                 LocalDate.of(2024, 8, 30),
                 LocalDate.of(2025, 8, 30)
             ),
             new StudentCourse(
                 courseId2,
                 4,
-                "デザインコース",
+                "DE",
                 LocalDate.of(2024, 7, 20),
                 LocalDate.of(2025, 7, 20)
             )
@@ -172,7 +172,7 @@ public class MyBatisTestDataFactory {
         List.of(new StudentCourse(
             courseId,
             5,
-            "フロントエンドコース",
+            "FR",
             LocalDate.of(2024, 9, 9),
             LocalDate.of(2025, 3, 9)
         ))
