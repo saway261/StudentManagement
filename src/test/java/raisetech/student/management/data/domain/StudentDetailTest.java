@@ -94,7 +94,7 @@ class StudentDetailTest {
   }
 
   @Test
-  void 登録時および更新時_受講生コースが空のときバリデーション違反が起きる() {
+  void 更新時_受講生コースが空のときバリデーション違反が起きる() {
     // Arrange
     Integer studentId = 1;
     StudentDetail invalidStudentDetail = new StudentDetail(
