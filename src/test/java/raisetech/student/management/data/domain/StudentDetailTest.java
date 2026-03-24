@@ -3,25 +3,34 @@ package raisetech.student.management.data.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.repository.CourseMasterRepository;
 import raisetech.student.management.testutil.TestDataFactory;
+import raisetech.student.management.testutil.ValidatorTestFactory;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
 
+@ExtendWith(MockitoExtension.class) // Mockitoを使用
 class StudentDetailTest {
 
-  private static Validator validator;
+  private Validator validator;
 
-  @BeforeAll
-  static void setUpValidator() {
-    validator = Validation.buildDefaultValidatorFactory().getValidator();
+  @Mock
+  private CourseMasterRepository courseMasterRepository;
+
+  @BeforeEach
+  void setUp() {
+    validator = ValidatorTestFactory.createValidator(courseMasterRepository);
   }
 
   @Test
@@ -67,6 +76,7 @@ class StudentDetailTest {
         TestDataFactory.makeCompletedStudent(studentId),
         List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
     );
+    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         validStudentDetail, CreateGroup.class);
 
@@ -120,6 +130,7 @@ class StudentDetailTest {
         TestDataFactory.makeCompletedStudent(studentId),
         List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
     );
+    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         validStudentDetail,
         UpdateGroup.class);
