@@ -12,9 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.repository.CourseMasterRepository;
 
 @ExtendWith(MockitoExtension.class)
-class CourseCodeValidatorTest {
+class CourseCodeExistsValidatorTest {
 
-  private CourseCodeValidator sut;
+  private CourseCodeExistsValidator sut;
 
   @Mock
   private CourseMasterRepository repository;
@@ -24,7 +24,7 @@ class CourseCodeValidatorTest {
 
   @BeforeEach
   void setUp() {
-    sut = new CourseCodeValidator(repository);
+    sut = new CourseCodeExistsValidator(repository);
   }
 
   @Test

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = CourseCodeValidator.class)
+@Constraint(validatedBy = CourseCodeExistsValidator.class)
 public @interface CourseCodeExists {
   String message() default "指定されたコースコードは存在しません。";
   Class<?>[] groups() default {};

@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import raisetech.student.management.repository.CourseMasterRepository;
-import raisetech.student.management.validation.CourseCodeValidator;
+import raisetech.student.management.validation.CourseCodeExistsValidator;
 
 /**
  * カスタムバリデータの依存をモックで注入したValidatorを手動で構築するためのクラスです
@@ -27,8 +27,8 @@ public class ValidatorTestFactory {
     factoryBean.setConstraintValidatorFactory(new ConstraintValidatorFactory() {
       @Override
       public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
-        if (key == CourseCodeValidator.class) {
-          return key.cast(new CourseCodeValidator(courseMasterRepository));
+        if (key == CourseCodeExistsValidator.class) {
+          return key.cast(new CourseCodeExistsValidator(courseMasterRepository));
         }
         try {
           return key.getDeclaredConstructor().newInstance();
