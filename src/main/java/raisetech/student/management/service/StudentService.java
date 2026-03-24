@@ -102,7 +102,7 @@ public class StudentService {
     return new StudentCourse(
         null,
         student.getStudentId(),
-        studentCourse.getCourseName(),
+        studentCourse.getCourseCode(),
         now,
         now.plusYears(1)
     );
