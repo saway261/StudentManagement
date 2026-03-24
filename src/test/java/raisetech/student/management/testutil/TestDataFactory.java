@@ -8,6 +8,12 @@ import raisetech.student.management.data.domain.StudentDetail;
 
 public class TestDataFactory {
 
+  /**
+   * インスタンス化を防ぐprivateコンストラクタ
+   */
+  private TestDataFactory() {
+  }
+
   public static Student makeCompletedStudent(Integer studentId) {
     return new Student(studentId, "山田太郎", "やまだたろう", "タロー", "taro@email.com",
         "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);

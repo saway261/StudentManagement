@@ -9,6 +9,12 @@ import raisetech.student.management.data.domain.StudentDetail;
 
 public class MyBatisTestDataFactory {
 
+  /**
+   * インスタンス化を防ぐprivateコンストラクタ
+   */
+  public MyBatisTestDataFactory() {
+  }
+
   static StudentDetail makeDummyStudentDetail1() {
 
     Integer studentId = 1;
