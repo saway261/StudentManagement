@@ -181,7 +181,7 @@ class StudentControllerTest {
                     },
                     "studentCourses": [
                         {
-                            "courseId": 1,
+                            "studentCourseId": 1,
                             "studentId": 1,
                             "courseCode": "JA",
                             "courseStartAt": "2025-04-01",
@@ -246,7 +246,7 @@ class StudentControllerTest {
                     },
                     "studentCourses": [
                         {
-                            "courseId": 99,
+                            "studentCourseId": 99,
                             "studentId": 99,
                             "courseCode": "JA",
                             "courseStartAt": "2025-04-01",

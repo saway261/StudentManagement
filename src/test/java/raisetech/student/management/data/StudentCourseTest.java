@@ -41,7 +41,7 @@ class StudentCourseTest {
 
   @ParameterizedTest(name = "[{index}] 登録時_フィールド: {0} がnullのとき violation={1}")
   @CsvSource({// trueはNotNull, falseはnull許容
-      "courseId,false",
+      "studentCourseId,false",
       "studentId,false",
       "courseCode,true",
       "courseStartAt,false",
@@ -54,7 +54,7 @@ class StudentCourseTest {
     String courseCode = fieldName.equals("courseCode") ? null : "JA";
 
     StudentCourse studentCourse = new StudentCourse(
-        fieldName.equals("courseId") ? null : 1,
+        fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
         courseCode,
         fieldName.equals("courseStartAt") ? null : now,
@@ -109,7 +109,7 @@ class StudentCourseTest {
 
   @ParameterizedTest(name = "[{index}] 更新時_フィールド: {0} がnullのとき violation={1}")
   @CsvSource({// trueはNotNull, falseはnull許容
-      "courseId,true",
+      "studentCourseId,true",
       "studentId,false",
       "courseCode,true",
       "courseStartAt,false",
@@ -122,7 +122,7 @@ class StudentCourseTest {
     String courseCode = fieldName.equals("courseCode") ? null : "JA";
 
     StudentCourse studentCourse = new StudentCourse(
-        fieldName.equals("courseId") ? null : 1,
+        fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
         courseCode,
         fieldName.equals("courseStartAt") ? null : now,
@@ -156,7 +156,7 @@ class StudentCourseTest {
     // Assert
     assertThat(violations).isNotEmpty();
     assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("courseId"))).isTrue();
+        .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseId"))).isTrue();
   }
 
   @Test

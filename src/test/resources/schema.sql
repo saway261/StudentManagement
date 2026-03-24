@@ -16,7 +16,7 @@ course_code VARCHAR(5) PRIMARY KEY ,
 course_name VARCHAR(20) NOT NULL UNIQUE);
 
 CREATE TABLE IF NOT EXISTS student_courses (
-course_id INT AUTO_INCREMENT PRIMARY KEY ,
+student_course_id INT AUTO_INCREMENT PRIMARY KEY ,
 student_id INT NOT NULL,
 course_code VARCHAR(5) NOT NULL,
 course_start_at TIMESTAMP NOT NULL,

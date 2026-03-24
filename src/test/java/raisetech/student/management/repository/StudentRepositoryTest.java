@@ -150,7 +150,7 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchStudentCourses(studentId);
     expected.add(beforeRegister);
 
-    assertThat(beforeRegister.getCourseId()).isNotNull();
+    assertThat(beforeRegister.getStudentCourseId()).isNotNull();
     assertThat(actual.size()).isEqualTo(originalSize + 1);
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
@@ -227,7 +227,7 @@ class StudentRepositoryTest {
     Integer updated = sut.updateStudentCourse(forUpdate);
 
     StudentCourse actual = sut.searchStudentCourses(studentId).stream()
-        .filter(sc -> sc.getCourseId().equals(courseId))
+        .filter(sc -> sc.getStudentCourseId().equals(courseId))
         .findFirst()
         .orElseThrow(() -> new AssertionError(
             "指定された courseCode の StudentCourse が見つかりませんでした"));

@@ -22,7 +22,7 @@ public class StudentCourse {
   @Schema(description = "コースID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")
   @NotNull(groups = UpdateGroup.class)
   @Positive(groups = UpdateGroup.class)
-  private Integer courseId;
+  private Integer studentCourseId;
 
   @Schema(description = "紐づく受講生を指定する受講生ID プログラム側が値をセットするため常に入力不要", example = "1")
   private Integer studentId;
