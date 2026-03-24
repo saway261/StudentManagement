@@ -176,8 +176,7 @@ class StudentControllerTest {
                             "studentId": 1,
                             "courseName": "Javaコース",
                             "courseStartAt": "2025-04-01",
-                            "courseEndAt": "2025-10-01",
-                            "deleted": false
+                            "courseEndAt": "2025-10-01"
                         }
                     ]
                 }
@@ -241,8 +240,7 @@ class StudentControllerTest {
                             "studentId": 99,
                             "courseName": "Javaコース",
                             "courseStartAt": "2025-04-01",
-                            "courseEndAt": "2025-10-01",
-                            "deleted": false
+                            "courseEndAt": "2025-10-01"
                         }
                     ]
                 }
