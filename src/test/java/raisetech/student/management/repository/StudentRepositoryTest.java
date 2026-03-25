@@ -150,7 +150,7 @@ class StudentRepositoryTest {
     List<StudentCourse> actual = sut.searchStudentCourses(studentId);
     expected.add(beforeRegister);
 
-    assertThat(beforeRegister.getCourseId()).isNotNull();
+    assertThat(beforeRegister.getStudentCourseId()).isNotNull();
     assertThat(actual.size()).isEqualTo(originalSize + 1);
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
@@ -204,13 +204,13 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース名の更新を行うことができ受講生IDとコース開始日とコース終了予定日の更新はできないこと() {
+  void 受講生コースコードの更新を行うことができ受講生IDとコース開始日とコース終了予定日の更新はできないこと() {
     Integer studentId = 1;
     Integer courseId = 1;
     StudentCourse original = new StudentCourse(
         courseId,
         studentId,
-        "Javaコース",
+        "JA",
         LocalDate.of(2024, 7, 15),
         LocalDate.of(2025, 4, 15)
     );
@@ -218,7 +218,7 @@ class StudentRepositoryTest {
     StudentCourse forUpdate = new StudentCourse(
         courseId,
         2,
-        "AWSコース",
+        "AW",
         LocalDate.of(2023, 10, 15),
         LocalDate.of(2025, 12, 15)
     );
@@ -227,14 +227,14 @@ class StudentRepositoryTest {
     Integer updated = sut.updateStudentCourse(forUpdate);
 
     StudentCourse actual = sut.searchStudentCourses(studentId).stream()
-        .filter(sc -> sc.getCourseId().equals(courseId))
+        .filter(sc -> sc.getStudentCourseId().equals(courseId))
         .findFirst()
         .orElseThrow(() -> new AssertionError(
-            "指定された courseId の StudentCourse が見つかりませんでした"));
+            "指定された courseCode の StudentCourse が見つかりませんでした"));
 
     // Assert
     assertThat(actual.getStudentId()).isEqualTo(original.getStudentId());
-    assertThat(actual.getCourseName()).isEqualTo(forUpdate.getCourseName());
+    assertThat(actual.getCourseCode()).isEqualTo(forUpdate.getCourseCode());
     assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
     assertThat(actual.getCourseEndAt()).isEqualTo(original.getCourseEndAt());
     assertThat(updated).isEqualTo(1);

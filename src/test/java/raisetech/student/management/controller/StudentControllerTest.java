@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.exception.handler.ErrorDetailsBuilder;
+import raisetech.student.management.repository.CourseRepository;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.testutil.TestDataFactory;
 
@@ -29,6 +30,9 @@ class StudentControllerTest {
 
   @MockitoBean
   private ErrorDetailsBuilder errorDetailsBuilder;
+
+  @MockitoBean
+  private CourseRepository courseRepository;
 
   @Test
   void アクティブ受講生一覧検索_リクエスト時に200OKが返りサービスが呼び出されること() throws Exception {
@@ -93,6 +97,9 @@ class StudentControllerTest {
   }
 
   @Test void 受講生詳細登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception {
+    // Arrange
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
+
     // Act
     mockMvc.perform(MockMvcRequestBuilders.post("/students")
         .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +119,7 @@ class StudentControllerTest {
                 },
                 "studentCourses": [
                     {
-                         "courseName": "Javaコース"
+                         "courseCode": "JA"
                     }
                 ]
             }
@@ -120,6 +127,7 @@ class StudentControllerTest {
             """
         ))
         .andExpect(status().isOk());
+
     // Assert
     Mockito.verify(service, times(1)).registerStudentDetail(any());
   }
@@ -148,6 +156,7 @@ class StudentControllerTest {
   void 受講生詳細更新成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
       throws Exception {
     // Arrange
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
     Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
         .thenReturn(TestDataFactory.makeCompletedStudentDetail(1, 1));
 
@@ -172,9 +181,9 @@ class StudentControllerTest {
                     },
                     "studentCourses": [
                         {
-                            "courseId": 1,
+                            "studentCourseId": 1,
                             "studentId": 1,
-                            "courseName": "Javaコース",
+                            "courseCode": "JA",
                             "courseStartAt": "2025-04-01",
                             "courseEndAt": "2025-10-01"
                         }
@@ -212,6 +221,7 @@ class StudentControllerTest {
   void 受講生詳細更新失敗_存在しない受講生を更新しようとすると404エラーが返ること()
       throws Exception {
     // Arrange
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
     Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
         .thenThrow(new TargetNotFoundException("Student.studentId", "更新対象のインスタンスが見つかりませんでした"));
 
@@ -236,9 +246,9 @@ class StudentControllerTest {
                     },
                     "studentCourses": [
                         {
-                            "courseId": 99,
+                            "studentCourseId": 99,
                             "studentId": 99,
-                            "courseName": "Javaコース",
+                            "courseCode": "JA",
                             "courseStartAt": "2025-04-01",
                             "courseEndAt": "2025-10-01"
                         }

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- アクティブな受講生の全件検索 -->
+  <!-- アクティブな受講生IDの全件検索 -->
   <select id="searchActiveStudentIdList" resultType="Integer">
   SELECT student_id FROM students WHERE is_deleted=false
   </select>
@@ -26,9 +26,9 @@
   </insert>
 
   <!-- 受講生コース新規登録 -->
-  <insert id="registerStudentCourse" useGeneratedKeys="true" keyProperty="courseId">
-    INSERT INTO student_courses(student_id, course_name, course_start_at, course_end_at)
-    VALUES(#{studentId}, #{courseName}, #{courseStartAt}, #{courseEndAt})
+  <insert id="registerStudentCourse" useGeneratedKeys="true" keyProperty="studentCourseId">
+    INSERT INTO student_courses(student_id, course_code, course_start_at, course_end_at)
+    VALUES(#{studentId}, #{courseCode}, #{courseStartAt}, #{courseEndAt})
   </insert>
 
   <!-- 受講生更新 -->
@@ -41,7 +41,7 @@
   <!-- 受講生コース更新 -->
   <update id="updateStudentCourse">
     UPDATE student_courses
-    SET course_name=#{courseName}
-    WHERE course_id=#{courseId}
+    SET course_code=#{courseCode}
+    WHERE student_course_id=#{studentCourseId}
   </update>
 </mapper>
