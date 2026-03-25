@@ -39,6 +39,18 @@ class CourseServiceTest {
     verify(repository,times(1)).searchCourseList();
     Assertions.assertEquals(expected, actual);
   }
+
+  @Test
+  void コース新規登録_リポジトリの処理を呼び出していること(){
+    // Arrange
+    Course course = new Course("JA","Javaコース");
+
+    // Act
+    sut.registerCourse(course);
+
+    // Assert
+    verify(repository,times(1)).registerCourse(course);
+  }
   
 
 }

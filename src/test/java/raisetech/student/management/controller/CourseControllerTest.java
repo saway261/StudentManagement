@@ -1,5 +1,6 @@
 package raisetech.student.management.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,6 +35,39 @@ class CourseControllerTest {
 
     // Assert
     Mockito.verify(service, times(1)).searchCourseMasterList();
+  }
+
+  @Test
+  void コース登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception{
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/courses")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(
+            """
+            {
+                "courseCode": "JA",
+                "courseName": "Javaコース"
+            }  
+            """
+        ))
+        .andExpect(status().isOk());
+
+    // Assert
+    Mockito.verify(service, times(1)).registerCourse(any());
+
+  }
+
+  @Test
+  void コース登録失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと() throws Exception{
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, times(0)).registerCourse(any());
+
   }
 
 }

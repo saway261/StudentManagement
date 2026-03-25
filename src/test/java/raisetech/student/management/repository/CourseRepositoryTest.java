@@ -1,8 +1,11 @@
 package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.ArrayList;
 import java.util.List;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -53,5 +56,49 @@ class CourseRepositoryTest {
 
     AssertionsForInterfaceTypes.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
+
+  @Test
+  void 提供コースの登録が行えること(){
+    // Arrange
+    List<Course> existing = MyBatisTestDataFactory.makeDummyCourseList();
+    int existingSize = existing.size();
+    Course newCourse = new Course("AI","AI開発コース");
+
+    List<Course> expected = new ArrayList<>(existing);
+    expected.add(newCourse);
+
+    // Act
+    sut.registerCourse(newCourse);
+    List<Course> actual = sut.searchCourseList();
+
+    // Assert
+    AssertionsForClassTypes.assertThat(actual.size()).isEqualTo(existingSize + 1);
+    AssertionsForInterfaceTypes.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+  }
+
+  @Test
+  void 必須項目がnullのコースを登録しようとすると例外が発生すること(){
+    // Arrange
+    Course invalidNewCourse = new Course("AI",null);
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerCourse(invalidNewCourse))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 重複したコース名を登録しようとすると例外が発生すること(){
+    // Arrange
+    // Arrange
+    Course invalidNewCourse = new Course(
+        "AI",// 識別子は新規
+        "Javaコース"//コース名は既存
+    );
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerCourse(invalidNewCourse))
+        .isInstanceOf(Exception.class);
+  }
+
 
 }
