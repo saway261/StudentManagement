@@ -23,4 +23,12 @@ public class CourseService {
   public List<Course> searchCourseMasterList(){
     return repository.searchCourseList();
   }
+
+  /**
+   * 提供コースの新規登録を行います。
+   * @param course 新規登録する提供コース
+   */
+  public void registerCourse(Course course){
+    repository.registerCourse(course);
+  }
 }

@@ -1,6 +1,7 @@
 package raisetech.student.management.repository;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import raisetech.student.management.data.master.Course;
@@ -21,4 +22,13 @@ public interface CourseRepository {
    */
   @Select("SELECT * FROM course_master")
   List<Course> searchCourseList();
+
+  /**
+   * 提供コースの新規追加を行います。
+   * @param course 提供コース
+   */
+  @Insert("INSERT INTO course_master VALUES(#{courseCode}, #{courseName})")
+  void registerCourse(Course course);
+
+
 }
