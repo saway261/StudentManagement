@@ -6,13 +6,14 @@ import java.util.List;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.data.master.Course;
 
 public class MyBatisTestDataFactory {
 
   /**
    * インスタンス化を防ぐprivateコンストラクタ
    */
-  public MyBatisTestDataFactory() {
+  private MyBatisTestDataFactory() {
   }
 
   static StudentDetail makeDummyStudentDetail1() {
@@ -199,6 +200,37 @@ public class MyBatisTestDataFactory {
     dummyStudents.add(makeDummyStudentDetail5().getStudent());
 
     return dummyStudents;
+  }
+
+  static Course makeDummyCourse1(){
+    return new Course("JA","Javaコース");
+  }
+
+  static Course makeDummyCourse2(){
+    return new Course("AW","AWSコース");
+  }
+
+  static Course makeDummyCourse3(){
+    return new Course("DE","デザインコース");
+  }
+
+  static Course makeDummyCourse4(){
+    return new Course("WM","Webマーケティングコース");
+  }
+
+  static Course makeDummyCourse5(){
+    return new Course("FR","フロントエンド開発コース");
+  }
+
+  static List<Course> makeDummyCourseList(){
+    List<Course> dummyCourseList = new ArrayList<>();
+    dummyCourseList.add(makeDummyCourse1());
+    dummyCourseList.add(makeDummyCourse2());
+    dummyCourseList.add(makeDummyCourse3());
+    dummyCourseList.add(makeDummyCourse4());
+    dummyCourseList.add(makeDummyCourse5());
+
+    return dummyCourseList;
   }
 
 }

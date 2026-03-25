@@ -47,13 +47,7 @@ class CourseRepositoryTest {
 
   @Test
   void コースの全件検索が行えること(){
-    Course course1 = new Course("JA","Javaコース");
-    Course course2 = new Course("AW","AWSコース");
-    Course course3 = new Course("DE","デザインコース");
-    Course course4 = new Course("WM","Webマーケティングコース");
-    Course course5 = new Course("FR","フロントエンド開発コース");
-
-    List<Course> expected = List.of(course1,course2,course3,course4,course5);
+    List<Course> expected = MyBatisTestDataFactory.makeDummyCourseList();
 
     List<Course> actual = sut.searchCourseList();
 
