@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 @AllArgsConstructor
-public class CourseMaster {
+public class Course {
 
   private final String courseCode;
   private final String courseName;

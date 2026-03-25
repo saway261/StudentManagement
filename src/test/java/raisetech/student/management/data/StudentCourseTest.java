@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import raisetech.student.management.repository.CourseMasterRepository;
+import raisetech.student.management.repository.CourseRepository;
 import raisetech.student.management.testutil.TestDataFactory;
 import raisetech.student.management.testutil.ValidatorTestFactory;
 import raisetech.student.management.validation.CreateGroup;
@@ -26,16 +26,16 @@ class StudentCourseTest {
   private Validator validator;
 
   @Mock
-  private CourseMasterRepository courseMasterRepository;
+  private CourseRepository courseRepository;
 
   @BeforeEach
   void setUp() {
-    validator = ValidatorTestFactory.createValidator(courseMasterRepository);
+    validator = ValidatorTestFactory.createValidator(courseRepository);
   }
 
   private void stubCourseCodeExistsIfNeeded(String courseCode) {
     if (courseCode != null) {
-      Mockito.when(courseMasterRepository.existsByCourseCode(courseCode)).thenReturn(true);
+      Mockito.when(courseRepository.existsByCourseCode(courseCode)).thenReturn(true);
     }
   }
 
@@ -83,7 +83,7 @@ class StudentCourseTest {
     StudentCourse invalidStudentCourse = new StudentCourse(
         courseId, studentId, "存在しないコース", null, null
     );
-    Mockito.when(courseMasterRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
+    Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
         CreateGroup.class);
 
@@ -100,7 +100,7 @@ class StudentCourseTest {
     Integer courseId = null;
     StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
 
-    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
+    Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
         CreateGroup.class);
 
@@ -167,7 +167,7 @@ class StudentCourseTest {
     StudentCourse invalidStudentCourse = new StudentCourse(
         courseId, studentId, "存在しないコース", null, null
     );
-    Mockito.when(courseMasterRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
+    Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
         UpdateGroup.class);
 
@@ -184,7 +184,7 @@ class StudentCourseTest {
     Integer courseId = 1;
     StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
 
-    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
+    Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
         UpdateGroup.class);
 

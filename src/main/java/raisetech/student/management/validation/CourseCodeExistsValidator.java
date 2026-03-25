@@ -3,14 +3,14 @@ package raisetech.student.management.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import raisetech.student.management.repository.CourseMasterRepository; // 仮のRepository/Mapper
+import raisetech.student.management.repository.CourseRepository; // 仮のRepository/Mapper
 
 public class CourseCodeExistsValidator implements ConstraintValidator<CourseCodeExists, String> {
 
-  private final CourseMasterRepository repository;
+  private final CourseRepository repository;
 
   @Autowired
-  public CourseCodeExistsValidator(CourseMasterRepository repository) {
+  public CourseCodeExistsValidator(CourseRepository repository) {
     this.repository = repository;
   }
 

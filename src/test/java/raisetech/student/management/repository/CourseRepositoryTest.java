@@ -2,7 +2,6 @@ package raisetech.student.management.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,10 +9,10 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @MybatisTest
-class CourseMasterRepositoryTest {
+class CourseRepositoryTest {
 
   @Autowired
-  private CourseMasterRepository sut;
+  private CourseRepository sut;
 
   @ParameterizedTest(name="[{index}] courseCodeが{0}の場合{1}が返る")
   @CsvSource({

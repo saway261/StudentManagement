@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import raisetech.student.management.repository.CourseMasterRepository;
+import raisetech.student.management.repository.CourseRepository;
 import raisetech.student.management.validation.CourseCodeExistsValidator;
 
 /**
@@ -18,7 +18,7 @@ public class ValidatorTestFactory {
   private ValidatorTestFactory() {
   }
 
-  public static Validator createValidator(CourseMasterRepository courseMasterRepository) {
+  public static Validator createValidator(CourseRepository courseRepository) {
     // 全てのフィールドが未初期化のLocalValidatorFactoryBeanインスタンスを生成
     LocalValidatorFactoryBean factoryBean = new LocalValidatorFactoryBean();
 
@@ -28,7 +28,7 @@ public class ValidatorTestFactory {
       @Override
       public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
         if (key == CourseCodeExistsValidator.class) {
-          return key.cast(new CourseCodeExistsValidator(courseMasterRepository));
+          return key.cast(new CourseCodeExistsValidator(courseRepository));
         }
         try {
           return key.getDeclaredConstructor().newInstance();

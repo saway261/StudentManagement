@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface CourseMasterRepository {
+public interface CourseRepository {
 
   /**
    * 指定されたコースコードがDBに存在するか確認する

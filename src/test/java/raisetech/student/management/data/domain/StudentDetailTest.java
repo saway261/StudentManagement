@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.StudentCourse;
-import raisetech.student.management.repository.CourseMasterRepository;
+import raisetech.student.management.repository.CourseRepository;
 import raisetech.student.management.testutil.TestDataFactory;
 import raisetech.student.management.testutil.ValidatorTestFactory;
 import raisetech.student.management.validation.CreateGroup;
@@ -26,11 +26,11 @@ class StudentDetailTest {
   private Validator validator;
 
   @Mock
-  private CourseMasterRepository courseMasterRepository;
+  private CourseRepository courseRepository;
 
   @BeforeEach
   void setUp() {
-    validator = ValidatorTestFactory.createValidator(courseMasterRepository);
+    validator = ValidatorTestFactory.createValidator(courseRepository);
   }
 
   @Test
@@ -76,7 +76,7 @@ class StudentDetailTest {
         TestDataFactory.makeCompletedStudent(studentId),
         List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
     );
-    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
+    Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         validStudentDetail, CreateGroup.class);
 
@@ -130,7 +130,7 @@ class StudentDetailTest {
         TestDataFactory.makeCompletedStudent(studentId),
         List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
     );
-    Mockito.when(courseMasterRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
+    Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         validStudentDetail,
         UpdateGroup.class);

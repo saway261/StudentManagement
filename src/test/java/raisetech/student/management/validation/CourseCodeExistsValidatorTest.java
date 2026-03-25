@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import raisetech.student.management.repository.CourseMasterRepository;
+import raisetech.student.management.repository.CourseRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CourseCodeExistsValidatorTest {
@@ -17,7 +17,7 @@ class CourseCodeExistsValidatorTest {
   private CourseCodeExistsValidator sut;
 
   @Mock
-  private CourseMasterRepository repository;
+  private CourseRepository repository;
 
   @Mock
   private ConstraintValidatorContext context;
