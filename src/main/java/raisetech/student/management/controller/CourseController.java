@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.student.management.data.master.Course;
@@ -68,5 +69,43 @@ public class CourseController {
   @PostMapping("/courses")
   public void registerCourse(@RequestBody @Validated Course course){
     service.registerCourse(course);
+  }
+
+  @Operation(
+      summary = "提供コース更新",
+      description = "提供コースのコース名の更新を行います",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "コース名を更新したいコースの識別子（コースコード）と更新後のコース名",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = Course.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = Course.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          ),
+          @ApiResponse(
+              responseCode = "404", description = "指定されたコースコードが存在しなかったときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              )
+          )
+      }
+  )
+  @PutMapping("/courses")
+  public void updateCourse(@RequestBody @Validated Course course){
+    service.updateCourse(course);
   }
 }

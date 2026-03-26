@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import raisetech.student.management.data.master.Course;
+import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseRepository;
 
 @Service
@@ -30,5 +31,16 @@ public class CourseService {
    */
   public void registerCourse(Course course){
     repository.registerCourse(course);
+  }
+
+  /**
+   * コースコードを指定して提供コースのコース名を更新します。
+   * @param course 更新する提供コース
+   */
+  public void updateCourse(Course course){
+    int updated = repository.updateCourse(course);
+    if(updated == 0) {
+      throw new TargetNotFoundException("courseCode", "更新対象のコースが見つかりませんでした");
+    }
   }
 }

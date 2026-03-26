@@ -4,6 +4,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import raisetech.student.management.data.master.Course;
 
 @Mapper
@@ -30,5 +31,13 @@ public interface CourseRepository {
   @Insert("INSERT INTO course_master VALUES(#{courseCode}, #{courseName})")
   void registerCourse(Course course);
 
+
+  /**
+   * コースコードを指定してコース名の更新を行います。
+   * @param course 提供コース
+   * @return 更新成功件数
+   */
+  @Update("UPDATE course_master SET course_name=#{courseName} WHERE course_code=#{courseCode}")
+  int updateCourse(Course course);
 
 }
