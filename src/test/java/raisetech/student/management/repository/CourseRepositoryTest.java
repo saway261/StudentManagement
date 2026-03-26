@@ -89,7 +89,6 @@ class CourseRepositoryTest {
   @Test
   void 重複したコース名を登録しようとすると例外が発生すること(){
     // Arrange
-    // Arrange
     Course invalidNewCourse = new Course(
         "AI",// 識別子は新規
         "Javaコース"//コース名は既存
@@ -98,6 +97,37 @@ class CourseRepositoryTest {
     // Act & Assert
     assertThatThrownBy(() -> sut.registerCourse(invalidNewCourse))
         .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 提供コースのコース名の更新が行えること(){
+    // Arrange
+    String targetCourseCode = "JA";
+    Course expected = new Course(
+        targetCourseCode,"名称変更コース"// もとはJavaコース
+    );
+
+    // Act
+    int updated = sut.updateCourse(expected);
+    Course actual = sut.searchCourseList().stream()
+        .filter(c -> c.getCourseCode().equals(targetCourseCode))
+        .findFirst()
+        .orElseThrow();
+
+    // Assert
+    assertThat(updated).isEqualTo(1);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void 存在しないコースコードを指定して更新しようとしたとき更新件数が0件であること(){
+    Course course = new Course(
+        "NOT","存在しないコース"
+    );
+
+    int actual = sut.updateCourse(course);
+
+    assertThat(actual).isZero();
   }
 
 

@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.master.Course;
+import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +51,31 @@ class CourseServiceTest {
 
     // Assert
     verify(repository,times(1)).registerCourse(course);
+  }
+
+  @Test
+  void コース更新成功_リポジトリの処理を呼び出し更新件数が1のとき例外を投げないこと(){
+    // Arrange
+    Course course = new Course("JA","Javaコース");
+    Mockito.when(repository.updateCourse(course)).thenReturn(1);
+
+    // Act & Assert
+    Assertions.assertDoesNotThrow(() -> sut.updateCourse(course));
+    verify(repository,times(1)).updateCourse(course);
+  }
+
+  @Test
+  void コース更新失敗_リポジトリの処理を呼び出し更新件数が0のとき例外を投げること(){
+    // Arrange
+    Course course = new Course("NOT","存在しないコース");
+    Mockito.when(repository.updateCourse(course)).thenReturn(0);
+
+    // Act & Assert
+    Assertions.assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateCourse(course);
+    });
+    verify(repository,times(1)).updateCourse(course);
+
   }
   
 
