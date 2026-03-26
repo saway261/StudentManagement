@@ -49,8 +49,8 @@ class StudentControllerTest {
       throws Exception {
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
-    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, courseId);
+    Integer scId = 1;
+    StudentDetail studentDetail = TestDataFactory.makeCompletedStudentDetail(studentId, scId);
     Mockito.when(service.searchStudentDetail(studentId)).thenReturn(studentDetail);
 
     // Act & Assert

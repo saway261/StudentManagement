@@ -19,7 +19,7 @@ public class MyBatisTestDataFactory {
   static StudentDetail makeDummyStudentDetail1() {
 
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
 
     return new StudentDetail(
         new Student(
@@ -36,7 +36,7 @@ public class MyBatisTestDataFactory {
             false
         ),
         List.of(new StudentCourse(
-            courseId,
+            scId,
             1,
             "JA",
             LocalDate.of(2024, 7, 15),
@@ -48,8 +48,8 @@ public class MyBatisTestDataFactory {
   static StudentDetail makeDummyStudentDetail2() {
 
     Integer studentId = 2;
-    Integer courseId1 = 2;
-    Integer courseId2 = 6;
+    Integer scId1 = 2;
+    Integer scId2 = 6;
 
     return new StudentDetail(
         new Student(
@@ -67,14 +67,14 @@ public class MyBatisTestDataFactory {
         ),
         List.of(
             new StudentCourse(
-                courseId1,
+                scId1,
                 2,
                 "AW",
                 LocalDate.of(2024, 7, 20),
                 LocalDate.of(2025, 7, 20)
             ),
             new StudentCourse(
-                courseId2,
+                scId2,
                 2,
                 "JA",
                 LocalDate.of(2024, 9, 23),
@@ -87,7 +87,7 @@ public class MyBatisTestDataFactory {
   static StudentDetail makeDummyStudentDetail3() {
 
     Integer studentId = 3;
-    Integer courseId = 3;
+    Integer scId = 3;
 
     return new StudentDetail(
         new Student(
@@ -104,7 +104,7 @@ public class MyBatisTestDataFactory {
             false
         ),
         List.of(new StudentCourse(
-            courseId,
+            scId,
             3,
             "DE",
             LocalDate.of(2024, 8, 12),
@@ -116,8 +116,8 @@ public class MyBatisTestDataFactory {
   static StudentDetail makeDummyStudentDetail4() {
 
     Integer studentId = 4;
-    Integer courseId1 = 4;
-    Integer courseId2 = 7;
+    Integer scId1 = 4;
+    Integer scId2 = 7;
 
     return new StudentDetail(
         new Student(
@@ -135,14 +135,14 @@ public class MyBatisTestDataFactory {
         ),
         List.of(
             new StudentCourse(
-                courseId1,
+                scId1,
                 4,
                 "WM",
                 LocalDate.of(2024, 8, 30),
                 LocalDate.of(2025, 8, 30)
             ),
             new StudentCourse(
-                courseId2,
+                scId2,
                 4,
                 "DE",
                 LocalDate.of(2024, 7, 20),
@@ -155,7 +155,7 @@ public class MyBatisTestDataFactory {
   static StudentDetail makeDummyStudentDetail5() {
 
     Integer studentId = 5;
-    Integer courseId = 5;
+    Integer scId = 5;
 
     return new StudentDetail(
         new Student(
@@ -171,7 +171,7 @@ public class MyBatisTestDataFactory {
             "",
             false),
         List.of(new StudentCourse(
-            courseId,
+            scId,
             5,
             "FR",
             LocalDate.of(2024, 9, 9),

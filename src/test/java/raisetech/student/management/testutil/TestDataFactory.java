@@ -19,14 +19,14 @@ public class TestDataFactory {
         "東京都練馬区", "090-0000-0000", 20, "男", "特になし", false);
   }
 
-  public static StudentCourse makeCompletedStudentCourse(Integer studentId, Integer courseId) {
+  public static StudentCourse makeCompletedStudentCourse(Integer studentId, Integer scId) {
     LocalDate now = LocalDate.now();
-    return new StudentCourse(courseId, studentId, "JA",  now, now.plusYears(1));
+    return new StudentCourse(scId, studentId, "JA",  now, now.plusYears(1));
   }
 
-  public static StudentDetail makeCompletedStudentDetail(Integer studentId, Integer courseId) {
+  public static StudentDetail makeCompletedStudentDetail(Integer studentId, Integer scId) {
     return new StudentDetail(makeCompletedStudent(studentId),
-        List.of(makeCompletedStudentCourse(studentId, courseId)));
+        List.of(makeCompletedStudentCourse(studentId, scId)));
   }
 
 }

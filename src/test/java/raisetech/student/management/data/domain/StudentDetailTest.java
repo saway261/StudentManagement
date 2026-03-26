@@ -37,9 +37,9 @@ class StudentDetailTest {
   void 登録時_受講生がnullのときバリデーション違反が起きる() {
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
     StudentDetail invalidStudentDetail = new StudentDetail(
-        null, List.of(TestDataFactory.makeCompletedStudentCourse(studentId, courseId))
+        null, List.of(TestDataFactory.makeCompletedStudentCourse(studentId, scId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         invalidStudentDetail, CreateGroup.class);
@@ -71,10 +71,10 @@ class StudentDetailTest {
   void 登録時_各フィールドが妥当な値をもつときバリデーション違反が起きない() {
     // Arrange:
     Integer studentId = null;
-    Integer courseId = null;
+    Integer scId = null;
     StudentDetail validStudentDetail = new StudentDetail(
         TestDataFactory.makeCompletedStudent(studentId),
-        List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
+        List.of(TestDataFactory.makeCompletedStudentCourse(studentId,scId))
     );
     Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
@@ -88,9 +88,9 @@ class StudentDetailTest {
   void 更新時_受講生がnullのときバリデーション違反が起きる() {
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
     StudentDetail invalidStudentDetailForm = new StudentDetail(
-        null, List.of(TestDataFactory.makeCompletedStudentCourse(studentId, courseId))
+        null, List.of(TestDataFactory.makeCompletedStudentCourse(studentId, scId))
     );
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(
         invalidStudentDetailForm,
@@ -125,10 +125,10 @@ class StudentDetailTest {
   void 更新時_各フィールドが妥当な値をもつときバリデーション違反が起きない() {
     // Arrange:
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
     StudentDetail validStudentDetail = new StudentDetail(
         TestDataFactory.makeCompletedStudent(studentId),
-        List.of(TestDataFactory.makeCompletedStudentCourse(studentId,courseId))
+        List.of(TestDataFactory.makeCompletedStudentCourse(studentId,scId))
     );
     Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentDetail>> violations = validator.validate(

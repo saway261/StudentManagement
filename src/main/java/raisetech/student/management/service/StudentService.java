@@ -84,7 +84,7 @@ public class StudentService {
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
       int updatedStudentCourse = repository.updateStudentCourse(studentCourse);
       if(updatedStudentCourse == 0){
-        throw new TargetNotFoundException("StudentCourse.courseId","更新対象のインスタンスが見つかりませんでした");
+        throw new TargetNotFoundException("StudentCourse.studentCourseId","更新対象のインスタンスが見つかりませんでした");
       }
     }
     return studentDetail;

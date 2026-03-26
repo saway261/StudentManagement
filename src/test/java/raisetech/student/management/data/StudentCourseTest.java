@@ -79,9 +79,9 @@ class StudentCourseTest {
   void 登録時_courseCodeがコースマスタに登録のない値を受け取ったときバリデーション違反が起きる(){
     // Arrange
     Integer studentId = null;
-    Integer courseId = null;
+    Integer scId = null;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        courseId, studentId, "存在しないコース", null, null
+        scId, studentId, "存在しないコース", null, null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
@@ -97,8 +97,8 @@ class StudentCourseTest {
   @Test
   void 登録時_StudentCourseの各のフィールドが妥当な値を持つときバリデーション違反が起きない(){
     Integer studentId = null;
-    Integer courseId = null;
-    StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
+    Integer scId = null;
+    StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
 
     Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
@@ -144,11 +144,11 @@ class StudentCourseTest {
   }
 
   @Test
-  void 更新時_courseIdが1未満の数値の時バリデーション違反が起きる() {
+  void 更新時_studentCourseIdが1未満の数値の時バリデーション違反が起きる() {
     // Arrange
     Integer studentId = 1;
-    Integer courseId = -3;
-    StudentCourse invalidStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
+    Integer scId = -3;
+    StudentCourse invalidStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
 
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
         UpdateGroup.class);
@@ -163,9 +163,9 @@ class StudentCourseTest {
   void 更新時_courseCodeがコースマスタに登録のない値を受け取ったときバリデーション違反が起きる(){
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        courseId, studentId, "存在しないコース", null, null
+        scId, studentId, "存在しないコース", null, null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
@@ -181,8 +181,8 @@ class StudentCourseTest {
   @Test
   void 更新時_StudentCourseの各のフィールドが妥当な値を持つときバリデーション違反が起きない(){
     Integer studentId = null;
-    Integer courseId = 1;
-    StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,courseId);
+    Integer scId = 1;
+    StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
 
     Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,

@@ -206,9 +206,9 @@ class StudentRepositoryTest {
   @Test
   void 受講生コースコードの更新を行うことができ受講生IDと受講開始日と受講終了予定日の更新はできないこと() {
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
     StudentCourse original = new StudentCourse(
-        courseId,
+        scId,
         studentId,
         "JA",
         LocalDate.of(2024, 7, 15),
@@ -216,7 +216,7 @@ class StudentRepositoryTest {
     );
 
     StudentCourse forUpdate = new StudentCourse(
-        courseId,
+        scId,
         2,
         "AW",
         LocalDate.of(2023, 10, 15),
@@ -227,7 +227,7 @@ class StudentRepositoryTest {
     Integer updated = sut.updateStudentCourse(forUpdate);
 
     StudentCourse actual = sut.searchStudentCourses(studentId).stream()
-        .filter(sc -> sc.getStudentCourseId().equals(courseId))
+        .filter(sc -> sc.getStudentCourseId().equals(scId))
         .findFirst()
         .orElseThrow(() -> new AssertionError(
             "指定された courseCode の StudentCourse が見つかりませんでした"));
@@ -243,8 +243,8 @@ class StudentRepositoryTest {
 
   @Test
   void 存在しない受講生コースIDを更新しようとすると更新件数が0件であること() {
-    int courseId = 999;
-    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, courseId);
+    int scId = 999;
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, scId);
 
     int actual = sut.updateStudentCourse(course);
 

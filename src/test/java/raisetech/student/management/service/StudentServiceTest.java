@@ -38,12 +38,12 @@ class StudentServiceTest {
   void アクティブ受講生の一覧検索_リポジトリの処理を呼び出していること() {
     // Arrange
     Integer studentId1 = 1;
-    Integer courseId1 = 1;
+    Integer scId1 = 1;
     Integer studentId2 = 2;
-    Integer courseId2 = 2;
+    Integer scId2 = 2;
 
-    StudentDetail studentDetail1 = TestDataFactory.makeCompletedStudentDetail(studentId1, courseId1);
-    StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, courseId2);
+    StudentDetail studentDetail1 = TestDataFactory.makeCompletedStudentDetail(studentId1, scId1);
+    StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, scId2);
     List<StudentDetail> expected = List.of(studentDetail1,studentDetail2);
 
     List<Integer> studentIdList = List.of(studentId1,studentId2);
@@ -74,9 +74,9 @@ class StudentServiceTest {
   void 受講生単一検索成功_リポジトリの処理を適切に呼び出していること() {
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
 
-    StudentDetail expected = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    StudentDetail expected = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = expected.getStudent();
     List<StudentCourse> studentCourseList = expected.getStudentCourses();
 
@@ -148,9 +148,9 @@ class StudentServiceTest {
   void 受講生更新成功_リポジトリの処理を呼び出していること(){
     // Arrange
     Integer studentId = 1;
-    Integer courseId = 1;
+    Integer scId = 1;
 
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = input.getStudent();
     List<StudentCourse> studentCourse = input.getStudentCourses();
 
@@ -171,9 +171,9 @@ class StudentServiceTest {
   @Test
   void 受講生更新失敗_リポジトリのupdateStudentの返り値が0なら例外を投げてupdateStudentCourseを呼ばないこと(){
     Integer studentId = 99;
-    Integer courseId = 99;
+    Integer scId = 99;
 
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = input.getStudent();
 
     Mockito.when(repository.updateStudent(student)).thenReturn(0); // 更新件数が0件=更新失敗
@@ -192,9 +192,9 @@ class StudentServiceTest {
   @Test
   void 受講生更新失敗_リポジトリのupdateStudentCourseの返り値が0なら例外を投げること(){
     Integer studentId = 99;
-    Integer courseId = 99;
+    Integer scId = 99;
 
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,courseId);
+    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = input.getStudent();
 
     Mockito.when(repository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
