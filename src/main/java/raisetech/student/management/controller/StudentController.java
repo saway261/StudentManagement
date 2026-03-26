@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -102,7 +103,7 @@ public class StudentController {
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "ok",
+              responseCode = "201", description = "ok",
               content = @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = StudentDetail.class)
@@ -119,7 +120,7 @@ public class StudentController {
   @PostMapping("/students")
   public ResponseEntity<StudentDetail> registerStudent(@RequestBody @Validated(CreateGroup.class) StudentDetail studentDetail){
     StudentDetail responseStudentDetail = service.registerStudentDetail(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+    return ResponseEntity.status(HttpStatus.CREATED).body(responseStudentDetail);
   }
 
   @Operation(

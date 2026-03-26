@@ -96,7 +96,7 @@ class StudentControllerTest {
     Mockito.verify(service, times(0)).searchStudentDetail(Mockito.anyInt());
   }
 
-  @Test void 受講生詳細登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception {
+  @Test void 受講生詳細登録成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
     // Arrange
     Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
 
@@ -126,7 +126,7 @@ class StudentControllerTest {
             
             """
         ))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
     // Assert
     Mockito.verify(service, times(1)).registerStudentDetail(any());
