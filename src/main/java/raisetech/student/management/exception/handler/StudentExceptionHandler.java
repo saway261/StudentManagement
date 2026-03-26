@@ -68,7 +68,7 @@ public class StudentExceptionHandler {
   }
 
   /**
-   * 検索及び更新処理においてstudentId,courseIdで指定するレコードが見つからなかったこと（studentId,courseIdがnullだった場合を含む）をクライアントに返します。
+   * 検索及び更新処理において studentId, studentCourseId, courseCode 等の識別子で指定するレコードが見つからなかったこと（nullだった場合を含む）をクライアントに返します。
    *
    * @param ex TargetNotFoundException
    * @return HTTPステータス(NOT_FOUND), エラー詳細
