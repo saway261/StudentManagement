@@ -120,7 +120,7 @@ class StudentServiceTest {
     int studentId = 1;
 
     Student student = TestDataFactory.makeCompletedStudent(studentId);
-    StudentCourse rawCourse = new StudentCourse(null,null,"Javaコース",null,null);
+    StudentCourse rawCourse = new StudentCourse(null,null,"JA",null,null);
     List<StudentCourse> rawCourseList = List.of(rawCourse);
 
     StudentDetail input = new StudentDetail(student, rawCourseList);
