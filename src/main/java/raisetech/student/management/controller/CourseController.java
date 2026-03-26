@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,7 +54,7 @@ public class CourseController {
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "登録成功"
+              responseCode = "201", description = "登録成功"
           ),
           @ApiResponse(
               responseCode = "400", description = "入力値のバリデーションエラー",
@@ -63,8 +65,9 @@ public class CourseController {
       }
   )
   @PostMapping("/courses")
-  public void registerCourse(@RequestBody @Validated Course course){
+  public ResponseEntity<Void> registerCourse(@RequestBody @Validated Course course){
     service.registerCourse(course);
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @Operation(

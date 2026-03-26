@@ -40,7 +40,7 @@ class CourseControllerTest {
   }
 
   @Test
-  void コース登録成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること() throws Exception{
+  void コース登録成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception{
     // Act
     mockMvc.perform(MockMvcRequestBuilders.post("/courses")
         .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +52,7 @@ class CourseControllerTest {
             }
             """
         ))
-        .andExpect(status().isOk());
+        .andExpect(status().isCreated());
 
     // Assert
     Mockito.verify(service, times(1)).registerCourse(any());
