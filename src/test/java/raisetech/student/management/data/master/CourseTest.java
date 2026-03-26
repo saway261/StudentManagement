@@ -110,7 +110,7 @@ class CourseTest {
     }
   }
 
-  @ParameterizedTest(name = "[{index}] 登録時_電話番号の形式が {0} のときバリデーション違反が起きる")
+  @ParameterizedTest(name = "[{index}] コースコードとして {0} が渡されたときバリデーション違反が起きる")
   @ValueSource(strings = {
       "123",     // 数字
       "あいう",    // 日本語
