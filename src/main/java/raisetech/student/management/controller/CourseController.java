@@ -30,8 +30,8 @@ public class CourseController {
   }
 
   @Operation(
-      summary = "提供コース一覧の検索",
-      description = "コースマスタに存在する提供コースの一覧を検索します。全件検索を行うので、条件指定はしません",
+      summary = "コース一覧の検索",
+      description = "コースの一覧を検索します。全件検索を行うので、条件指定はしません",
       responses = {@ApiResponse(
           content = @Content(mediaType = "application/json",
           array = @ArraySchema(schema= @Schema(implementation = Course.class)))
@@ -43,8 +43,8 @@ public class CourseController {
   }
 
   @Operation(
-      summary = "提供コース登録",
-      description = "提供コース登録を行います",
+      summary = "コース登録",
+      description = "コース登録を行います",
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "新規に追加したいコース名とその識別子",
           required = true,
@@ -71,8 +71,8 @@ public class CourseController {
   }
 
   @Operation(
-      summary = "提供コース更新",
-      description = "提供コースのコース名の更新を行います",
+      summary = "コース更新",
+      description = "コースのコース名の更新を行います",
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "コース名を更新したいコースの識別子（コースコード）と更新後のコース名",
           required = true,

@@ -204,7 +204,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コースコードの更新を行うことができ受講生IDとコース開始日とコース終了予定日の更新はできないこと() {
+  void 受講生コースコードの更新を行うことができ受講生IDと受講開始日と受講終了予定日の更新はできないこと() {
     Integer studentId = 1;
     Integer courseId = 1;
     StudentCourse original = new StudentCourse(

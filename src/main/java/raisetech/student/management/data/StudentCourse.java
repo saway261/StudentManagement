@@ -19,7 +19,7 @@ import raisetech.student.management.validation.UpdateGroup;
 @NoArgsConstructor
 public class StudentCourse {
 
-  @Schema(description = "コースID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")
+  @Schema(description = "受講生コースID 登録時は自動採番を行うため不要、更新時のみ必要", example = "1")
   @NotNull(groups = UpdateGroup.class)
   @Positive(groups = UpdateGroup.class)
   private Integer studentCourseId;

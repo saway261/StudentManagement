@@ -18,24 +18,24 @@ public class CourseService {
   }
 
   /**
-   * コースマスタに存在する提供コースの一覧検索を行います。
-   * @return 提供コースの一覧
+   * コースマスタに存在するコースの一覧検索を行います。
+   * @return コースの一覧
    */
   public List<Course> searchCourseMasterList(){
     return repository.searchCourseList();
   }
 
   /**
-   * 提供コースの新規登録を行います。
-   * @param course 新規登録する提供コース
+   * コースの新規登録を行います。
+   * @param course 新規登録するコース
    */
   public void registerCourse(Course course){
     repository.registerCourse(course);
   }
 
   /**
-   * コースコードを指定して提供コースのコース名を更新します。
-   * @param course 更新する提供コース
+   * コースコードを指定してコースのコース名を更新します。
+   * @param course 更新するコース
    */
   public void updateCourse(Course course){
     int updated = repository.updateCourse(course);

@@ -18,15 +18,15 @@ public interface CourseRepository {
   boolean existsByCourseCode(String courseCode);
 
   /**
-   * 提供コースの全件検索を行います。
-   * @return 提供コース一覧
+   * コースの全件検索を行います。
+   * @return コース一覧
    */
   @Select("SELECT * FROM course_master")
   List<Course> searchCourseList();
 
   /**
-   * 提供コースの新規追加を行います。
-   * @param course 提供コース
+   * コースの新規追加を行います。
+   * @param course コース
    */
   @Insert("INSERT INTO course_master VALUES(#{courseCode}, #{courseName})")
   void registerCourse(Course course);
@@ -34,7 +34,7 @@ public interface CourseRepository {
 
   /**
    * コースコードを指定してコース名の更新を行います。
-   * @param course 提供コース
+   * @param course コース
    * @return 更新成功件数
    */
   @Update("UPDATE course_master SET course_name=#{courseName} WHERE course_code=#{courseCode}")

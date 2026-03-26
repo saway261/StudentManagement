@@ -26,7 +26,7 @@ public interface StudentRepository {
   Student searchStudent(int studentId);
 
   /**
-   * 受講生IDに紐づく受講生のコース情報の検索を行います。
+   * 受講生IDに紐づく受講生コース情報の検索を行います。
    * @param studentId 受講性ID
    * @return 受講生IDに紐づく受講生コース情報
    */

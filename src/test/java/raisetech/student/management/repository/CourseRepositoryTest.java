@@ -58,7 +58,7 @@ class CourseRepositoryTest {
   }
 
   @Test
-  void 提供コースの登録が行えること(){
+  void コースの登録が行えること(){
     // Arrange
     List<Course> existing = MyBatisTestDataFactory.makeDummyCourseList();
     int existingSize = existing.size();
@@ -100,7 +100,7 @@ class CourseRepositoryTest {
   }
 
   @Test
-  void 提供コースのコース名の更新が行えること(){
+  void コースのコース名の更新が行えること(){
     // Arrange
     String targetCourseCode = "JA";
     Course expected = new Course(

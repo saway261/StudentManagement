@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-@Schema(description = "提供コース")
+@Schema(description = "コース")
 @EqualsAndHashCode
 @AllArgsConstructor
 public class Course {
