@@ -52,11 +52,7 @@ public class CourseController {
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "ok",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = Course.class)
-              )
+              responseCode = "200", description = "登録成功"
           ),
           @ApiResponse(
               responseCode = "400", description = "入力値のバリデーションエラー",
@@ -83,11 +79,7 @@ public class CourseController {
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "ok",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = Course.class)
-              )
+              responseCode = "200", description = "更新成功"
           ),
           @ApiResponse(
               responseCode = "400", description = "入力値のバリデーションエラー",
