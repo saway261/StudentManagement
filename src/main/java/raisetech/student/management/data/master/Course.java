@@ -6,10 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @Schema(description = "コース")
 @EqualsAndHashCode
 @AllArgsConstructor
+@Getter
 public class Course {
 
   @Schema(description = "コースコード 英字大文字2~5文字", example = "JA")
@@ -25,13 +27,5 @@ public class Course {
   @NotBlank
   @Size(max = 20)
   private final String courseName;
-
-  public String getCourseCode() {
-    return courseCode;
-  }
-
-  public String getCourseName() {
-    return courseName;
-  }
 
 }
