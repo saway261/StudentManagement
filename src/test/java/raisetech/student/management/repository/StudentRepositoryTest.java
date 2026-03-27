@@ -156,10 +156,36 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void コースコードがnullの受講生コースを登録しようとすると例外が発生すること() {
+    Integer studentId = 1;
+    LocalDate today = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        null, studentId, null, null, null
+    );
+
+    assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
   void 存在しない受講生IDを持つ受講生コースを登録しようとすると例外が発生すること() {
     // Arrange
     Integer studentId = 999;
     StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId, null);
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 存在しないコースコードを持つ受講生コースを登録しようとすると例外が発生すること() {
+    // Arrange
+    Integer studentId = 1;
+    LocalDate today = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        null,studentId,"NOT",null,null
+    );
 
     // Act & Assert
     assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
