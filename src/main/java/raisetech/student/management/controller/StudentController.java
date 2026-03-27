@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.handler.ErrorResponse;
 import raisetech.student.management.service.StudentService;
@@ -159,6 +160,41 @@ public class StudentController {
   public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Validated(UpdateGroup.class) StudentDetail studentDetail){
     StudentDetail responseStudentDetail = service.updateStudentDetail(studentDetail);
     return ResponseEntity.ok(responseStudentDetail);
+  }
+
+  @Operation(
+      summary = "受講生コース追加",
+      description = "登録済みの受講生の受講コースを追加します",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "新規に追加したい受講生コース情報",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentCourse.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "201", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentCourse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          )
+      }
+  )
+  @PostMapping("/students/{studentId}/courses")
+  public ResponseEntity<StudentCourse> addStudentCourse(
+      @PathVariable @Positive int studentId,
+      @RequestBody @Validated(CreateGroup.class) StudentCourse request
+  ){
+    StudentCourse response = service.registerStudentCourse(request,studentId);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
 }
