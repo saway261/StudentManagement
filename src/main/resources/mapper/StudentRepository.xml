@@ -43,6 +43,7 @@
     UPDATE student_courses
     SET course_code=#{courseCode}
     WHERE student_course_id=#{studentCourseId}
+      AND student_id=#{studentId}
   </update>
 
   <!-- 受講生ID存在チェック（アクティブに限る） -->

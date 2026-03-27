@@ -74,23 +74,17 @@ public class StudentService {
   }
 
   /**
-   * 受講生詳細の更新を行います。受講生と受講生コース情報を個別に更新します。
-   * @param studentDetail 受講生詳細
-   * @return 更新後の受講生詳細
+   * 受講生の更新を行います
+   * @param student 受講生
+   * @return 引数で受け取った受講生
    */
   @Transactional
-  public StudentDetail updateStudentDetail(StudentDetail studentDetail){
-    int updatedStudent = studentRepository.updateStudent(studentDetail.getStudent());
+  public Student updateStudent(Student student){
+    int updatedStudent = studentRepository.updateStudent(student);
     if(updatedStudent == 0){
-      throw new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした");
+      throw new TargetNotFoundException("studentId","更新対象の受講生が見つかりませんでした");
     }
-    for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
-      int updatedStudentCourse = studentRepository.updateStudentCourse(studentCourse);
-      if(updatedStudentCourse == 0){
-        throw new TargetNotFoundException("StudentCourse.studentCourseId","更新対象のインスタンスが見つかりませんでした");
-      }
-    }
-    return studentDetail;
+    return student;
   }
 
   /**
@@ -101,12 +95,41 @@ public class StudentService {
    */
   @Transactional
   public StudentCourse registerStudentCourse(StudentCourse studentCourse, int studentId) {
-    if(!repository.existsActiveStudentById(studentId)){
+    if(!studentRepository.existsActiveStudentById(studentId)){
       throw new TargetNotFoundException("studentId","対象の受講生が見つかりませんでした");
     }
     StudentCourse initedStudentCourse = initStudentCourse(studentCourse,studentId);
     studentRepository.registerStudentCourse(initedStudentCourse);
     return initedStudentCourse;
+  }
+
+  /**
+   * 受講生コースの更新を行います。受講生コースIDと受講生IDで指定した受講生コースのコースコードのみを更新できます。
+   * @param studentCourse 受講生コース
+   * @param studentId 受講生ID
+   * @return 引数で受け取った受講生コースに受講生IDだけセットしなおしたもの
+   */
+  @Transactional
+  public StudentCourse updateStudentCourse(StudentCourse studentCourse, int studentId){
+    StudentCourse adjustedStudentCourse = new StudentCourse(
+        studentCourse.getStudentCourseId(),
+        studentId,
+        studentCourse.getCourseCode(),
+        studentCourse.getStatusId(),
+        studentCourse.getCourseApplyAt(),
+        studentCourse.getCourseStartAt(),
+        studentCourse.getCourseEndAt()
+    );
+
+    int updatedRows = studentRepository.updateStudentCourse(adjustedStudentCourse);
+
+    if (updatedRows == 0) {
+      throw new TargetNotFoundException(
+          "studentCourseId",
+          "指定した受講生IDと受講生コースIDが紐づきません"
+      );
+    }
+    return adjustedStudentCourse;
   }
 
   /**
