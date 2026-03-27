@@ -2,7 +2,6 @@ package raisetech.student.management.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -226,7 +225,7 @@ class StudentServiceTest {
     StudentCourse rawCourse =
         new StudentCourse(null, null, "JA", null, null, null, null);
     LocalDate today = LocalDate.now();
-    Mockito.when(repository.existsActiveStudentById(studentId)).thenReturn(true);
+    Mockito.when(studentRepository.existsActiveStudentById(studentId)).thenReturn(true);
 
     // Act
     StudentCourse result = sut.registerStudentCourse(rawCourse,studentId);
@@ -256,7 +255,7 @@ class StudentServiceTest {
     StudentCourse rawCourse =
         new StudentCourse(null, null, "JA", null, null, null, null);
 
-    when(repository.existsActiveStudentById(studentId)).thenReturn(true);
+    when(studentRepository.existsActiveStudentById(studentId)).thenReturn(true);
     doThrow(new RuntimeException("DB error"))
         .when(studentRepository).registerStudentCourse(any(StudentCourse.class));
 
@@ -275,82 +274,84 @@ class StudentServiceTest {
     StudentCourse rawCourse =
         new StudentCourse(null, null, "JA", null, null, null, null);
 
-    when(repository.existsActiveStudentById(studentId)).thenReturn(false);
+    when(studentRepository.existsActiveStudentById(studentId)).thenReturn(false);
 
     // Act & Assert
     assertThrows(TargetNotFoundException.class,
         () -> sut.registerStudentCourse(rawCourse, studentId));
 
-    verify(repository, never()).registerStudentCourse(any(StudentCourse.class));
+    verify(studentRepository, never()).registerStudentCourse(any(StudentCourse.class));
   }
 
   /**
-   * updateStudentDetail(StudentDetail studentDetail)の正常系テスト
+   * updateStudent(Student student)の正常系テスト
    */
   @Test
   void 受講生更新成功_リポジトリの処理を呼び出していること(){
     // Arrange
     Integer studentId = 1;
-    Integer scId = 1;
-
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
-    Student student = input.getStudent();
-    List<StudentCourse> studentCourse = input.getStudentCourses();
-
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
     Mockito.when(studentRepository.updateStudent(student)).thenReturn(1);
-    Mockito.when(studentRepository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(1);
 
     // Act
-    sut.updateStudentDetail(input);
+    sut.updateStudent(student);
 
     // Assert
     verify(studentRepository, times(1)).updateStudent(student);
-    verify(studentRepository, times(studentCourse.size())).updateStudentCourse(Mockito.any(StudentCourse.class));
   }
 
   /**
-   * updateStudentDetail(StudentDetail studentDetail)の異常系テスト
+   * updateStudent(Student student)の異常系テスト
    */
   @Test
-  void 受講生更新失敗_リポジトリのupdateStudentの返り値が0なら例外を投げてupdateStudentCourseを呼ばないこと(){
+  void 受講生更新失敗_リポジトリのupdateStudentの返り値が0なら例外をそのまま送出すること(){
+    // Arrange
     Integer studentId = 99;
-    Integer scId = 99;
-
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
-    Student student = input.getStudent();
-
+    Student student = TestDataFactory.makeCompletedStudent(studentId);
     Mockito.when(studentRepository.updateStudent(student)).thenReturn(0); // 更新件数が0件=更新失敗
 
     // Act & Assert
-    Assertions.assertThrows(TargetNotFoundException.class, () -> {
-      sut.updateStudentDetail(input);
+    assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateStudent(student);
     });
-    verify(studentRepository, never()).updateStudentCourse(Mockito.any(StudentCourse.class));
-
   }
 
   /**
-   * updateStudentDetail(StudentDetail studentDetail)の異常系テスト
+   * updateStudentCourse(StudentCourse studentCourse,int studentId)の正常系テスト
    */
   @Test
-  void 受講生更新失敗_リポジトリのupdateStudentCourseの返り値が0なら例外を投げること(){
+  void 受講生コース更新成功_リポジトリの処理を呼び出していること(){
+    // Arrange
+    Integer studentId = 1;
+    Integer scId = 1;
+    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
+    Mockito.when(studentRepository.updateStudentCourse(studentCourse)).thenReturn(1);
+
+    // Act
+    sut.updateStudentCourse(studentCourse,studentId);
+
+    // Assert
+    verify(studentRepository, times(1)).updateStudentCourse(studentCourse);
+  }
+
+  /**
+   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
+   */
+  @Test
+  void 受講生コース更新失敗_リポジトリのupdateStudentの返り値が0なら例外をそのまま送出すること(){
+    // Arrange
     Integer studentId = 99;
-    Integer scId = 99;
-
-    StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
-    Student student = input.getStudent();
-
-    Mockito.when(studentRepository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
-    Mockito.when(studentRepository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(0);
+    Integer scId = 1;
+    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
+    Mockito.when(studentRepository.updateStudentCourse(studentCourse)).thenReturn(0); // 更新件数が0件=更新失敗
 
     // Act & Assert
-    Assertions.assertThrows(TargetNotFoundException.class, () -> {
-      sut.updateStudentDetail(input);
+    assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateStudentCourse(studentCourse,studentId);
     });
-    verify(studentRepository, times(1)).updateStudent(student);
-    verify(studentRepository, atLeastOnce()).updateStudentCourse(Mockito.any(StudentCourse.class));
-
-
+    verify(studentRepository, times(1)).updateStudentCourse(studentCourse);
   }
+
+
 
 }

@@ -313,6 +313,17 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 存在する受講生コースIDを更新しようとしても受講生IDが紐づかなければ更新件数が0件であること() {
+    int scId = 1;
+    int studentId = 99;
+    StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, scId);
+
+    int actual = sut.updateStudentCourse(course);
+
+    assertThat(actual).isZero();
+  }
+
+  @Test
   void 存在しない受講生コースIDを更新しようとすると更新件数が0件であること() {
     int scId = 999;
     StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, scId);
