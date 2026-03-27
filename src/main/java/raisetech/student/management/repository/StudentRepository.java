@@ -56,4 +56,11 @@ public interface StudentRepository {
    */
   int updateStudentCourse(StudentCourse studentCourse);
 
+  /**
+   * 受講生IDがアクティブな受講生の中に存在するかのチェックを行います。
+   * @param studentId 受講生ID
+   * @return 存在するならtrue,存在しなければfalse
+   */
+  boolean existsActiveStudentById(int studentId);
+
 }

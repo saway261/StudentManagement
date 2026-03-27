@@ -95,12 +95,15 @@ public class StudentService {
 
   /**
    * 受講生コースの登録(追加)を行います。
-   * @param studentCourse 受講生コース
+   * @param studentCourse 未初期化の受講生コース
    * @param studentId コースを紐づける受講生のID
-   * @return
+   * @return 初期化された受講生コース
    */
   @Transactional
-  public StudentCourse registerStudentCourse(StudentCourse studentCourse, int studentId){
+  public StudentCourse registerStudentCourse(StudentCourse studentCourse, int studentId) {
+    if(!repository.existsActiveStudentById(studentId)){
+      throw new TargetNotFoundException("studentId","対象の受講生が見つかりませんでした");
+    }
     StudentCourse initedStudentCourse = initStudentCourse(studentCourse,studentId);
     studentRepository.registerStudentCourse(initedStudentCourse);
     return initedStudentCourse;

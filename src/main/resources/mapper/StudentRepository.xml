@@ -44,4 +44,13 @@
     SET course_code=#{courseCode}
     WHERE student_course_id=#{studentCourseId}
   </update>
+
+  <!-- 受講生ID存在チェック（アクティブに限る） -->
+  <select id="existsActiveStudentById" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM students
+    WHERE student_id=#{studentId}
+      AND is_deleted=false
+  </select>
+
 </mapper>
