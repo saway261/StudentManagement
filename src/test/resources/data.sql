@@ -14,35 +14,35 @@ INSERT INTO students(full_name, kana_name, nickname, email, area, telephone, age
 VALUES ('服部次郎','はっとりじろう','ハットリくん','ninja@gmail.com','滋賀県甲賀市','080-1347-0678',33,'その他','',false);
 
 INSERT INTO course_master VALUES ('JA','Javaコース');
-
 INSERT INTO course_master VALUES ('AW','AWSコース');
-
 INSERT INTO course_master VALUES ('DE','デザインコース');
-
 INSERT INTO course_master VALUES ('WM','Webマーケティングコース');
-
 INSERT INTO course_master VALUES ('FR','フロントエンド開発コース');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('JA',1,'2024-07-15','2025-04-15');
+INSERT INTO status_master VALUES (1,'仮申込',false);
+INSERT INTO status_master VALUES (2,'本申込',false);
+INSERT INTO status_master VALUES (3,'受講中',false);
+INSERT INTO status_master VALUES (4,'受講終了',true);
+INSERT INTO status_master VALUES (5,'キャンセル',true);
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('AW',2,'2024-07-20','2025-07-20');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('JA',1,3,'2024-07-10','2024-07-15','2025-04-15');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('DE',3,'2024-08-12','2025-02-12');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('AW',2,3,'2024-07-15','2024-07-20','2025-07-20');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('WM',4,'2024-08-30','2025-08-30');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('DE',3,3,'2024-08-07','2024-08-12','2025-02-12');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('FR',5,'2024-09-09','2025-03-09');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('WM',4,3,'2024-08-25','2024-08-30','2025-08-30');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('JA',2,'2024-09-23','2025-03-23');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('FR',5,3,'2024-09-04','2024-09-09','2025-03-09');
 
-INSERT INTO student_courses(course_code, student_id, course_start_at, course_end_at)
-VALUES ('DE',4,'2024-07-20','2025-07-20');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('JA',2,3,'2024-09-18','2024-09-23','2025-03-23');
 
-
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
+VALUES ('DE',4,3,'2024-07-15','2024-07-20','2025-07-20');
 
