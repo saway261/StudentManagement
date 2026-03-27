@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.validation.CreateGroup;
-import raisetech.student.management.validation.UpdateGroup;
 
 @Schema(description = "受講生詳細情報")
 @Getter
@@ -21,11 +20,11 @@ import raisetech.student.management.validation.UpdateGroup;
 @NoArgsConstructor
 public class StudentDetail {
 
-  @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
+  @NotNull(groups = CreateGroup.class)
   @Valid
   private Student student;
 
-  @NotEmpty(groups = {CreateGroup.class, UpdateGroup.class})
+  @NotEmpty(groups = CreateGroup.class)
   @Valid
   private List<StudentCourse> studentCourses;
 
