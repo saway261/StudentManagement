@@ -1,6 +1,10 @@
 package raisetech.student.management.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -112,33 +116,151 @@ class StudentServiceTest {
   }
 
   /**
-   * registerStudentDetail(StudentDetail studentDetail)のテスト
+   * registerStudentDetail(StudentDetail studentDetail)の正常系テスト
    */
   @Test
-  void 受講生新規登録_StudentCourseのフィールドを初期化しリポジトリの処理を呼び出していること(){
+  void 受講生詳細登録成功_受講生を登録し各受講生コースを初期化してリポジトリに渡していること() {
     // Arrange
-    int studentId = 1;
+    Integer studentId = 1;
 
     Student student = TestDataFactory.makeCompletedStudent(studentId);
-    StudentCourse rawCourse = new StudentCourse(null,null,"JA",null,null);
-    List<StudentCourse> rawCourseList = List.of(rawCourse);
+    StudentCourse rawCourse1 =
+        new StudentCourse(null, null, "JA", null, null, null, null);
+    StudentCourse rawCourse2 =
+        new StudentCourse(null, null, "PY", null, null, null, null);
 
+    List<StudentCourse> rawCourseList = List.of(rawCourse1, rawCourse2);
     StudentDetail input = new StudentDetail(student, rawCourseList);
 
     LocalDate today = LocalDate.now();
 
     // Act
-    sut.registerStudentDetail(input);
+    StudentDetail result = sut.registerStudentDetail(input);
+
+    // Assert
+    verify(studentRepository, times(1)).registerStudent(student);
+
+    ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
+    verify(studentRepository, times(rawCourseList.size())).registerStudentCourse(captor.capture());
+
+    List<StudentCourse> registeredCourses = captor.getAllValues();
+
+    Assertions.assertEquals(2, registeredCourses.size());
+
+    Assertions.assertEquals(studentId, registeredCourses.get(0).getStudentId());
+    Assertions.assertEquals("JA", registeredCourses.get(0).getCourseCode());
+    Assertions.assertEquals(1, registeredCourses.get(0).getStatusId());
+    Assertions.assertEquals(today, registeredCourses.get(0).getCourseApplyAt());
+    Assertions.assertNull(registeredCourses.get(0).getCourseStartAt());
+    Assertions.assertNull(registeredCourses.get(0).getCourseEndAt());
+
+    Assertions.assertEquals(studentId, registeredCourses.get(1).getStudentId());
+    Assertions.assertEquals("PY", registeredCourses.get(1).getCourseCode());
+    Assertions.assertEquals(1, registeredCourses.get(1).getStatusId());
+    Assertions.assertEquals(today, registeredCourses.get(1).getCourseApplyAt());
+    Assertions.assertNull(registeredCourses.get(1).getCourseStartAt());
+    Assertions.assertNull(registeredCourses.get(1).getCourseEndAt());
+
+    Assertions.assertEquals(student, result.getStudent());
+    Assertions.assertEquals(registeredCourses, result.getStudentCourses());
+  }
+
+  /**
+   * registerStudentDetail(StudentDetail studentDetail)の異常系テスト
+   * registerStudentで失敗したらregisterStudentCourseは呼ばれない
+   */
+  @Test
+  void 受講生詳細登録失敗_受講生登録時に例外が発生したら例外をそのまま送出すること() {
+    // Arrange
+    Student student = TestDataFactory.makeCompletedStudent(1);
+    StudentCourse rawCourse =
+        new StudentCourse(null, null, "JA", null, null, null, null);
+    StudentDetail input = new StudentDetail(student, List.of(rawCourse));
+
+    doThrow(new RuntimeException("DB error"))
+        .when(studentRepository).registerStudent(any(Student.class));
+
+    // Act & Assert
+    assertThrows(RuntimeException.class,
+        () -> sut.registerStudentDetail(input));
+
+    verify(studentRepository, times(1)).registerStudent(student);
+    verify(studentRepository, never()).registerStudentCourse(any(StudentCourse.class));
+  }
+
+  /**
+   * registerStudentDetail(StudentDetail studentDetail)の異常系テスト
+   * registerStudentCourseで1件目のコースは成功、2件目のコースで失敗
+   */
+  @Test
+  void 受講生詳細登録失敗_受講生コース登録の途中で例外が発生したら例外を送出すること() {
+    // Arrange
+    Student student = TestDataFactory.makeCompletedStudent(1);
+    StudentCourse course1 =
+        new StudentCourse(null, null, "JA", null, null, null, null);
+    StudentCourse course2 =
+        new StudentCourse(null, null, "PY", null, null, null, null);
+
+    StudentDetail input = new StudentDetail(student, List.of(course1, course2));
+
+    doNothing()
+        .doThrow(new RuntimeException("DB error"))
+        .when(studentRepository).registerStudentCourse(any(StudentCourse.class));
+
+    // Act & Assert
+    assertThrows(RuntimeException.class,
+        () -> sut.registerStudentDetail(input));
+
+    verify(studentRepository, times(1)).registerStudent(student);
+    verify(studentRepository, times(2)).registerStudentCourse(any(StudentCourse.class));
+  }
+
+  /**
+   * registerStudentCourse(StudentCourse studentCourse, int studentId)の正常系テスト
+   */
+  @Test
+  void 受講生コース新規登録成功_StudentCourseのフィールドを初期化しリポジトリに渡していること(){
+    // Arrange
+    Integer studentId = 1;
+
+    StudentCourse rawCourse =
+        new StudentCourse(null,null,"JA",null,null,null,null);
+
+    LocalDate today = LocalDate.now();
+
+    // Act
+    StudentCourse result = sut.registerStudentCourse(rawCourse,studentId);
 
     // Assert
     ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
-    verify(studentRepository, times(1)).registerStudent(student);
-    verify(studentRepository, times(rawCourseList.size())).registerStudentCourse(captor.capture());
+    verify(studentRepository, times(1)).registerStudentCourse(captor.capture());
 
     StudentCourse registered = captor.getValue();
     Assertions.assertEquals(studentId, registered.getStudentId()); // studentIdをセットされている
-    Assertions.assertEquals(today, registered.getCourseStartAt()); // courseStartAtに今日の日付をセットされている
-    Assertions.assertEquals(today.plusYears(1), registered.getCourseEndAt()); // courseEndAtに今日の日付をセットされている
+    Assertions.assertEquals("JA", registered.getCourseCode());// courseCodeは渡されたまま
+    Assertions.assertEquals(1, registered.getStatusId()); // statusIdに1をセットされている
+    Assertions.assertEquals(today, registered.getCourseApplyAt()); // courseApplyAtに今日の日付をセットされている
+    Assertions.assertNull(registered.getCourseStartAt()); // courseStarAtがnullになっている
+    Assertions.assertNull(registered.getCourseEndAt()); // courseEndAtがnullになっている
+
+    Assertions.assertEquals(registered, result);
+  }
+
+  /**
+   * registerStudentCourse(StudentCourse studentCourse, int studentId)の異常系テスト
+   */
+  @Test
+  void 受講生コース新規登録失敗_リポジトリ登録時に例外が発生したら例外をそのまま送出すること() {
+    // Arrange
+    StudentCourse rawCourse =
+        new StudentCourse(null, null, "JA", null, null, null, null);
+
+    doThrow(new RuntimeException("DB error"))
+        .when(studentRepository).registerStudentCourse(any(StudentCourse.class));
+
+    // Act & Assert
+    assertThrows(RuntimeException.class,
+        () -> sut.registerStudentCourse(rawCourse, 1));
   }
 
   /**

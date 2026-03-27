@@ -1,6 +1,8 @@
 package raisetech.student.management.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.exception.handler.ErrorDetailsBuilder;
@@ -260,6 +263,44 @@ class StudentControllerTest {
 
     // Assert
     Mockito.verify(service, times(1)).updateStudentDetail(any(StudentDetail.class));
+  }
+
+  @Test
+  void 受講生コース追加成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
+    // Arrange
+    Integer studentId = 1;
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                     "courseCode": "JA"
+                }
+                """
+            ))
+        .andExpect(status().isCreated());
+
+    // Assert
+    Mockito.verify(service, times(1)).registerStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース追加失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Arrange
+    Integer studentId = 1;
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).registerStudentCourse(any(),eq(studentId));
   }
 
 }

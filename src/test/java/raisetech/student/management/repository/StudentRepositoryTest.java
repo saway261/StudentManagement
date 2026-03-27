@@ -133,7 +133,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コース登録が行えること() {
+  void 受講生コース登録を行うことができ_受講生IDとコースコードとステータスIDと受講申込日だけがセットされていること() {
     // Arrange
     Integer studentId = 1;
     List<StudentCourse> expected = new ArrayList<>(
@@ -141,18 +141,32 @@ class StudentRepositoryTest {
     );
     int originalSize = expected.size();
 
-    StudentCourse beforeRegister = TestDataFactory.makeCompletedStudentCourse(studentId, null);
+    StudentCourse beforeRegister =
+        TestDataFactory.makeCompletedStudentCourse(studentId, null);
 
     // Act
     sut.registerStudentCourse(beforeRegister);
 
     // Assert
     List<StudentCourse> actual = sut.searchStudentCourses(studentId);
-    expected.add(beforeRegister);
 
+    //studentCourseIdが登録前インスタンスに自動でマッピングされることを検証
     assertThat(beforeRegister.getStudentCourseId()).isNotNull();
+    //登録前インスタンスにマッピングされたidを使って登録後インスタンスを取得
+    StudentCourse afterRegister = actual.stream()
+        .filter(sc -> sc.getStudentCourseId().equals(beforeRegister.getStudentCourseId()))
+        .findFirst()
+        .orElseThrow();
+    //もともと受講生が持っていた受講生コースより+1になっていること
     assertThat(actual.size()).isEqualTo(originalSize + 1);
-    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+    // 受講生ID,コースコード,ステータスID、受講申込日がセットされていること
+    assertThat(afterRegister.getStudentId()).isEqualTo(beforeRegister.getStudentId());
+    assertThat(afterRegister.getCourseCode()).isEqualTo(beforeRegister.getCourseCode());
+    assertThat(afterRegister.getStatusId()).isEqualTo(beforeRegister.getStatusId());
+    assertThat(afterRegister.getCourseApplyAt()).isEqualTo(beforeRegister.getCourseApplyAt());
+    // 受講開始日と受講終了日がnullであること
+    assertThat(afterRegister.getCourseStartAt()).isNull();
+    assertThat(afterRegister.getCourseEndAt()).isNull();
   }
 
   @Test
@@ -160,7 +174,18 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     LocalDate today = LocalDate.now();
     StudentCourse studentCourse = new StudentCourse(
-        null, studentId, null, null, null
+        null, studentId, null,1,today, null, null
+    );
+
+    assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 受講申込日がnullの受講生コースを登録しようとすると例外が発生すること() {
+    Integer studentId = 1;
+    StudentCourse studentCourse = new StudentCourse(
+        null, studentId, "JA", 1, null, null, null
     );
 
     assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
@@ -184,7 +209,21 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     LocalDate today = LocalDate.now();
     StudentCourse studentCourse = new StudentCourse(
-        null,studentId,"NOT",null,null
+        null,studentId,"NOT",1,today,null,null
+    );
+
+    // Act & Assert
+    assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
+        .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void 存在しないステータスIDを持つ受講生コースを登録しようとすると例外が発生すること() {
+    // Arrange
+    Integer studentId = 1;
+    LocalDate today = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        null,studentId,"JA",999,today,null,null
     );
 
     // Act & Assert
@@ -230,21 +269,25 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コースコードの更新を行うことができ受講生IDと受講開始日と受講終了予定日の更新はできないこと() {
+  void 受講生コースコードの更新を行うことができステータスIDと受講申込日と受講開始日と受講終了予定日の更新はできないこと() {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse original = new StudentCourse(
         scId,
         studentId,
         "JA",
+        3,
+        LocalDate.of(2024, 7, 10),
         LocalDate.of(2024, 7, 15),
         LocalDate.of(2025, 4, 15)
     );
 
     StudentCourse forUpdate = new StudentCourse(
         scId,
-        2,
+        studentId,
         "AW",
+        4,
+        LocalDate.of(2023, 10, 10),
         LocalDate.of(2023, 10, 15),
         LocalDate.of(2025, 12, 15)
     );
@@ -261,6 +304,8 @@ class StudentRepositoryTest {
     // Assert
     assertThat(actual.getStudentId()).isEqualTo(original.getStudentId());
     assertThat(actual.getCourseCode()).isEqualTo(forUpdate.getCourseCode());
+    assertThat(actual.getStatusId()).isEqualTo(original.getStatusId());
+    assertThat(actual.getCourseApplyAt()).isEqualTo(original.getCourseApplyAt());
     assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
     assertThat(actual.getCourseEndAt()).isEqualTo(original.getCourseEndAt());
     assertThat(updated).isEqualTo(1);
