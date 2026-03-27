@@ -44,6 +44,8 @@ class StudentCourseTest {
       "studentCourseId,false",
       "studentId,false",
       "courseCode,true",
+      "statusId,false",
+      "courseApplyAt,false",
       "courseStartAt,false",
       "courseEndAt,false"
   })
@@ -57,6 +59,8 @@ class StudentCourseTest {
         fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
         courseCode,
+        fieldName.equals("statusId") ? null : 1,
+        fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
         fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
     );
@@ -81,7 +85,7 @@ class StudentCourseTest {
     Integer studentId = null;
     Integer scId = null;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        scId, studentId, "存在しないコース", null, null
+        scId, studentId, "存在しないコース",null,null, null, null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
@@ -112,6 +116,8 @@ class StudentCourseTest {
       "studentCourseId,true",
       "studentId,false",
       "courseCode,true",
+      "statusId,false",
+      "courseApplyAt,false",
       "courseStartAt,false",
       "courseEndAt,false"
   })
@@ -125,6 +131,8 @@ class StudentCourseTest {
         fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
         courseCode,
+        fieldName.equals("statusId") ? null : 1,
+        fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
         fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
     );
@@ -165,7 +173,7 @@ class StudentCourseTest {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        scId, studentId, "存在しないコース", null, null
+        scId, studentId, "存在しないコース",null,null, null, null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
