@@ -266,7 +266,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生コース追加成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
+  void 受講生コース追加成功_妥当なリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
     // Arrange
     Integer studentId = 1;
     Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
@@ -282,6 +282,30 @@ class StudentControllerTest {
                 """
             ))
         .andExpect(status().isCreated());
+
+    // Assert
+    Mockito.verify(service, times(1)).registerStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース追加失敗_登録されていない受講生IDを指定すると404が返ること() throws Exception {
+    // Arrange
+    Integer studentId = 99;
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
+    Mockito.when(service.registerStudentCourse(any(StudentCourse.class),eq(studentId)))
+        .thenThrow(TargetNotFoundException.class);
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                     "courseCode": "JA"
+                }
+                """
+            ))
+        .andExpect(status().isNotFound());
 
     // Assert
     Mockito.verify(service, times(1)).registerStudentCourse(any(StudentCourse.class),eq(studentId));

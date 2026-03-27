@@ -322,4 +322,22 @@ class StudentRepositoryTest {
     assertThat(actual).isZero();
   }
 
+  @Test
+  void アクティブな受講生IDが存在するときtrueを返すこと() {
+    // Act
+    // 初期データ5件が1~5で採番されるという前提
+    boolean actual = sut.existsActiveStudentById(1);
+
+    // Assert
+    assertThat(actual).isTrue();
+  }
+
+  @Test
+  void 存在しない受講生IDのときfalseを返すこと() {
+    // Act
+    boolean actual = sut.existsActiveStudentById(999);
+
+    // Assert
+    assertThat(actual).isFalse();
+  }
 }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -219,14 +220,13 @@ class StudentServiceTest {
    * registerStudentCourse(StudentCourse studentCourse, int studentId)の正常系テスト
    */
   @Test
-  void 受講生コース新規登録成功_StudentCourseのフィールドを初期化しリポジトリに渡していること(){
+  void 受講生コース新規登録成功_StudentCourseのフィールドを初期化しリポジトリに渡していること() {
     // Arrange
     Integer studentId = 1;
-
     StudentCourse rawCourse =
-        new StudentCourse(null,null,"JA",null,null,null,null);
-
+        new StudentCourse(null, null, "JA", null, null, null, null);
     LocalDate today = LocalDate.now();
+    Mockito.when(repository.existsActiveStudentById(studentId)).thenReturn(true);
 
     // Act
     StudentCourse result = sut.registerStudentCourse(rawCourse,studentId);
@@ -250,17 +250,38 @@ class StudentServiceTest {
    * registerStudentCourse(StudentCourse studentCourse, int studentId)の異常系テスト
    */
   @Test
-  void 受講生コース新規登録失敗_リポジトリ登録時に例外が発生したら例外をそのまま送出すること() {
+  void 受講生コース新規登録失敗_受講生IDが存在し登録処理で例外が発生したら例外をそのまま送出すること() {
     // Arrange
+    Integer studentId = 1;
     StudentCourse rawCourse =
         new StudentCourse(null, null, "JA", null, null, null, null);
 
+    when(repository.existsActiveStudentById(studentId)).thenReturn(true);
     doThrow(new RuntimeException("DB error"))
         .when(studentRepository).registerStudentCourse(any(StudentCourse.class));
 
     // Act & Assert
     assertThrows(RuntimeException.class,
-        () -> sut.registerStudentCourse(rawCourse, 1));
+        () -> sut.registerStudentCourse(rawCourse, studentId));
+  }
+
+  /**
+   * registerStudentCourse(StudentCourse studentCourse, int studentId)の異常系テスト
+   */
+  @Test
+  void 受講生コース新規登録失敗_存在しない受講生IDならTargetNotFoundExceptionを投げ登録処理を行わないこと() {
+    // Arrange
+    Integer studentId = 999;
+    StudentCourse rawCourse =
+        new StudentCourse(null, null, "JA", null, null, null, null);
+
+    when(repository.existsActiveStudentById(studentId)).thenReturn(false);
+
+    // Act & Assert
+    assertThrows(TargetNotFoundException.class,
+        () -> sut.registerStudentCourse(rawCourse, studentId));
+
+    verify(repository, never()).registerStudentCourse(any(StudentCourse.class));
   }
 
   /**
