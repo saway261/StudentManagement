@@ -32,7 +32,13 @@ public class StudentCourse {
   @CourseCodeExists(groups = {CreateGroup.class, UpdateGroup.class})
   private String courseCode;
 
-  @Schema(description = "受講開始日 プログラム側が値をセットするため常に入力不要", example = "2026/01/01")
+  @Schema(description = "ステータスID 申込状況を表す プログラム側が値をセットするため常に入力不要", example = "1")
+  private Integer statusId;
+
+  @Schema(description = "受講申込日 プログラム側が値をセットするため常に入力不要", example = "2026/01/01")
+  private LocalDate courseApplyAt;
+
+  @Schema(description = "受講開始日 プログラム側が値をセットするため常に入力不要", example = "2026/01/31")
   private LocalDate courseStartAt;
 
   @Schema(description = "受講終了予定日 プログラム側が値をセットするため常に入力不要", example = "2026/06/31")
