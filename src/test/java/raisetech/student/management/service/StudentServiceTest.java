@@ -26,7 +26,7 @@ import raisetech.student.management.testutil.TestDataFactory;
 class StudentServiceTest {
 
   @Mock
-  private StudentRepository repository;
+  private StudentRepository studentRepository;
 
   @InjectMocks
   private StudentService sut;// System Under Test テスト対象システム
@@ -51,19 +51,19 @@ class StudentServiceTest {
     List<StudentCourse> studentCourses2 = studentDetail2.getStudentCourses();
 
     // スタブ
-    Mockito.when(repository.searchActiveStudentIdList()).thenReturn(studentIdList);
-    Mockito.when(repository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
-    Mockito.when(repository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
-    Mockito.when(repository.searchStudentCourses(studentId1)).thenReturn(studentCourses1);
-    Mockito.when(repository.searchStudentCourses(studentId2)).thenReturn(studentCourses2);
+    Mockito.when(studentRepository.searchActiveStudentIdList()).thenReturn(studentIdList);
+    Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
+    Mockito.when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
+    Mockito.when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentCourses1);
+    Mockito.when(studentRepository.searchStudentCourses(studentId2)).thenReturn(studentCourses2);
 
     // Act
     List<StudentDetail> actual = sut.searchStudentDetailList();
 
     // Assert
-    verify(repository, times(1)).searchActiveStudentIdList();
-    verify(repository, times(studentIdList.size())).searchStudent(Mockito.anyInt());
-    verify(repository, times(studentIdList.size())).searchStudentCourses(Mockito.anyInt());
+    verify(studentRepository, times(1)).searchActiveStudentIdList();
+    verify(studentRepository, times(studentIdList.size())).searchStudent(Mockito.anyInt());
+    verify(studentRepository, times(studentIdList.size())).searchStudentCourses(Mockito.anyInt());
     Assertions.assertEquals(expected, actual);
   }
 
@@ -81,15 +81,15 @@ class StudentServiceTest {
     List<StudentCourse> studentCourseList = expected.getStudentCourses();
 
     // スタブ
-    Mockito.when(repository.searchStudent(studentId)).thenReturn(student);
-    Mockito.when(repository.searchStudentCourses(studentId)).thenReturn(studentCourseList);
+    Mockito.when(studentRepository.searchStudent(studentId)).thenReturn(student);
+    Mockito.when(studentRepository.searchStudentCourses(studentId)).thenReturn(studentCourseList);
 
     // Act
     StudentDetail actual = sut.searchStudentDetail(studentId);
 
     // Assert
-    verify(repository, times(1)).searchStudent(studentId);
-    verify(repository, times(1)).searchStudentCourses(studentId);
+    verify(studentRepository, times(1)).searchStudent(studentId);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId);
     Assertions.assertEquals(expected, actual);
   }
 
@@ -101,14 +101,14 @@ class StudentServiceTest {
     // Arrange
     Integer studentId = 999;
 
-    Mockito.when(repository.searchStudent(studentId)).thenReturn(null);
-    Mockito.when(repository.searchStudentCourses(studentId)).thenReturn(List.of());
+    Mockito.when(studentRepository.searchStudent(studentId)).thenReturn(null);
+    Mockito.when(studentRepository.searchStudentCourses(studentId)).thenReturn(List.of());
 
     // Act & Assert
     Assertions.assertThrows(TargetNotFoundException.class, () -> {
       sut.searchStudentDetail(studentId);
     });
-    verify(repository, times(1)).searchStudent(studentId);
+    verify(studentRepository, times(1)).searchStudent(studentId);
   }
 
   /**
@@ -132,8 +132,8 @@ class StudentServiceTest {
 
     // Assert
     ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
-    verify(repository, times(1)).registerStudent(student);
-    verify(repository, times(rawCourseList.size())).registerStudentCourse(captor.capture());
+    verify(studentRepository, times(1)).registerStudent(student);
+    verify(studentRepository, times(rawCourseList.size())).registerStudentCourse(captor.capture());
 
     StudentCourse registered = captor.getValue();
     Assertions.assertEquals(studentId, registered.getStudentId()); // studentIdをセットされている
@@ -154,15 +154,15 @@ class StudentServiceTest {
     Student student = input.getStudent();
     List<StudentCourse> studentCourse = input.getStudentCourses();
 
-    Mockito.when(repository.updateStudent(student)).thenReturn(1);
-    Mockito.when(repository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(1);
+    Mockito.when(studentRepository.updateStudent(student)).thenReturn(1);
+    Mockito.when(studentRepository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(1);
 
     // Act
     sut.updateStudentDetail(input);
 
     // Assert
-    verify(repository, times(1)).updateStudent(student);
-    verify(repository, times(studentCourse.size())).updateStudentCourse(Mockito.any(StudentCourse.class));
+    verify(studentRepository, times(1)).updateStudent(student);
+    verify(studentRepository, times(studentCourse.size())).updateStudentCourse(Mockito.any(StudentCourse.class));
   }
 
   /**
@@ -176,13 +176,13 @@ class StudentServiceTest {
     StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = input.getStudent();
 
-    Mockito.when(repository.updateStudent(student)).thenReturn(0); // 更新件数が0件=更新失敗
+    Mockito.when(studentRepository.updateStudent(student)).thenReturn(0); // 更新件数が0件=更新失敗
 
     // Act & Assert
     Assertions.assertThrows(TargetNotFoundException.class, () -> {
       sut.updateStudentDetail(input);
     });
-    verify(repository, never()).updateStudentCourse(Mockito.any(StudentCourse.class));
+    verify(studentRepository, never()).updateStudentCourse(Mockito.any(StudentCourse.class));
 
   }
 
@@ -197,15 +197,15 @@ class StudentServiceTest {
     StudentDetail input = TestDataFactory.makeCompletedStudentDetail(studentId,scId);
     Student student = input.getStudent();
 
-    Mockito.when(repository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
-    Mockito.when(repository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(0);
+    Mockito.when(studentRepository.updateStudent(student)).thenReturn(1); // 更新件数が1件=更新成功
+    Mockito.when(studentRepository.updateStudentCourse(Mockito.any(StudentCourse.class))).thenReturn(0);
 
     // Act & Assert
     Assertions.assertThrows(TargetNotFoundException.class, () -> {
       sut.updateStudentDetail(input);
     });
-    verify(repository, times(1)).updateStudent(student);
-    verify(repository, atLeastOnce()).updateStudentCourse(Mockito.any(StudentCourse.class));
+    verify(studentRepository, times(1)).updateStudent(student);
+    verify(studentRepository, atLeastOnce()).updateStudentCourse(Mockito.any(StudentCourse.class));
 
 
   }

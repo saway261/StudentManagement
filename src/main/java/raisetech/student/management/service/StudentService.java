@@ -20,11 +20,11 @@ import raisetech.student.management.repository.StudentRepository;
 @Service
 public class StudentService {
 
-  private StudentRepository repository;
+  private StudentRepository studentRepository;
 
   @Autowired
-  public StudentService(StudentRepository repository) {
-    this.repository = repository;
+  public StudentService(StudentRepository studentRepository) {
+    this.studentRepository = studentRepository;
   }
 
   /**
@@ -32,7 +32,7 @@ public class StudentService {
    * @return 受講生詳細の一覧
    */
   public List<StudentDetail> searchStudentDetailList(){
-    List<Integer> studentIdList = repository.searchActiveStudentIdList();
+    List<Integer> studentIdList = studentRepository.searchActiveStudentIdList();
 
     return studentIdList.stream()
         .map(studentId -> buildStudentDetail(studentId))
@@ -61,11 +61,11 @@ public class StudentService {
   @Transactional
   public StudentDetail registerStudentDetail(StudentDetail studentDetail){
     Student student = studentDetail.getStudent();
-    repository.registerStudent(student);
+    studentRepository.registerStudent(student);
 
     for(StudentCourse studentCourse : studentDetail.getStudentCourses()){
       StudentCourse initedStudentCourse = initStudentCourse(studentCourse, student);
-      repository.registerStudentCourse(initedStudentCourse);
+      studentRepository.registerStudentCourse(initedStudentCourse);
     }
     return studentDetail;
   }
@@ -77,12 +77,12 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail updateStudentDetail(StudentDetail studentDetail){
-    int updatedStudent = repository.updateStudent(studentDetail.getStudent());
+    int updatedStudent = studentRepository.updateStudent(studentDetail.getStudent());
     if(updatedStudent == 0){
       throw new TargetNotFoundException("Student.studentId","更新対象のインスタンスが見つかりませんでした");
     }
     for (StudentCourse studentCourse : studentDetail.getStudentCourses()){
-      int updatedStudentCourse = repository.updateStudentCourse(studentCourse);
+      int updatedStudentCourse = studentRepository.updateStudentCourse(studentCourse);
       if(updatedStudentCourse == 0){
         throw new TargetNotFoundException("StudentCourse.studentCourseId","更新対象のインスタンスが見つかりませんでした");
       }
@@ -114,8 +114,8 @@ public class StudentService {
    * @return 受講生詳細
    */
   private StudentDetail buildStudentDetail(int studentId){
-    Student student = repository.searchStudent(studentId);
-    List<StudentCourse> studentCourses = repository.searchStudentCourses(studentId);
+    Student student = studentRepository.searchStudent(studentId);
+    List<StudentCourse> studentCourses = studentRepository.searchStudentCourses(studentId);
 
     return new StudentDetail(student, studentCourses);
   }
