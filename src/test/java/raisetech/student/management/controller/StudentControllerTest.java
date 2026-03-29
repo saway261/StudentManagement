@@ -303,7 +303,6 @@ class StudentControllerTest {
     // Arrange
     Integer studentId = 1;
     Integer scId = 1;
-    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
     Mockito.when(service.updateStudentCourse(any(StudentCourse.class),eq(studentId)))
         .thenReturn(TestDataFactory.makeCompletedStudentCourse(studentId,scId));
 
@@ -314,7 +313,7 @@ class StudentControllerTest {
                 """               
                 {
                     "studentCourseId": 1,
-                    "courseCode": "JA"
+                    "statusId": 2
                 }
                 """
             ))
@@ -343,8 +342,6 @@ class StudentControllerTest {
   void 受講生コース更新失敗_登録されていない受講生IDを指定すると404が返ること() throws Exception {
     // Arrange
     Integer studentId = 99;
-    Integer scId = 1;
-    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
     Mockito.when(service.updateStudentCourse(any(StudentCourse.class),eq(studentId)))
         .thenThrow(TargetNotFoundException.class);
 
@@ -355,7 +352,7 @@ class StudentControllerTest {
                 """               
                 {
                     "studentCourseId":1,
-                    "courseCode": "JA"
+                    "statusId": 2
                 }
                 """
             ))

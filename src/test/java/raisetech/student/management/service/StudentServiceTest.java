@@ -2,6 +2,7 @@ package raisetech.student.management.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -22,7 +23,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
+import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
 import raisetech.student.management.testutil.TestDataFactory;
 
@@ -31,6 +34,9 @@ class StudentServiceTest {
 
   @Mock
   private StudentRepository studentRepository;
+
+  @Mock
+  private CourseStatusRepository statusRepository;
 
   @InjectMocks
   private StudentService sut;// System Under Test テスト対象システム
@@ -325,31 +331,80 @@ class StudentServiceTest {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
-    Mockito.when(studentRepository.updateStudentCourse(studentCourse)).thenReturn(1);
+    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(4);
+    Mockito.when(statusRepository.canTransition(anyInt(),anyInt())).thenReturn(true);
+    Mockito.when(studentRepository.updateStudentCourseStatus(any(StudentCourse.class))).thenReturn(1);
 
     // Act
     sut.updateStudentCourse(studentCourse,studentId);
 
     // Assert
-    verify(studentRepository, times(1)).updateStudentCourse(studentCourse);
+    verify(studentRepository,times(1)).findStatusId(any(StudentCourse.class));
+    verify(statusRepository,times(1)).canTransition(anyInt(),anyInt());
+    verify(studentRepository, times(1)).updateStudentCourseStatus(any(StudentCourse.class));
   }
 
   /**
    * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
    */
   @Test
-  void 受講生コース更新失敗_リポジトリのupdateStudentの返り値が0なら例外をそのまま送出すること(){
+  void 受講生コース更新失敗_更新前ステータスが取得できないならTargetNotFoundExceptionを送出してのちの処理を呼ばないこと() {
+    // Arrange
+    Integer studentId = 99;
+    Integer scId = 1;
+    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId, scId);
+    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(null);
+
+    // Act & Assert
+    assertThrows(TargetNotFoundException.class, () -> {
+      sut.updateStudentCourse(studentCourse, studentId);
+    });
+    verify(studentRepository, times(1)).findStatusId(any(StudentCourse.class));
+    verify(statusRepository, never()).canTransition(anyInt(), anyInt());
+    verify(studentRepository, never()).updateStudentCourseStatus(any(StudentCourse.class));
+  }
+
+  /**
+   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
+   */
+  @Test
+  void 受講生コース更新失敗_ステータス遷移が不可能ならInvalidStatusTransitionExceptionを送出しリポジトリの更新処理を呼ばないこと(){
     // Arrange
     Integer studentId = 99;
     Integer scId = 1;
     StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
-    Mockito.when(studentRepository.updateStudentCourse(studentCourse)).thenReturn(0); // 更新件数が0件=更新失敗
+    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(1);
+    Mockito.when(statusRepository.canTransition(anyInt(),anyInt())).thenReturn(false);
+
+    // Act & Assert
+    assertThrows(InvalidStatusTransitionException.class, () -> {
+      sut.updateStudentCourse(studentCourse,studentId);
+    });
+    verify(studentRepository,times(1)).findStatusId(any(StudentCourse.class));
+    verify(statusRepository,times(1)).canTransition(anyInt(),anyInt());
+    verify(studentRepository, never()).updateStudentCourseStatus(any(StudentCourse.class));
+  }
+
+  /**
+   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
+   */
+  @Test
+  void 受講生コース更新失敗_update件数が0ならTargetNotFoundExceptionを送出すること(){
+    // Arrange
+    Integer studentId = 99;
+    Integer scId = 1;
+    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
+    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(4);
+    Mockito.when(statusRepository.canTransition(anyInt(),anyInt())).thenReturn(true);
+    Mockito.when(studentRepository.updateStudentCourseStatus(any(StudentCourse.class))).thenReturn(0); // 更新件数が0件=更新失敗
 
     // Act & Assert
     assertThrows(TargetNotFoundException.class, () -> {
       sut.updateStudentCourse(studentCourse,studentId);
     });
-    verify(studentRepository, times(1)).updateStudentCourse(studentCourse);
+    verify(studentRepository,times(1)).findStatusId(any(StudentCourse.class));
+    verify(statusRepository,times(1)).canTransition(anyInt(),anyInt());
+    verify(studentRepository, times(1)).updateStudentCourseStatus(any(StudentCourse.class));
   }
 
 

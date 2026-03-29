@@ -269,7 +269,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コースコードの更新を行うことができステータスIDと受講申込日と受講開始日と受講終了予定日の更新はできないこと() {
+  void 受講生コースのステータス更新を行うことができコースコードと受講申込日と受講開始日と受講終了予定日の更新はできないこと() {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse original = new StudentCourse(
@@ -293,7 +293,7 @@ class StudentRepositoryTest {
     );
 
     // Act
-    Integer updated = sut.updateStudentCourse(forUpdate);
+    Integer updated = sut.updateStudentCourseStatus(forUpdate);
 
     StudentCourse actual = sut.searchStudentCourses(studentId).stream()
         .filter(sc -> sc.getStudentCourseId().equals(scId))
@@ -303,8 +303,8 @@ class StudentRepositoryTest {
 
     // Assert
     assertThat(actual.getStudentId()).isEqualTo(original.getStudentId());
-    assertThat(actual.getCourseCode()).isEqualTo(forUpdate.getCourseCode());
-    assertThat(actual.getStatusId()).isEqualTo(original.getStatusId());
+    assertThat(actual.getCourseCode()).isEqualTo(original.getCourseCode());
+    assertThat(actual.getStatusId()).isEqualTo(forUpdate.getStatusId());
     assertThat(actual.getCourseApplyAt()).isEqualTo(original.getCourseApplyAt());
     assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
     assertThat(actual.getCourseEndAt()).isEqualTo(original.getCourseEndAt());
@@ -318,7 +318,7 @@ class StudentRepositoryTest {
     int studentId = 99;
     StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, scId);
 
-    int actual = sut.updateStudentCourse(course);
+    int actual = sut.updateStudentCourseStatus(course);
 
     assertThat(actual).isZero();
   }
@@ -328,10 +328,47 @@ class StudentRepositoryTest {
     int scId = 999;
     StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, scId);
 
-    int actual = sut.updateStudentCourse(course);
+    int actual = sut.updateStudentCourseStatus(course);
 
     assertThat(actual).isZero();
   }
+
+  @Test
+  void 受講生コースIDと受講生IDに紐づく現在のステータスIDを取得できること() {
+    // student_course_id=1 のレコードは student_id=1, status_id=3
+    Integer studentId = 1;
+    Integer scId = 1;
+    StudentCourse studentCourse =
+        new StudentCourse(scId,studentId,null,null,null,null,null);
+    Integer actual = sut.findStatusId(studentCourse);
+
+    assertThat(actual).isEqualTo(3);
+  }
+
+  @Test
+  void 存在する受講生コースIDでも受講生IDが一致しないとnullが返ること() {
+    // student_course_id=1 は student_id=1 に紐づくので、2を渡すと不一致
+    Integer studentId = 1;
+    Integer scId = 2;
+    StudentCourse studentCourse =
+        new StudentCourse(scId,studentId,null,null,null,null,null);
+    Integer actual = sut.findStatusId(studentCourse);
+
+    assertThat(actual).isNull();
+  }
+
+  @Test
+  void 存在しない受講生コースIDを指定したときnullが返ること() {
+    Integer studentId = 1;
+    Integer scId = 999;
+    StudentCourse studentCourse =
+        new StudentCourse(scId,studentId,null,null,null,null,null);
+    Integer actual = sut.findStatusId(studentCourse);
+
+
+    assertThat(actual).isNull();
+  }
+
 
   @Test
   void アクティブな受講生IDが存在するときtrueを返すこと() {

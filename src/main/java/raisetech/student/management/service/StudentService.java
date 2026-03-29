@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
+import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
 
 
@@ -22,10 +24,13 @@ import raisetech.student.management.repository.StudentRepository;
 public class StudentService {
 
   private StudentRepository studentRepository;
+  private CourseStatusRepository statusRepository;
 
   @Autowired
-  public StudentService(StudentRepository studentRepository) {
+  public StudentService(StudentRepository studentRepository,
+      CourseStatusRepository statusRepository) {
     this.studentRepository = studentRepository;
+    this.statusRepository = statusRepository;
   }
 
   /**
@@ -104,30 +109,41 @@ public class StudentService {
   }
 
   /**
-   * 受講生コースの更新を行います。受講生コースIDと受講生IDで指定した受講生コースのコースコードのみを更新できます。
+   * 受講生コースの更新を行います。受講生コースIDと受講生IDで指定した受講生コースのステータスのみを更新できます。
    * @param studentCourse 受講生コース
    * @param studentId 受講生ID
    * @return 引数で受け取った受講生コースに受講生IDだけセットしなおしたもの
    */
   @Transactional
   public StudentCourse updateStudentCourse(StudentCourse studentCourse, int studentId){
+    // 更新後のステータスID
+    int toStatusId = studentCourse.getStatusId();
+
+    // SQLで扱わないフィールドはいったん明示的にnullとする
     StudentCourse adjustedStudentCourse = new StudentCourse(
         studentCourse.getStudentCourseId(),
         studentId,
-        studentCourse.getCourseCode(),
+        null,
         studentCourse.getStatusId(),
-        studentCourse.getCourseApplyAt(),
-        studentCourse.getCourseStartAt(),
-        studentCourse.getCourseEndAt()
+        null,
+        null,
+        null
     );
 
-    int updatedRows = studentRepository.updateStudentCourse(adjustedStudentCourse);
+    // 更新前（現在）のステータスID
+    Integer fromStatusId = studentRepository.findStatusId(adjustedStudentCourse);
+    if (fromStatusId == null) {
+      throw new TargetNotFoundException("studentCourse", "受講生IDと受講生コースIDで指定できる受講生コースが存在しません");
+    }
 
+    // 遷移不可能なら例外をスロー
+    if(!statusRepository.canTransition(fromStatusId,toStatusId)){
+      throw new InvalidStatusTransitionException(fromStatusId,toStatusId);
+    }
+
+    int updatedRows = studentRepository.updateStudentCourseStatus(adjustedStudentCourse);
     if (updatedRows == 0) {
-      throw new TargetNotFoundException(
-          "studentCourseId",
-          "指定した受講生IDと受講生コースIDが紐づきません"
-      );
+      throw new TargetNotFoundException("studentCourse", "受講生IDと受講生コースIDで指定できる受講生コースが存在しません");
     }
     return adjustedStudentCourse;
   }

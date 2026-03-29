@@ -206,7 +206,7 @@ public class StudentController {
 
   @Operation(
       summary = "受講生コース更新",
-      description = "受講生コース更新を行います。コースコードのみを更新します",
+      description = "受講生コース更新を行います。ステータスのみを更新します",
       parameters = {
           @Parameter(in = ParameterIn.PATH,
               name = "studentId", required = true,
@@ -225,7 +225,7 @@ public class StudentController {
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "登録成功",
+              responseCode = "200", description = "更新成功",
               content = @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = StudentCourse.class)
