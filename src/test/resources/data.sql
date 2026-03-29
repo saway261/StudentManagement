@@ -25,6 +25,13 @@ INSERT INTO status_master VALUES (3,'受講中',false);
 INSERT INTO status_master VALUES (4,'受講終了',true);
 INSERT INTO status_master VALUES (5,'キャンセル',true);
 
+INSERT INTO status_transition_master VALUES (1,2);
+INSERT INTO status_transition_master VALUES (1,5);
+INSERT INTO status_transition_master VALUES (2,3);
+INSERT INTO status_transition_master VALUES (2,5);
+INSERT INTO status_transition_master VALUES (3,4);
+INSERT INTO status_transition_master VALUES (3,5);
+
 INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
 VALUES ('JA',1,3,'2024-07-10','2024-07-15','2025-04-15');
 

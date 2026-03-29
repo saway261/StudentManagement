@@ -23,6 +23,14 @@ status_name VARCHAR(10) NOT NULL UNIQUE,
 is_terminal BOOLEAN NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS status_transition_master (
+from_status_id INT NOT NULL,
+to_status_id INT NOT NULL,
+PRIMARY KEY (from_status_id, to_status_id),
+FOREIGN KEY (from_status_id) REFERENCES status_master(status_id),
+FOREIGN KEY (to_status_id) REFERENCES status_master(status_id)
+);
+
 CREATE TABLE IF NOT EXISTS student_courses (
 student_course_id INT AUTO_INCREMENT PRIMARY KEY ,
 student_id INT NOT NULL,
