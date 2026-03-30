@@ -47,6 +47,9 @@ public class StudentCourse {
   private LocalDate courseStartAt;
 
   @Schema(description = "受講終了予定日 プログラム側が値をセットするため常に入力不要", example = "2026/06/31")
-  private LocalDate courseEndAt;
+  private LocalDate coursePlannedEndAt;
+
+  @Schema(description = "受講終了実績日 プログラム側が値をセットするため常に入力不要", example = "2026/06/31")
+  private LocalDate courseFinishedAt;
 
 }

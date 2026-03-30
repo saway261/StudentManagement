@@ -42,7 +42,8 @@ public class MyBatisTestDataFactory {
             3,
             LocalDate.of(2024, 7, 10),
             LocalDate.of(2024, 7, 15),
-            LocalDate.of(2025, 4, 15)
+            LocalDate.of(2025, 4, 15),
+            null
         ))
     );
   }
@@ -75,7 +76,8 @@ public class MyBatisTestDataFactory {
                 3,
                 LocalDate.of(2024, 7, 15),
                 LocalDate.of(2024, 7, 20),
-                LocalDate.of(2025, 7, 20)
+                LocalDate.of(2025, 7, 20),
+                null
             ),
             new StudentCourse(
                 scId2,
@@ -84,7 +86,8 @@ public class MyBatisTestDataFactory {
                 3,
                 LocalDate.of(2024, 9, 18),
                 LocalDate.of(2024, 9, 23),
-                LocalDate.of(2025, 3, 23)
+                LocalDate.of(2025, 3, 23),
+                null
             )
         )
     );
@@ -116,7 +119,8 @@ public class MyBatisTestDataFactory {
             3,
             LocalDate.of(2024, 8, 7),
             LocalDate.of(2024, 8, 12),
-            LocalDate.of(2025, 2, 12)
+            LocalDate.of(2025, 2, 12),
+            null
         ))
     );
   }
@@ -149,7 +153,8 @@ public class MyBatisTestDataFactory {
                 3,
                 LocalDate.of(2024, 8, 25),
                 LocalDate.of(2024, 8, 30),
-                LocalDate.of(2025, 8, 30)
+                LocalDate.of(2025, 8, 30),
+                null
             ),
             new StudentCourse(
                 scId2,
@@ -158,7 +163,8 @@ public class MyBatisTestDataFactory {
                 3,
                 LocalDate.of(2024, 7, 15),
                 LocalDate.of(2024, 7, 20),
-                LocalDate.of(2025, 7, 20)
+                LocalDate.of(2025, 7, 20),
+                null
             )
         )
     );
@@ -189,7 +195,8 @@ public class MyBatisTestDataFactory {
             3,
             LocalDate.of(2024, 9, 4),
             LocalDate.of(2024, 9, 9),
-            LocalDate.of(2025, 3, 9)
+            LocalDate.of(2025, 3, 9),
+            null
         ))
     );
   }

@@ -127,6 +127,7 @@ public class StudentService {
         studentCourse.getStatusId(),
         null,
         null,
+        null,
         null
     );
 
@@ -163,6 +164,7 @@ public class StudentService {
         studentCourse.getCourseCode(),
         1,//登録時は仮登録
         now,// 登録時は受講申込日のみセット
+        null,
         null,
         null
     );

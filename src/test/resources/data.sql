@@ -32,24 +32,24 @@ INSERT INTO status_transition_master VALUES (2,5);
 INSERT INTO status_transition_master VALUES (3,4);
 INSERT INTO status_transition_master VALUES (3,5);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('JA',1,3,'2024-07-10','2024-07-15','2025-04-15');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('JA',1,3,'2024-07-10','2024-07-15','2025-04-15',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('AW',2,3,'2024-07-15','2024-07-20','2025-07-20');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('AW',2,3,'2024-07-15','2024-07-20','2025-07-20',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('DE',3,3,'2024-08-07','2024-08-12','2025-02-12');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('DE',3,3,'2024-08-07','2024-08-12','2025-02-12',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('WM',4,3,'2024-08-25','2024-08-30','2025-08-30');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('WM',4,3,'2024-08-25','2024-08-30','2025-08-30',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('FR',5,3,'2024-09-04','2024-09-09','2025-03-09');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('FR',5,3,'2024-09-04','2024-09-09','2025-03-09',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('JA',2,3,'2024-09-18','2024-09-23','2025-03-23');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('JA',2,3,'2024-09-18','2024-09-23','2025-03-23',null);
 
-INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_end_at)
-VALUES ('DE',4,3,'2024-07-15','2024-07-20','2025-07-20');
+INSERT INTO student_courses(course_code, student_id, status_id, course_apply_at, course_start_at, course_planned_end_at, course_finished_at)
+VALUES ('DE',4,3,'2024-07-15','2024-07-20','2025-07-20',null);
 

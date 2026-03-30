@@ -47,7 +47,8 @@ class StudentCourseTest {
       "statusId,false",
       "courseApplyAt,false",
       "courseStartAt,false",
-      "courseEndAt,false"
+      "coursePlannedEndAt,false",
+      "courseFinishedAt,false"
   })
   void 登録時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
@@ -62,7 +63,9 @@ class StudentCourseTest {
         fieldName.equals("statusId") ? null : 1,
         fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
-        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+        fieldName.equals("coursePlannedEndAt") ? null : now.plusMonths(6),
+        fieldName.equals("courseFinishedAt") ? null : now.plusMonths(6)
+
     );
 
     stubCourseCodeExistsIfNeeded(courseCode);
@@ -85,7 +88,7 @@ class StudentCourseTest {
     Integer studentId = null;
     Integer scId = null;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        scId, studentId, "存在しないコース",null,null, null, null
+        scId, studentId, "存在しないコース",null,null, null, null,null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
@@ -119,7 +122,8 @@ class StudentCourseTest {
       "statusId,true",
       "courseApplyAt,false",
       "courseStartAt,false",
-      "courseEndAt,false"
+      "coursePlannedEndAt,false",
+      "courseFinishedAt,false"
   })
   void 更新時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
@@ -133,7 +137,8 @@ class StudentCourseTest {
         fieldName.equals("statusId") ? null : 1,
         fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
-        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+        fieldName.equals("coursePlannedEndAt") ? null : now.plusMonths(6),
+        fieldName.equals("courseFinishedAt") ? null : now.plusMonths(6)
     );
 
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(studentCourse,
@@ -182,6 +187,7 @@ class StudentCourseTest {
         statusId,
         null,
         null,
+        null,
         null
     );
     // Act
@@ -203,7 +209,7 @@ class StudentCourseTest {
   void 更新時_StudentCourseの各のフィールドが妥当な値を持つときバリデーション違反が起きない(){
     Integer studentId = null;
     Integer scId = 1;
-    StudentCourse validStudentCourse = new StudentCourse(1,null,null,2,null,null,null);
+    StudentCourse validStudentCourse = new StudentCourse(1,null,null,2,null,null,null,null);
 
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
         UpdateGroup.class);

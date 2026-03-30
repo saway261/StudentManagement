@@ -131,9 +131,9 @@ class StudentServiceTest {
 
     Student student = TestDataFactory.makeCompletedStudent(studentId);
     StudentCourse rawCourse1 =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null,null);
     StudentCourse rawCourse2 =
-        new StudentCourse(null, null, "PY", null, null, null, null);
+        new StudentCourse(null, null, "PY", null, null, null, null,null);
 
     List<StudentCourse> rawCourseList = List.of(rawCourse1, rawCourse2);
     StudentDetail input = new StudentDetail(student, rawCourseList);
@@ -158,14 +158,14 @@ class StudentServiceTest {
     Assertions.assertEquals(1, registeredCourses.get(0).getStatusId());
     Assertions.assertEquals(today, registeredCourses.get(0).getCourseApplyAt());
     Assertions.assertNull(registeredCourses.get(0).getCourseStartAt());
-    Assertions.assertNull(registeredCourses.get(0).getCourseEndAt());
+    Assertions.assertNull(registeredCourses.get(0).getCoursePlannedEndAt());
 
     Assertions.assertEquals(studentId, registeredCourses.get(1).getStudentId());
     Assertions.assertEquals("PY", registeredCourses.get(1).getCourseCode());
     Assertions.assertEquals(1, registeredCourses.get(1).getStatusId());
     Assertions.assertEquals(today, registeredCourses.get(1).getCourseApplyAt());
     Assertions.assertNull(registeredCourses.get(1).getCourseStartAt());
-    Assertions.assertNull(registeredCourses.get(1).getCourseEndAt());
+    Assertions.assertNull(registeredCourses.get(1).getCoursePlannedEndAt());
 
     Assertions.assertEquals(student, result.getStudent());
     Assertions.assertEquals(registeredCourses, result.getStudentCourses());
@@ -180,7 +180,7 @@ class StudentServiceTest {
     // Arrange
     Student student = TestDataFactory.makeCompletedStudent(1);
     StudentCourse rawCourse =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null,null);
     StudentDetail input = new StudentDetail(student, List.of(rawCourse));
 
     doThrow(new RuntimeException("DB error"))
@@ -203,9 +203,9 @@ class StudentServiceTest {
     // Arrange
     Student student = TestDataFactory.makeCompletedStudent(1);
     StudentCourse course1 =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null,null);
     StudentCourse course2 =
-        new StudentCourse(null, null, "PY", null, null, null, null);
+        new StudentCourse(null, null, "PY", null, null, null, null,null);
 
     StudentDetail input = new StudentDetail(student, List.of(course1, course2));
 
@@ -229,7 +229,7 @@ class StudentServiceTest {
     // Arrange
     Integer studentId = 1;
     StudentCourse rawCourse =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null,null);
     LocalDate today = LocalDate.now();
     Mockito.when(studentRepository.existsActiveStudentById(studentId)).thenReturn(true);
 
@@ -246,7 +246,7 @@ class StudentServiceTest {
     Assertions.assertEquals(1, registered.getStatusId()); // statusIdに1をセットされている
     Assertions.assertEquals(today, registered.getCourseApplyAt()); // courseApplyAtに今日の日付をセットされている
     Assertions.assertNull(registered.getCourseStartAt()); // courseStarAtがnullになっている
-    Assertions.assertNull(registered.getCourseEndAt()); // courseEndAtがnullになっている
+    Assertions.assertNull(registered.getCoursePlannedEndAt()); // courseEndAtがnullになっている
 
     Assertions.assertEquals(registered, result);
   }
@@ -259,7 +259,7 @@ class StudentServiceTest {
     // Arrange
     Integer studentId = 1;
     StudentCourse rawCourse =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null, null);
 
     when(studentRepository.existsActiveStudentById(studentId)).thenReturn(true);
     doThrow(new RuntimeException("DB error"))
@@ -278,7 +278,7 @@ class StudentServiceTest {
     // Arrange
     Integer studentId = 999;
     StudentCourse rawCourse =
-        new StudentCourse(null, null, "JA", null, null, null, null);
+        new StudentCourse(null, null, "JA", null, null, null, null,null);
 
     when(studentRepository.existsActiveStudentById(studentId)).thenReturn(false);
 

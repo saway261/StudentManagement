@@ -166,7 +166,8 @@ class StudentRepositoryTest {
     assertThat(afterRegister.getCourseApplyAt()).isEqualTo(beforeRegister.getCourseApplyAt());
     // 受講開始日と受講終了日がnullであること
     assertThat(afterRegister.getCourseStartAt()).isNull();
-    assertThat(afterRegister.getCourseEndAt()).isNull();
+    assertThat(afterRegister.getCoursePlannedEndAt()).isNull();
+    assertThat(afterRegister.getCourseFinishedAt()).isNull();
   }
 
   @Test
@@ -174,7 +175,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     LocalDate today = LocalDate.now();
     StudentCourse studentCourse = new StudentCourse(
-        null, studentId, null,1,today, null, null
+        null, studentId, null,1,today, null, null,null
     );
 
     assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
@@ -185,7 +186,7 @@ class StudentRepositoryTest {
   void 受講申込日がnullの受講生コースを登録しようとすると例外が発生すること() {
     Integer studentId = 1;
     StudentCourse studentCourse = new StudentCourse(
-        null, studentId, "JA", 1, null, null, null
+        null, studentId, "JA", 1, null, null, null,null
     );
 
     assertThatThrownBy(() -> sut.registerStudentCourse(studentCourse))
@@ -209,7 +210,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     LocalDate today = LocalDate.now();
     StudentCourse studentCourse = new StudentCourse(
-        null,studentId,"NOT",1,today,null,null
+        null,studentId,"NOT",1,today,null,null,null
     );
 
     // Act & Assert
@@ -223,7 +224,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     LocalDate today = LocalDate.now();
     StudentCourse studentCourse = new StudentCourse(
-        null,studentId,"JA",999,today,null,null
+        null,studentId,"JA",999,today,null,null,null
     );
 
     // Act & Assert
@@ -269,7 +270,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コースのステータス更新を行うことができコースコードと受講申込日と受講開始日と受講終了予定日の更新はできないこと() {
+  void 受講生コースのステータス更新を行うことができコースコードと受講申込日と受講開始日と受講終了予定日と受講終了実績日の更新はできないこと() {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse original = new StudentCourse(
@@ -279,7 +280,8 @@ class StudentRepositoryTest {
         3,
         LocalDate.of(2024, 7, 10),
         LocalDate.of(2024, 7, 15),
-        LocalDate.of(2025, 4, 15)
+        LocalDate.of(2025, 4, 15),
+        null
     );
 
     StudentCourse forUpdate = new StudentCourse(
@@ -289,7 +291,8 @@ class StudentRepositoryTest {
         4,
         LocalDate.of(2023, 10, 10),
         LocalDate.of(2023, 10, 15),
-        LocalDate.of(2025, 12, 15)
+        LocalDate.of(2025, 12, 15),
+        LocalDate.of(2025, 12, 10)
     );
 
     // Act
@@ -307,7 +310,8 @@ class StudentRepositoryTest {
     assertThat(actual.getStatusId()).isEqualTo(forUpdate.getStatusId());
     assertThat(actual.getCourseApplyAt()).isEqualTo(original.getCourseApplyAt());
     assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
-    assertThat(actual.getCourseEndAt()).isEqualTo(original.getCourseEndAt());
+    assertThat(actual.getCoursePlannedEndAt()).isEqualTo(original.getCoursePlannedEndAt());
+    assertThat(actual.getCourseFinishedAt()).isEqualTo(original.getCourseFinishedAt());
     assertThat(updated).isEqualTo(1);
 
   }
@@ -339,7 +343,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse studentCourse =
-        new StudentCourse(scId,studentId,null,null,null,null,null);
+        new StudentCourse(scId,studentId,null,null,null,null,null,null);
     Integer actual = sut.findStatusId(studentCourse);
 
     assertThat(actual).isEqualTo(3);
@@ -351,7 +355,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     Integer scId = 2;
     StudentCourse studentCourse =
-        new StudentCourse(scId,studentId,null,null,null,null,null);
+        new StudentCourse(scId,studentId,null,null,null,null,null,null);
     Integer actual = sut.findStatusId(studentCourse);
 
     assertThat(actual).isNull();
@@ -362,7 +366,7 @@ class StudentRepositoryTest {
     Integer studentId = 1;
     Integer scId = 999;
     StudentCourse studentCourse =
-        new StudentCourse(scId,studentId,null,null,null,null,null);
+        new StudentCourse(scId,studentId,null,null,null,null,null,null);
     Integer actual = sut.findStatusId(studentCourse);
 
 
