@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raisetech.student.management.data.Student;
@@ -270,7 +272,8 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生コースのステータス更新を行うことができコースコードと受講申込日と受講開始日と受講終了予定日と受講終了実績日の更新はできないこと() {
+  void 受講生コース更新成功_ステータス更新を行うことができコースコードと受講申込日の更新はできないこと() {
+    // data.sql存在するそのままのデータ
     Integer studentId = 1;
     Integer scId = 1;
     StudentCourse original = new StudentCourse(
@@ -301,23 +304,65 @@ class StudentRepositoryTest {
     StudentCourse actual = sut.searchStudentCourses(studentId).stream()
         .filter(sc -> sc.getStudentCourseId().equals(scId))
         .findFirst()
-        .orElseThrow(() -> new AssertionError(
-            "指定された courseCode の StudentCourse が見つかりませんでした"));
+        .orElseThrow();
 
     // Assert
-    assertThat(actual.getStudentId()).isEqualTo(original.getStudentId());
+    assertThat(updated).isEqualTo(1);
     assertThat(actual.getCourseCode()).isEqualTo(original.getCourseCode());
     assertThat(actual.getStatusId()).isEqualTo(forUpdate.getStatusId());
     assertThat(actual.getCourseApplyAt()).isEqualTo(original.getCourseApplyAt());
-    assertThat(actual.getCourseStartAt()).isEqualTo(original.getCourseStartAt());
-    assertThat(actual.getCoursePlannedEndAt()).isEqualTo(original.getCoursePlannedEndAt());
-    assertThat(actual.getCourseFinishedAt()).isEqualTo(original.getCourseFinishedAt());
-    assertThat(updated).isEqualTo(1);
 
   }
 
+  @ParameterizedTest(name = "[{index}] {0}がnullでその他の日付フィールドはnullでない場合、{0}は更新されずそれ以外は更新されること(※courseApplyAtは除く)")
+  @ValueSource(strings = {"courseStartAt","coursePlannedEndAt","courseFinishedAt"})
+  void 受講生コース更新成功_受講開始日と受講終了予定日と受講終了実績日はnullでない場合のみ更新できること(String fieldName){
+    // data.sql存在するそのままのデータ
+    Integer studentId = 1;
+    Integer scId = 1;
+    StudentCourse original = new StudentCourse(
+        scId,
+        studentId,
+        "JA",
+        3,
+        LocalDate.of(2024, 7, 10),
+        LocalDate.of(2024, 7, 15),
+        LocalDate.of(2025, 4, 15),
+        null
+    );
+
+    StudentCourse forUpdate = new StudentCourse(
+        scId,
+        studentId,
+        "JA",
+        3,
+        LocalDate.of(2024, 7, 10),
+        fieldName.equals("courseStartAt") ? null : LocalDate.of(2023, 10, 15),
+        fieldName.equals("coursePlannedEndAt") ? null : LocalDate.of(2025, 12, 15),
+        fieldName.equals("courseFinishedAt") ? null :LocalDate.of(2025, 12, 10)
+    );
+
+    // Act
+    Integer updated = sut.updateStudentCourseStatus(forUpdate);
+
+    StudentCourse actual = sut.searchStudentCourses(studentId).stream()
+        .filter(sc -> sc.getStudentCourseId().equals(scId))
+        .findFirst()
+        .orElseThrow();
+
+    // Assert
+    assertThat(updated).isEqualTo(1);
+    assertThat(actual.getCourseStartAt()).isEqualTo(
+        fieldName.equals("courseStartAt") ? original.getCourseStartAt() : forUpdate.getCourseStartAt());
+    assertThat(actual.getCoursePlannedEndAt()).isEqualTo(
+        fieldName.equals("coursePlannedEndAt") ? original.getCoursePlannedEndAt() : forUpdate.getCoursePlannedEndAt());
+    assertThat(actual.getCourseFinishedAt()).isEqualTo(
+        fieldName.equals("courseFinishedAt") ? original.getCourseFinishedAt() : forUpdate.getCourseFinishedAt());
+  }
+
+
   @Test
-  void 存在する受講生コースIDを更新しようとしても受講生IDが紐づかなければ更新件数が0件であること() {
+  void 受講生コース更新失敗_存在する受講生コースIDと異なる受講生IDの組み合わせでは更新件数が0件であること() {
     int scId = 1;
     int studentId = 99;
     StudentCourse course = TestDataFactory.makeCompletedStudentCourse(studentId, scId);
@@ -328,7 +373,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 存在しない受講生コースIDを更新しようとすると更新件数が0件であること() {
+  void 受講生コース更新失敗_存在しない受講生コースIDを更新しようとすると更新件数が0件であること() {
     int scId = 999;
     StudentCourse course = TestDataFactory.makeCompletedStudentCourse(1, scId);
 

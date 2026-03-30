@@ -15,6 +15,8 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -325,13 +327,31 @@ class StudentServiceTest {
   /**
    * updateStudentCourse(StudentCourse studentCourse,int studentId)の正常系テスト
    */
-  @Test
-  void 受講生コース更新成功_リポジトリの処理を呼び出していること(){
+  @ParameterizedTest(name = "[{index}] statusIdを{0}に更新するとき、受講開始日、受講終了日、受講終了実績日に適切な値をセットすること")
+  @CsvSource({
+      "1,true,true,true",//実際にはcanTransitionで通る組み合わせはない
+      "2,true,true,true",
+      "3,false,false,true",
+      "4,true,true,false",
+      "5,true,true,true"
+  })
+  void 受講生コース更新成功_リポジトリの処理を呼び出していること_ステータス遷移に合わせて適切に日付フィールドがセットされた受講生コースを渡していること(
+      int toStatusId, boolean isStartAtNull, boolean isPlannedEndAtNull, boolean isFinishedAtNull ){
     // Arrange
     Integer studentId = 1;
     Integer scId = 1;
-    StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
-    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(4);
+    LocalDate now = LocalDate.now();
+    StudentCourse studentCourse = new StudentCourse(
+        scId,
+        studentId,
+        null,
+        toStatusId,
+        null,
+        isStartAtNull ? null : now,
+        isPlannedEndAtNull ? null : now.plusYears(1),
+        isFinishedAtNull ? null : now
+    );
+    Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(1);//返り値はnullでなければ良い
     Mockito.when(statusRepository.canTransition(anyInt(),anyInt())).thenReturn(true);
     Mockito.when(studentRepository.updateStudentCourseStatus(any(StudentCourse.class))).thenReturn(1);
 
@@ -341,7 +361,19 @@ class StudentServiceTest {
     // Assert
     verify(studentRepository,times(1)).findStatusId(any(StudentCourse.class));
     verify(statusRepository,times(1)).canTransition(anyInt(),anyInt());
-    verify(studentRepository, times(1)).updateStudentCourseStatus(any(StudentCourse.class));
+    ArgumentCaptor<StudentCourse> captor = ArgumentCaptor.forClass(StudentCourse.class);
+    verify(studentRepository, times(1)).updateStudentCourseStatus(captor.capture());
+
+    StudentCourse updated = captor.getValue();
+    Assertions.assertEquals(studentId, updated.getStudentId());
+    Assertions.assertEquals(scId, updated.getStudentCourseId());
+    Assertions.assertNull(updated.getCourseCode());
+    Assertions.assertEquals(toStatusId, updated.getStatusId());
+    Assertions.assertNull(updated.getCourseApplyAt());
+    Assertions.assertEquals(isStartAtNull ? null : now, updated.getCourseStartAt());
+    Assertions.assertEquals(isPlannedEndAtNull ? null : now.plusYears(1), updated.getCoursePlannedEndAt());
+    Assertions.assertEquals(isFinishedAtNull ? null : now, updated.getCourseFinishedAt());
+
   }
 
   /**
@@ -370,7 +402,7 @@ class StudentServiceTest {
   @Test
   void 受講生コース更新失敗_ステータス遷移が不可能ならInvalidStatusTransitionExceptionを送出しリポジトリの更新処理を呼ばないこと(){
     // Arrange
-    Integer studentId = 99;
+    Integer studentId = 1;
     Integer scId = 1;
     StudentCourse studentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
     Mockito.when(studentRepository.findStatusId(any(StudentCourse.class))).thenReturn(1);
@@ -406,7 +438,5 @@ class StudentServiceTest {
     verify(statusRepository,times(1)).canTransition(anyInt(),anyInt());
     verify(studentRepository, times(1)).updateStudentCourseStatus(any(StudentCourse.class));
   }
-
-
 
 }

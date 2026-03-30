@@ -41,9 +41,20 @@
   <!-- 受講生コースステータス更新 -->
   <update id="updateStudentCourseStatus">
     UPDATE student_courses
-    SET status_id=#{statusId}
-    WHERE student_course_id=#{studentCourseId}
-      AND student_id=#{studentId}
+    <set>
+      status_id = #{statusId}
+      <if test="courseStartAt != null">
+        , course_start_at = #{courseStartAt}
+      </if>
+      <if test="coursePlannedEndAt != null">
+        , course_planned_end_at = #{coursePlannedEndAt}
+      </if>
+      <if test="courseFinishedAt != null">
+        , course_finished_at = #{courseFinishedAt}
+      </if>
+    </set>
+    WHERE student_course_id = #{studentCourseId}
+    AND student_id = #{studentId}
   </update>
 
   <!-- 受講生コースの現在ステータス取得 -->

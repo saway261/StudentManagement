@@ -112,27 +112,17 @@ public class StudentService {
    * 受講生コースの更新を行います。受講生コースIDと受講生IDで指定した受講生コースのステータスのみを更新できます。
    * @param studentCourse 受講生コース
    * @param studentId 受講生ID
-   * @return 引数で受け取った受講生コースに受講生IDだけセットしなおしたもの
+   * @return 引数で受け取った受講生コースに受講生IDと必要な日付情報をセットしなおしたもの
    */
   @Transactional
   public StudentCourse updateStudentCourse(StudentCourse studentCourse, int studentId){
     // 更新後のステータスID
     int toStatusId = studentCourse.getStatusId();
 
-    // SQLで扱わないフィールドはいったん明示的にnullとする
-    StudentCourse adjustedStudentCourse = new StudentCourse(
-        studentCourse.getStudentCourseId(),
-        studentId,
-        null,
-        studentCourse.getStatusId(),
-        null,
-        null,
-        null,
-        null
-    );
+    StudentCourse reflected = reflectStatusTransition(studentCourse,studentId);
 
     // 更新前（現在）のステータスID
-    Integer fromStatusId = studentRepository.findStatusId(adjustedStudentCourse);
+    Integer fromStatusId = studentRepository.findStatusId(reflected);
     if (fromStatusId == null) {
       throw new TargetNotFoundException("studentCourse", "受講生IDと受講生コースIDで指定できる受講生コースが存在しません");
     }
@@ -142,11 +132,11 @@ public class StudentService {
       throw new InvalidStatusTransitionException(fromStatusId,toStatusId);
     }
 
-    int updatedRows = studentRepository.updateStudentCourseStatus(adjustedStudentCourse);
+    int updatedRows = studentRepository.updateStudentCourseStatus(reflected);
     if (updatedRows == 0) {
       throw new TargetNotFoundException("studentCourse", "受講生IDと受講生コースIDで指定できる受講生コースが存在しません");
     }
-    return adjustedStudentCourse;
+    return reflected;
   }
 
   /**
@@ -167,6 +157,32 @@ public class StudentService {
         null,
         null,
         null
+    );
+  }
+
+  /**
+   * 受講生コースのステータス更新に付随して必要な日付情報をセットする。
+   * 「受講中」への遷移なら受講開始日に今日を、受講終了予定日に今日から一年後をセットする。
+   * 「受講終了」への遷移なら受講終了実績日に今日をセットする。
+   * 更新時にリポジトリ層で使用しないコースコードと受講申込日は明示的にnullをセットする。
+   * @param studentCourse 受講生コース
+   * @param studentId 受講生ID
+   * @return ステータス遷移に応じて日付情報をセットされた受講生コース
+   */
+  private StudentCourse reflectStatusTransition(StudentCourse studentCourse, Integer studentId){
+    LocalDate now = LocalDate.now();
+    Integer toStatusId = studentCourse.getStatusId();
+
+    // statusId==3は受講中、statusId==4は受講終了
+    return new StudentCourse(
+      studentCourse.getStudentCourseId(),
+        studentId,
+        null,
+        toStatusId,
+        null,
+        toStatusId == 3 ? now : null,
+        toStatusId == 3 ? now.plusYears(1) : null,
+        toStatusId == 4 ? now : null
     );
   }
 
