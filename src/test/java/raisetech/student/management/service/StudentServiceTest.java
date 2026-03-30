@@ -32,7 +32,7 @@ class StudentServiceTest {
   private StudentService sut;// System Under Test テスト対象システム
 
   /**
-   * serchStudentDetailList()のテスト
+   * searchStudentDetailList()のテスト
    */
   @Test
   void アクティブ受講生の一覧検索_リポジトリの処理を呼び出していること() {
