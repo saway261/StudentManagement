@@ -21,7 +21,7 @@ public class TestDataFactory {
 
   public static StudentCourse makeCompletedStudentCourse(Integer studentId, Integer scId) {
     LocalDate now = LocalDate.now();
-    return new StudentCourse(scId, studentId, "JA",  now, now.plusYears(1));
+    return new StudentCourse(scId, studentId, "JA", 3,now.minusDays(1), now, now.plusYears(1),null);
   }
 
   public static StudentDetail makeCompletedStudentDetail(Integer studentId, Integer scId) {

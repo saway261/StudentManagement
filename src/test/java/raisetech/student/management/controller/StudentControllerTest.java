@@ -1,6 +1,8 @@
 package raisetech.student.management.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -12,6 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.exception.handler.ErrorDetailsBuilder;
@@ -153,12 +157,11 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細更新成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
+  void 受講生更新成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
       throws Exception {
     // Arrange
-    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
-    Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
-        .thenReturn(TestDataFactory.makeCompletedStudentDetail(1, 1));
+    Mockito.when(service.updateStudent(any(Student.class)))
+        .thenReturn(TestDataFactory.makeCompletedStudent(1));
 
     // Act
     mockMvc.perform(MockMvcRequestBuilders.put("/students")
@@ -166,63 +169,44 @@ class StudentControllerTest {
             .content(
                 """
                 {
-                    "student": {
-                        "studentId": 1,
-                        "fullName": "山田太郎",
-                        "kanaName": "やまだたろう",
-                        "nickname": "タロー",
-                        "email": "taro@email.com",
-                        "area": "東京都練馬区",
-                        "telephone": "090-0000-0000",
-                        "age": 20,
-                        "sex": "男",
-                        "remark": "特になし",
-                        "isDeleted": false
-                    },
-                    "studentCourses": [
-                        {
-                            "studentCourseId": 1,
-                            "studentId": 1,
-                            "courseCode": "JA",
-                            "courseStartAt": "2025-04-01",
-                            "courseEndAt": "2025-10-01"
-                        }
-                    ]
+                    "studentId": 1,
+                    "fullName": "山田太郎",
+                    "kanaName": "やまだたろう",
+                    "nickname": "タロー",
+                    "email": "taro@email.com",
+                    "area": "東京都練馬区",
+                    "telephone": "090-0000-0000",
+                    "age": 20,
+                    "sex": "男",
+                    "remark": "特になし",
+                    "isDeleted": false
                 }
                 """
             ))
         .andExpect(status().isOk());
 
     // Assert
-    Mockito.verify(service, times(1)).updateStudentDetail(any(StudentDetail.class));
+    Mockito.verify(service, times(1)).updateStudent(any(Student.class));
   }
 
   @Test
-  void 受講生詳細更新失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+  void 受講生更新失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
       throws Exception {
     // Act
     mockMvc.perform(MockMvcRequestBuilders.put("/students")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(
-                """
-                {
-                    "student": {},
-                    "studentCourses": []
-                }
-                """
-            ))
+            .content("{}"))
         .andExpect(status().isBadRequest());
 
     // Assert
-    Mockito.verify(service, times(0)).updateStudentDetail(any(StudentDetail.class));
+    Mockito.verify(service, never()).updateStudent(any(Student.class));
   }
 
   @Test
-  void 受講生詳細更新失敗_存在しない受講生を更新しようとすると404エラーが返ること()
+  void 受講生更新失敗_存在しない受講生を更新しようとすると404エラーが返ること()
       throws Exception {
     // Arrange
-    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
-    Mockito.when(service.updateStudentDetail(any(StudentDetail.class)))
+    Mockito.when(service.updateStudent(any(Student.class)))
         .thenThrow(new TargetNotFoundException("Student.studentId", "更新対象のインスタンスが見つかりませんでした"));
 
     // Act
@@ -231,35 +215,152 @@ class StudentControllerTest {
             .content(
                 """
                 {
-                    "student": {
-                        "studentId": 99,
-                        "fullName": "山田太郎",
-                        "kanaName": "やまだたろう",
-                        "nickname": "タロー",
-                        "email": "taro@email.com",
-                        "area": "東京都練馬区",
-                        "telephone": "090-0000-0000",
-                        "age": 20,
-                        "sex": "男",
-                        "remark": "特になし",
-                        "isDeleted": false
-                    },
-                    "studentCourses": [
-                        {
-                            "studentCourseId": 99,
-                            "studentId": 99,
-                            "courseCode": "JA",
-                            "courseStartAt": "2025-04-01",
-                            "courseEndAt": "2025-10-01"
-                        }
-                    ]
+                    "studentId": 99,
+                    "fullName": "山田太郎",
+                    "kanaName": "やまだたろう",
+                    "nickname": "タロー",
+                    "email": "taro@email.com",
+                    "area": "東京都練馬区",
+                    "telephone": "090-0000-0000",
+                    "age": 20,
+                    "sex": "男",
+                    "remark": "特になし",
+                    "isDeleted": false
                 }
                 """
             ))
         .andExpect(status().isNotFound());
 
     // Assert
-    Mockito.verify(service, times(1)).updateStudentDetail(any(StudentDetail.class));
+    Mockito.verify(service, times(1)).updateStudent(any(Student.class));
+  }
+
+  @Test
+  void 受講生コース追加成功_妥当なリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
+    // Arrange
+    Integer studentId = 1;
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                     "courseCode": "JA"
+                }
+                """
+            ))
+        .andExpect(status().isCreated());
+
+    // Assert
+    Mockito.verify(service, times(1)).registerStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース追加失敗_登録されていない受講生IDを指定すると404が返ること() throws Exception {
+    // Arrange
+    Integer studentId = 99;
+    Mockito.when(courseRepository.existsByCourseCode("JA")).thenReturn(true);
+    Mockito.when(service.registerStudentCourse(any(StudentCourse.class),eq(studentId)))
+        .thenThrow(TargetNotFoundException.class);
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                     "courseCode": "JA"
+                }
+                """
+            ))
+        .andExpect(status().isNotFound());
+
+    // Assert
+    Mockito.verify(service, times(1)).registerStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース追加失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Arrange
+    Integer studentId = 1;
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/" + studentId + "/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).registerStudentCourse(any(),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース更新成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
+      throws Exception {
+    // Arrange
+    Integer studentId = 1;
+    Integer scId = 1;
+    Mockito.when(service.updateStudentCourse(any(StudentCourse.class),eq(studentId)))
+        .thenReturn(TestDataFactory.makeCompletedStudentCourse(studentId,scId));
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.put("/students/" + studentId +"/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """               
+                {
+                    "studentCourseId": 1,
+                    "statusId": 2
+                }
+                """
+            ))
+        .andExpect(status().isOk());
+
+    // Assert
+    Mockito.verify(service, times(1)).updateStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース更新失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Arrange
+    Integer studentId = 1;
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.put("/students/" + studentId +"/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).updateStudentCourse(any(StudentCourse.class),eq(studentId));
+  }
+
+  @Test
+  void 受講生コース更新失敗_登録されていない受講生IDを指定すると404が返ること() throws Exception {
+    // Arrange
+    Integer studentId = 99;
+    Mockito.when(service.updateStudentCourse(any(StudentCourse.class),eq(studentId)))
+        .thenThrow(TargetNotFoundException.class);
+
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.put("/students/" + studentId +"/courses")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """               
+                {
+                    "studentCourseId":1,
+                    "statusId": 2
+                }
+                """
+            ))
+        .andExpect(status().isNotFound());
+
+    // Assert
+    Mockito.verify(service, times(1)).updateStudentCourse(any(StudentCourse.class),eq(studentId));
+
   }
 
 }

@@ -44,8 +44,11 @@ class StudentCourseTest {
       "studentCourseId,false",
       "studentId,false",
       "courseCode,true",
+      "statusId,false",
+      "courseApplyAt,false",
       "courseStartAt,false",
-      "courseEndAt,false"
+      "coursePlannedEndAt,false",
+      "courseFinishedAt,false"
   })
   void 登録時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
@@ -57,8 +60,12 @@ class StudentCourseTest {
         fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
         courseCode,
+        fieldName.equals("statusId") ? null : 1,
+        fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
-        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+        fieldName.equals("coursePlannedEndAt") ? null : now.plusMonths(6),
+        fieldName.equals("courseFinishedAt") ? null : now.plusMonths(6)
+
     );
 
     stubCourseCodeExistsIfNeeded(courseCode);
@@ -81,7 +88,7 @@ class StudentCourseTest {
     Integer studentId = null;
     Integer scId = null;
     StudentCourse invalidStudentCourse = new StudentCourse(
-        scId, studentId, "存在しないコース", null, null
+        scId, studentId, "存在しないコース",null,null, null, null,null
     );
     Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
@@ -111,25 +118,29 @@ class StudentCourseTest {
   @CsvSource({// trueはNotNull, falseはnull許容
       "studentCourseId,true",
       "studentId,false",
-      "courseCode,true",
+      "courseCode,false",
+      "statusId,true",
+      "courseApplyAt,false",
       "courseStartAt,false",
-      "courseEndAt,false"
+      "coursePlannedEndAt,false",
+      "courseFinishedAt,false"
   })
   void 更新時_各フィールドのnull許容性のテスト(String fieldName,
       boolean expectViolation) {
     // Arrange
     LocalDate now = LocalDate.now();
-    String courseCode = fieldName.equals("courseCode") ? null : "JA";
 
     StudentCourse studentCourse = new StudentCourse(
         fieldName.equals("studentCourseId") ? null : 1,
         fieldName.equals("studentId") ? null : 1,
-        courseCode,
+        fieldName.equals("courseCode") ? null : "JA",
+        fieldName.equals("statusId") ? null : 1,
+        fieldName.equals("courseApplyAt") ? null : now.minusDays(1),
         fieldName.equals("courseStartAt") ? null : now,
-        fieldName.equals("courseEndAt") ? null : now.plusMonths(6)
+        fieldName.equals("coursePlannedEndAt") ? null : now.plusMonths(6),
+        fieldName.equals("courseFinishedAt") ? null : now.plusMonths(6)
     );
 
-    stubCourseCodeExistsIfNeeded(courseCode);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(studentCourse,
         UpdateGroup.class);
 
@@ -159,22 +170,38 @@ class StudentCourseTest {
         .anyMatch(v -> v.getPropertyPath().toString().equals("studentCourseId"))).isTrue();
   }
 
-  @Test
-  void 更新時_courseCodeがコースマスタに登録のない値を受け取ったときバリデーション違反が起きる(){
+  @ParameterizedTest(name = "[{index}] フィールド：statusIdが {0} を受け取ると violation={1}")
+  @CsvSource({
+      "0,true",
+      "1,false",
+      "5,false",
+      "6,true",
+  })
+  void 更新時_statusIdの数値の境界値テスト(int statusId, boolean expectViolation)
+      throws Exception {
     // Arrange
-    Integer studentId = 1;
-    Integer scId = 1;
-    StudentCourse invalidStudentCourse = new StudentCourse(
-        scId, studentId, "存在しないコース", null, null
+    StudentCourse studentCourse = new StudentCourse(
+        1,
+        1,
+        "JA",
+        statusId,
+        null,
+        null,
+        null,
+        null
     );
-    Mockito.when(courseRepository.existsByCourseCode("存在しないコース")).thenReturn(false);
-    Set<ConstraintViolation<StudentCourse>> violations = validator.validate(invalidStudentCourse,
-        UpdateGroup.class);
+    // Act
+    Set<ConstraintViolation<StudentCourse>> violations = validator.validate(
+        studentCourse, UpdateGroup.class);
 
     // Assert
-    assertThat(violations).isNotEmpty();
-    assertThat(violations.stream()
-        .anyMatch(v -> v.getPropertyPath().toString().equals("courseCode"))).isTrue();
+    if (expectViolation) {
+      assertThat(violations).isNotEmpty();
+      assertThat(violations.stream()
+          .anyMatch(v -> v.getPropertyPath().toString().equals("statusId"))).isTrue();
+    } else {
+      assertThat(violations).isEmpty();
+    }
 
   }
 
@@ -182,9 +209,8 @@ class StudentCourseTest {
   void 更新時_StudentCourseの各のフィールドが妥当な値を持つときバリデーション違反が起きない(){
     Integer studentId = null;
     Integer scId = 1;
-    StudentCourse validStudentCourse = TestDataFactory.makeCompletedStudentCourse(studentId,scId);
+    StudentCourse validStudentCourse = new StudentCourse(1,null,null,2,null,null,null,null);
 
-    Mockito.when(courseRepository.existsByCourseCode(Mockito.anyString())).thenReturn(true);
     Set<ConstraintViolation<StudentCourse>> violations = validator.validate(validStudentCourse,
         UpdateGroup.class);
 

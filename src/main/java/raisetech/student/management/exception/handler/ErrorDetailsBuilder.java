@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 
 @Component
@@ -81,6 +82,23 @@ public class ErrorDetailsBuilder {
 
     Map<String, String> error = new HashMap<>();
     error.put("field", ex.getField());
+    error.put("message", ex.getMessage());
+    errors.add(error);
+
+    return errors;
+  }
+
+  /**
+   * InvalidStatusTransitionExceptionを受け取り、エラーメッセージと遷移前、遷移後のステータスIDを返します。
+   *
+   * @param ex InvalidStatusTransitionException
+   * @return 遷移前と遷移後のステータスIDとエラーメッセージ
+   */
+  public List<Map<String, String>> buildErrorDetails(InvalidStatusTransitionException ex) {
+    List<Map<String, String>> errors = new ArrayList<>();
+
+    Map<String, String> error = new HashMap<>();
+    error.put("value", "遷移前: "+ ex.getFromStatusId() + " -> 遷移後: " + ex.getToStatusId());
     error.put("message", ex.getMessage());
     errors.add(error);
 

@@ -1,6 +1,8 @@
 package raisetech.student.management.data;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
@@ -28,14 +30,26 @@ public class StudentCourse {
   private Integer studentId;
 
   @Schema(description = "コースコード", example = "JA")
-  @NotNull(groups = {CreateGroup.class, UpdateGroup.class})
-  @CourseCodeExists(groups = {CreateGroup.class, UpdateGroup.class})
+  @NotNull(groups = CreateGroup.class)
+  @CourseCodeExists(groups = CreateGroup.class)
   private String courseCode;
 
-  @Schema(description = "受講開始日 プログラム側が値をセットするため常に入力不要", example = "2026/01/01")
+  @Schema(description = "ステータスID 申込状況を表す", example = "1")
+  @NotNull(groups = UpdateGroup.class)
+  @Min(value = 1,groups = UpdateGroup.class)
+  @Max(value = 5,groups = UpdateGroup.class)
+  private Integer statusId;
+
+  @Schema(description = "受講申込日 プログラム側が値をセットするため常に入力不要", example = "2026/01/01")
+  private LocalDate courseApplyAt;
+
+  @Schema(description = "受講開始日 プログラム側が値をセットするため常に入力不要", example = "2026/01/31")
   private LocalDate courseStartAt;
 
   @Schema(description = "受講終了予定日 プログラム側が値をセットするため常に入力不要", example = "2026/06/31")
-  private LocalDate courseEndAt;
+  private LocalDate coursePlannedEndAt;
+
+  @Schema(description = "受講終了実績日 プログラム側が値をセットするため常に入力不要", example = "2026/06/31")
+  private LocalDate courseFinishedAt;
 
 }

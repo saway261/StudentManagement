@@ -54,6 +54,20 @@ public interface StudentRepository {
    * 受講生コースの更新を行います。
    * @param studentCourse 受講生コース
    */
-  int updateStudentCourse(StudentCourse studentCourse);
+  int updateStudentCourseStatus(StudentCourse studentCourse);
+
+  /**
+   * 受講生コースIDと受講生IDで指定する受講生コースの現在のステータスを取得します。
+   * @param studentCourse
+   * @return 受講生コースが存在する場合はステータスID、存在しない場合はnull
+   */
+  Integer findStatusId(StudentCourse studentCourse);
+
+  /**
+   * 受講生IDがアクティブな受講生の中に存在するかのチェックを行います。
+   * @param studentId 受講生ID
+   * @return 存在するならtrue,存在しなければfalse
+   */
+  boolean existsActiveStudentById(int studentId);
 
 }

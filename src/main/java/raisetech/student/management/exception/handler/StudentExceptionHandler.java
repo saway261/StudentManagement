@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 
 @RestControllerAdvice
@@ -80,6 +81,22 @@ public class StudentExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
         "target not found", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+
+  }
+
+  /**
+   * 受講生コースの現在のステータスと更新後のステータスを照合して、許可された遷移でなかった場合にユーザに詳細を伝えます。
+   *
+   * @param ex InvalidStatusTransitionException
+   * @return HTTPステータス(BAD_REQUEST), エラー詳細
+   */
+  @ExceptionHandler(InvalidStatusTransitionException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidStatusTransitionException(
+      InvalidStatusTransitionException ex) {
+
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+        "invalid status transition", errorDetailsBuilder.buildErrorDetails(ex));
+    return ResponseEntity.badRequest().body(errorResponse);
 
   }
 }

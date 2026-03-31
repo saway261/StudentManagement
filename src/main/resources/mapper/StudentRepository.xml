@@ -27,8 +27,8 @@
 
   <!-- 受講生コース新規登録 -->
   <insert id="registerStudentCourse" useGeneratedKeys="true" keyProperty="studentCourseId">
-    INSERT INTO student_courses(student_id, course_code, course_start_at, course_end_at)
-    VALUES(#{studentId}, #{courseCode}, #{courseStartAt}, #{courseEndAt})
+    INSERT INTO student_courses(student_id, course_code, status_id, course_apply_at)
+    VALUES(#{studentId}, #{courseCode}, #{statusId}, #{courseApplyAt})
   </insert>
 
   <!-- 受講生更新 -->
@@ -38,10 +38,39 @@
     WHERE student_id=#{studentId}
   </update>
 
-  <!-- 受講生コース更新 -->
-  <update id="updateStudentCourse">
+  <!-- 受講生コースステータス更新 -->
+  <update id="updateStudentCourseStatus">
     UPDATE student_courses
-    SET course_code=#{courseCode}
-    WHERE student_course_id=#{studentCourseId}
+    <set>
+      status_id = #{statusId}
+      <if test="courseStartAt != null">
+        , course_start_at = #{courseStartAt}
+      </if>
+      <if test="coursePlannedEndAt != null">
+        , course_planned_end_at = #{coursePlannedEndAt}
+      </if>
+      <if test="courseFinishedAt != null">
+        , course_finished_at = #{courseFinishedAt}
+      </if>
+    </set>
+    WHERE student_course_id = #{studentCourseId}
+    AND student_id = #{studentId}
   </update>
+
+  <!-- 受講生コースの現在ステータス取得 -->
+  <select id="findStatusId" resultType="Integer">
+    SELECT status_id
+    FROM student_courses
+    WHERE student_course_id=#{studentCourseId}
+    AND student_id=#{studentId}
+  </select>
+
+  <!-- 受講生ID存在チェック（アクティブに限る） -->
+  <select id="existsActiveStudentById" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM students
+    WHERE student_id=#{studentId}
+      AND is_deleted=false
+  </select>
+
 </mapper>

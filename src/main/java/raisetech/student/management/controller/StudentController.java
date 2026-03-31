@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.handler.ErrorResponse;
 import raisetech.student.management.service.StudentService;
@@ -124,21 +126,21 @@ public class StudentController {
   }
 
   @Operation(
-      summary = "受講生詳細更新",
-      description = "受講生詳細の更新を行います。キャンセルフラグの更新(アクティブ⇔非アクティブ)もここで行います。受講生IDが登録されていない、または受講生コースIDがひとつでも受講生IDと紐づかない場合はエラーを返します。",
+      summary = "受講生更新",
+      description = "受講生の更新を行います。キャンセルフラグの更新(アクティブ⇔非アクティブ)もここで行います。受講生IDが登録されていない場合はエラーを返します。",
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "更新したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = Student.class)
           )
       ),
       responses = {
           @ApiResponse(
-              responseCode = "200", description = "ok",
+              responseCode = "200", description = "更新成功",
               content = @Content(
                   mediaType = "application/json",
-                  schema = @Schema(implementation = StudentDetail.class)
+                  schema = @Schema(implementation = Student.class)
               )
           ),
           @ApiResponse(
@@ -148,7 +150,7 @@ public class StudentController {
                   schema = @Schema(implementation = ErrorResponse.class))
           ),
           @ApiResponse(
-              responseCode = "404", description = "指定された受講生IDが存在しないか、受講生コースIDが受講生IDに紐づかないときのエラー",
+              responseCode = "404", description = "指定された受講生IDが存在しないときのエラー",
               content = @Content(
                   mediaType = "application/json",
                   schema = @Schema(implementation = ErrorResponse.class))
@@ -156,9 +158,99 @@ public class StudentController {
       }
   )
   @PutMapping("/students")
-  public ResponseEntity<StudentDetail> updateStudent(@RequestBody @Validated(UpdateGroup.class) StudentDetail studentDetail){
-    StudentDetail responseStudentDetail = service.updateStudentDetail(studentDetail);
-    return ResponseEntity.ok(responseStudentDetail);
+  public ResponseEntity<Student> updateStudent(@RequestBody @Validated(UpdateGroup.class) Student request){
+    Student response = service.updateStudent(request);
+    return ResponseEntity.ok(response);
+  }
+
+  @Operation(
+      summary = "受講生コース追加",
+      description = "登録済みの受講生の受講コースを追加します",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "新規に追加したい受講生コース情報",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentCourse.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "201", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentCourse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          ),
+          @ApiResponse(
+              responseCode = "404", description = "指定された受講生IDが存在しないときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          )
+      }
+  )
+  @PostMapping("/students/{studentId}/courses")
+  public ResponseEntity<StudentCourse> addStudentCourse(
+      @PathVariable @Positive int studentId,
+      @RequestBody @Validated(CreateGroup.class) StudentCourse request
+  ){
+    StudentCourse response = service.registerStudentCourse(request,studentId);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
+
+  @Operation(
+      summary = "受講生コース更新",
+      description = "受講生コース更新を行います。ステータスのみを更新します",
+      parameters = {
+          @Parameter(in = ParameterIn.PATH,
+              name = "studentId", required = true,
+              description = "受講生ID",
+              schema = @Schema(
+                  type = "integer",
+                  format = "int32"
+              )
+          )},
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "更新したい受講生コース情報",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentCourse.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "更新成功",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentCourse.class)
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400", description = "入力値のバリデーションエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          ),
+          @ApiResponse(
+              responseCode = "404", description = "指定された受講生コースIDが存在しないか、受講生IDと紐づかないときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class))
+          )
+      }
+  )
+  @PutMapping("/students/{studentId}/courses")
+  public ResponseEntity<StudentCourse> updateStudentCourse(
+      @PathVariable @Positive int studentId,
+      @RequestBody @Validated(UpdateGroup.class) StudentCourse request){
+    StudentCourse response = service.updateStudentCourse(request,studentId);
+    return ResponseEntity.ok(response);
   }
 
 }
