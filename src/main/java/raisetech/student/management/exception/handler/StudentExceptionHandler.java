@@ -91,11 +91,11 @@ public class StudentExceptionHandler {
    * @return HTTPステータス(BAD_REQUEST), エラー詳細
    */
   @ExceptionHandler(InvalidStatusTransitionException.class)
-  public ResponseEntity<ErrorResponse> handleUpdateInvalidStatusTransitionException(
+  public ResponseEntity<ErrorResponse> handleInvalidStatusTransitionException(
       InvalidStatusTransitionException ex) {
 
-    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND,
-        "target not found", errorDetailsBuilder.buildErrorDetails(ex));
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+        "invalid status transition", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
 
   }
