@@ -63,7 +63,7 @@ class StudentServiceTest {
     List<StudentCourse> studentCourses2 = studentDetail2.getStudentCourses();
 
     // スタブ
-    Mockito.when(studentRepository.searchActiveStudentIdList()).thenReturn(studentIdList);
+    Mockito.when(studentRepository.searchStudentIdList()).thenReturn(studentIdList);
     Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
     Mockito.when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
     Mockito.when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentCourses1);
@@ -73,7 +73,7 @@ class StudentServiceTest {
     List<StudentDetail> actual = sut.searchStudentDetailList();
 
     // Assert
-    verify(studentRepository, times(1)).searchActiveStudentIdList();
+    verify(studentRepository, times(1)).searchStudentIdList();
     verify(studentRepository, times(studentIdList.size())).searchStudent(Mockito.anyInt());
     verify(studentRepository, times(studentIdList.size())).searchStudentCourses(Mockito.anyInt());
     Assertions.assertEquals(expected, actual);

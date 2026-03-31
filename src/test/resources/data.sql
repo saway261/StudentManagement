@@ -11,7 +11,7 @@ INSERT INTO students(full_name, kana_name, nickname, email, area, telephone, age
 VALUES ('鈴木佑一','すずきゆういち','Yuu','yuyuyu@gmail.com','福島県会津若松市','080-1344-5678',21,'男','',false);
 
 INSERT INTO students(full_name, kana_name, nickname, email, area, telephone, age,  sex, remark, is_deleted)
-VALUES ('服部次郎','はっとりじろう','ハットリくん','ninja@gmail.com','滋賀県甲賀市','080-1347-0678',33,'その他','',false);
+VALUES ('服部次郎','はっとりじろう','ハットリくん','ninja@gmail.com','滋賀県甲賀市','080-1347-0678',33,'その他','',true);
 
 INSERT INTO course_master VALUES ('JA','Javaコース');
 INSERT INTO course_master VALUES ('AW','AWSコース');

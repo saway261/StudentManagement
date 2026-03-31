@@ -22,10 +22,10 @@ class StudentRepositoryTest {
   private StudentRepository sut;
 
   @Test
-  void アクティブな受講生IDの全件検索が行えること() {
+  void 受講生IDの全件検索が行えること() {
     List<Integer> expected = List.of(1,2,3,4,5);
 
-    List<Integer> actual = sut.searchActiveStudentIdList();
+    List<Integer> actual = sut.searchStudentIdList();
 
     assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
   }
@@ -81,7 +81,7 @@ class StudentRepositoryTest {
     List<Student> expected = new ArrayList<>(existing);
     expected.add(beforeRegister);
 
-    List<Student> actual = sut.searchActiveStudentIdList().stream()
+    List<Student> actual = sut.searchStudentIdList().stream()
         .map(sut::searchStudent)
         .toList();
 

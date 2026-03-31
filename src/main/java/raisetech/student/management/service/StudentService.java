@@ -34,11 +34,11 @@ public class StudentService {
   }
 
   /**
-   * アクティブな受講生詳細の一覧検索を行います。
+   * 受講生詳細の一覧検索を行います。
    * @return 受講生詳細の一覧
    */
   public List<StudentDetail> searchStudentDetailList(){
-    List<Integer> studentIdList = studentRepository.searchActiveStudentIdList();
+    List<Integer> studentIdList = studentRepository.searchStudentIdList();
 
     return studentIdList.stream()
         .map(studentId -> buildStudentDetail(studentId))
@@ -46,7 +46,7 @@ public class StudentService {
   }
 
   /**
-   * アクティブかどうかを問わず受講生IDに紐づく受講生詳細を検索します。
+   * 受講生IDに紐づく受講生詳細を検索します。
    * @param studentId 受講生ID
    * @return 受講生詳細
    */

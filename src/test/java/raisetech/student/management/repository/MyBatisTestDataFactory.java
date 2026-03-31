@@ -187,7 +187,7 @@ public class MyBatisTestDataFactory {
             33,
             "その他",
             "",
-            false),
+            true),
         List.of(new StudentCourse(
             scId,
             5,
