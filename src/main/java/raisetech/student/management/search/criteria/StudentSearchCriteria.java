@@ -35,6 +35,24 @@ public class StudentSearchCriteria {
   /** ニックネーム LIKE検索用*/
   private String nicknameLike;
 
+  /** Email 完全一致 */
+  private String emailEq;
+
+  /** Email LIKE検索用*/
+  private String emailLike;
+
+  /** 地域 完全一致 */
+  private String areaEq;
+
+  /** 地域 LIKE検索用*/
+  private String areaLike;
+
+  /** 電話番号 完全一致 */
+  private String telephoneEq;
+
+  /** 電話番号 LIKE検索用*/
+  private String telephoneLike;
+
   /** 年齢 完全一致 */
   private Integer ageEq;
 
@@ -43,6 +61,18 @@ public class StudentSearchCriteria {
 
   /** 年齢 上限 */
   private Integer ageMax;
+
+  /** 性別 完全一致 */
+  private String sexEq;
+
+  /** 性別 IN */
+  private List<String> sexIn;
+
+  /** 備考 完全一致 */
+  private String remarkEq;
+
+  /** 備考 LIKE検索用*/
+  private String remarkLike;
 
   /** 削除フラグ */
   private Boolean isDeleted;
@@ -142,6 +172,48 @@ public class StudentSearchCriteria {
     this.nicknameLike = nicknameLike;
   }
 
+  private void setEmailEq(String emailEq) {
+    if(this.emailEq != null){
+      throw new IllegalStateException("emailEq は既に設定されています。重複指定はできません。");
+    }
+    this.emailEq = emailEq;
+  }
+
+  private void setEmailLike(String emailLike) {
+    if(this.emailLike != null){
+      throw new IllegalStateException("emailLike は既に設定されています。重複指定はできません。");
+    }
+    this.emailLike = emailLike;
+  }
+
+  private void setAreaEq(String areaEq) {
+    if(this.areaEq != null){
+      throw new IllegalStateException("areaEq は既に設定されています。重複指定はできません。");
+    }
+    this.areaEq = areaEq;
+  }
+
+  private void setAreaLike(String areaLike) {
+    if(this.areaLike != null){
+      throw new IllegalStateException("areaLike は既に設定されています。重複指定はできません。");
+    }
+    this.areaLike = areaLike;
+  }
+
+  private void setTelephoneEq(String telephoneEq) {
+    if(this.telephoneEq != null){
+      throw new IllegalStateException("telephoneEq は既に設定されています。重複指定はできません。");
+    }
+    this.telephoneEq = telephoneEq;
+  }
+
+  private void setTelephoneLike(String telephoneLike) {
+    if(this.telephoneLike != null){
+      throw new IllegalStateException("telephoneLike は既に設定されています。重複指定はできません。");
+    }
+    this.telephoneLike = telephoneLike;
+  }
+
   private void setAgeEq(Integer ageEq) {
     if(this.ageEq != null){
       throw new IllegalStateException("ageEq は既に設定されています。重複指定はできません。");
@@ -161,6 +233,34 @@ public class StudentSearchCriteria {
       throw new IllegalStateException("ageMax は既に設定されています。重複指定はできません。");
     }
     this.ageMax = ageMax;
+  }
+
+  private void setSexEq(String sexEq) {
+    if(this.sexEq != null){
+      throw new IllegalStateException("sexEq は既に設定されています。重複指定はできません。");
+    }
+    this.sexEq = sexEq;
+  }
+
+  private void setSexIn(List<String> sexIn) {
+    if(this.sexIn != null){
+      throw new IllegalStateException("sexIn は既に設定されています。重複指定はできません。");
+    }
+    this.sexIn = sexIn;
+  }
+
+  private void setRemarkEq(String remarkEq) {
+    if(this.remarkEq != null){
+      throw new IllegalStateException("remarkEq は既に設定されています。重複指定はできません。");
+    }
+    this.remarkEq = remarkEq;
+  }
+
+  private void setRemarkLike(String remarkLike) {
+    if(this.remarkLike != null){
+      throw new IllegalStateException("remarkLike は既に設定されています。重複指定はできません。");
+    }
+    this.remarkLike = remarkLike;
   }
 
   private void setDeleted(Boolean deleted) {
@@ -362,6 +462,79 @@ public class StudentSearchCriteria {
     }
   }
 
+  public void applyEmailFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setEmailEq(text);
+      }
+      case STARTS_WITH -> {
+        setEmailLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setEmailLike("%" + text);
+      }
+      case CONTAINS -> {
+        setEmailLike("%" + text + "%");
+      }
+      default -> throw new IllegalArgumentException("email に指定できない operator です: " + operator);
+    }
+
+    if (this.getEmailEq() != null && this.getEmailLike() != null) {
+      throw new IllegalStateException("email EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+    }
+  }
+
+  public void applyAreaFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setAreaEq(text);
+      }
+      case STARTS_WITH -> {
+        setAreaLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setAreaLike("%" + text);
+      }
+      case CONTAINS -> {
+        setAreaLike("%" + text + "%");
+      }
+      default -> throw new IllegalArgumentException("area に指定できない operator です: " + operator);
+    }
+
+    if (this.getAreaEq() != null && this.getAreaLike() != null) {
+      throw new IllegalStateException("area EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+    }
+  }
+
+  public void applyTelephoneFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setTelephoneEq(text);
+      }
+      case STARTS_WITH -> {
+        setTelephoneLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setTelephoneLike("%" + text);
+      }
+      default -> throw new IllegalArgumentException("telephone に指定できない operator です: " + operator);
+    }
+    // 電話番号検索で中間一致を求めるケースが思いつかないためCONTAINSは持たない
+
+    if (this.getTelephoneEq() != null && this.getTelephoneLike() != null) {
+      throw new IllegalStateException("telephone EQ(完全一致) と STARTS_WITH,ENDS_WITH(部分一致) は併用できません");
+    }
+  }
+
   public void applyAgeFilter(SearchFilter filter) {
     SearchOperator operator = filter.getOperator();
 
@@ -399,6 +572,46 @@ public class StudentSearchCriteria {
       throw new IllegalStateException("age eq と age の範囲条件は併用できません");
     }
 
+  }
+
+  public void applySexFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+
+    switch (operator) {
+      case EQ -> {
+        String sex = filter.getValue();
+        setSexEq(sex);
+      }
+      case IN -> {
+        List<String> sexes = filter.getValues();
+        setSexIn(sexes);
+      }
+      default -> throw new IllegalArgumentException("sex に指定できない operator です: " + operator);
+    }
+
+    if (this.getSexEq() != null && this.getSexIn() != null) {
+      throw new IllegalStateException("sex eq と in は併用できません");
+    }
+  }
+
+  public void applyRemarkFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setRemarkEq(text);
+      }
+      case CONTAINS -> {
+        setRemarkLike("%" + text + "%");
+      }
+      default -> throw new IllegalArgumentException("remark に指定できない operator です: " + operator);
+    }
+    // 備考は記載が自由すぎるので、STARTS_WITH, ENDS_WITHのメリットが薄いため持たない。EQは念のため持つ
+
+    if (this.getRemarkEq() != null && this.getRemarkLike() != null) {
+      throw new IllegalStateException("remark EQ(完全一致) と CONTAINS(部分一致) は併用できません");
+    }
   }
 
   public void applyIsDeletedFilter(SearchFilter filter) {

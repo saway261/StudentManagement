@@ -62,6 +62,30 @@
         AND s.is_deleted = #{isDeleted}
       </if>
 
+      <if test="emailEq != null">
+        AND s.email = #{emailEq}
+      </if>
+
+      <if test="emailLike != null">
+        AND s.email LIKE #{emailLike}
+      </if>
+
+      <if test="areaEq != null">
+        AND s.area = #{areaEq}
+      </if>
+
+      <if test="areaLike != null">
+        AND s.area LIKE #{areaLike}
+      </if>
+
+      <if test="telephoneEq != null">
+        AND s.telephone = #{telephoneEq}
+      </if>
+
+      <if test="telephoneLike != null">
+        AND s.telephone LIKE #{telephoneLike}
+      </if>
+
       <if test="courseCodeEq != null">
         AND sc.course_code = #{courseCodeEq}
       </if>
@@ -82,6 +106,25 @@
         <foreach collection="statusIdIn" item="statusId" open="(" separator="," close=")">
           #{statusId}
         </foreach>
+      </if>
+
+      <if test="sexEq != null">
+        AND s.sex = #{sexEq}
+      </if>
+
+      <if test="sexIn != null and sexIn.size() > 0">
+        AND s.sex IN
+        <foreach collection="sexIn" item="sex" open="(" separator="," close=")">
+          #{sex}
+        </foreach>
+      </if>
+
+      <if test="remarkEq != null">
+        AND s.remark = #{remarkEq}
+      </if>
+
+      <if test="remarkLike != null">
+        AND s.remark LIKE #{remarkLike}
       </if>
 
       <if test="courseApplyAtEq != null">

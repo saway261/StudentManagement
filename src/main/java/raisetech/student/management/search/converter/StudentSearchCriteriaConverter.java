@@ -19,7 +19,12 @@ public class StudentSearchCriteriaConverter {
         case FULL_NAME -> criteria.applyFullNameFilter(filter);
         case KANA_NAME -> criteria.applyKanaNameFilter(filter);
         case NICKNAME -> criteria.applyNicknameFilter(filter);
+        case EMAIL -> criteria.applyEmailFilter(filter);
+        case AREA -> criteria.applyAreaFilter(filter);
+        case TELEPHONE -> criteria.applyTelephoneFilter(filter);
         case AGE -> criteria.applyAgeFilter(filter);
+        case SEX -> criteria.applySexFilter(filter);
+        case REMARK -> criteria.applyRemarkFilter(filter);
         case IS_DELETED -> criteria.applyIsDeletedFilter(filter);
         case COURSE_CODE -> criteria.applyCourseCodeFilter(filter);
         case STATUS_ID -> criteria.applyStatusIdFilter(filter);
