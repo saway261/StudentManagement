@@ -23,6 +23,9 @@ public class StudentSearchCriteriaConverter {
         case STATUS_ID -> criteria.applyStatusIdFilter(filter);
         case AGE -> criteria.applyAgeFilter(filter);
         case COURSE_APPLY_AT -> criteria.applyCourseApplyAtFilter(filter);
+        case COURSE_START_AT -> criteria.applyCourseStartAtFilter(filter);
+        case COURSE_PLANNED_END_AT -> criteria.applyCoursePlannedEndAtFilter(filter);
+        case COURSE_FINISHED_AT -> criteria.applyCourseFinishedAtFilter(filter);
         case IS_DELETED -> criteria.applyIsDeletedFilter(filter);
       }
     }

@@ -65,6 +65,35 @@ public class StudentSearchCriteria {
   /** 申込日 上限 */
   private LocalDate courseApplyAtTo;
 
+  /** 受講開始日 完全一致 */
+  private LocalDate courseStartAtEq;
+
+  /** 受講開始日 下限 */
+  private LocalDate courseStartAtFrom;
+
+  /** 受講開始日 上限 */
+  private LocalDate courseStartAtTo;
+
+  /** 受講終了予定日 完全一致 */
+  private LocalDate coursePlannedEndAtEq;
+
+  /** 受講終了予定日 下限 */
+  private LocalDate coursePlannedEndAtFrom;
+
+  /** 受講終了予定日 上限 */
+  private LocalDate coursePlannedEndAtTo;
+
+  /** 受講終了実績日 完全一致 */
+  private LocalDate courseFinishedAtEq;
+
+  /** 受講終了実績日 下限 */
+  private LocalDate courseFinishedAtFrom;
+
+  /** 受講終了実績日 上限 */
+  private LocalDate courseFinishedAtTo;
+
+
+
   /** 削除フラグ */
   private Boolean isDeleted;
 
@@ -183,6 +212,69 @@ public class StudentSearchCriteria {
       throw new IllegalStateException("courseApplyAtTo は既に設定されています。重複指定はできません。");
     }
     this.courseApplyAtTo = courseApplyAtTo;
+  }
+
+  private void setCourseStartAtEq(LocalDate courseStartAtEq) {
+    if(this.courseStartAtEq != null){
+      throw new IllegalStateException("courseStartAtEq は既に設定されています。重複指定はできません。");
+    }
+    this.courseStartAtEq = courseStartAtEq;
+  }
+
+  private void setCourseStartAtFrom(LocalDate courseStartAtFrom) {
+    if(this.courseStartAtFrom != null){
+      throw new IllegalStateException("courseStartAtFrom は既に設定されています。重複指定はできません。");
+    }
+    this.courseStartAtFrom = courseStartAtFrom;
+  }
+
+  private void setCourseStartAtTo(LocalDate courseStartAtTo) {
+    if(this.courseStartAtTo != null){
+      throw new IllegalStateException("courseStartAtTo は既に設定されています。重複指定はできません。");
+    }
+    this.courseStartAtTo = courseStartAtTo;
+  }
+
+  private void setCoursePlannedEndAtEq(LocalDate coursePlannedEndAtEq) {
+    if(this.coursePlannedEndAtEq != null){
+      throw new IllegalStateException("coursePlannedEndAtEq は既に設定されています。重複指定はできません。");
+    }
+    this.coursePlannedEndAtEq = coursePlannedEndAtEq;
+  }
+
+  private void setCoursePlannedEndAtFrom(LocalDate coursePlannedEndAtFrom) {
+    if(this.coursePlannedEndAtFrom != null){
+      throw new IllegalStateException("coursePlannedEndAtFrom は既に設定されています。重複指定はできません。");
+    }
+    this.coursePlannedEndAtFrom = coursePlannedEndAtFrom;
+  }
+
+  private void setCoursePlannedEndAtTo(LocalDate coursePlannedEndAtTo) {
+    if(this.coursePlannedEndAtTo != null){
+      throw new IllegalStateException("coursePlannedEndAtTo は既に設定されています。重複指定はできません。");
+    }
+    this.coursePlannedEndAtTo = coursePlannedEndAtTo;
+  }
+
+  private void setCourseFinishedAtEq(LocalDate courseFinishedAtEq) {
+    if(this.courseFinishedAtEq != null){
+      throw new IllegalStateException("courseFinishedAtEq は既に設定されています。重複指定はできません。");
+    }
+    this.courseFinishedAtEq = courseFinishedAtEq;
+  }
+
+  private void setCourseFinishedAtFrom(LocalDate courseFinishedAtFrom) {
+    if(this.courseFinishedAtFrom != null){
+      throw new IllegalStateException("courseFinishedAtFrom は既に設定されています。重複指定はできません。");
+    }
+    this.courseFinishedAtFrom = courseFinishedAtFrom;
+  }
+
+  private void setCourseFinishedAtTo(LocalDate courseFinishedAtTo) {
+    if(this.courseFinishedAtTo != null){
+      throw new IllegalStateException("courseFinishedAtTo は既に設定されています。重複指定はできません。");
+    }
+    this.courseFinishedAtTo = courseFinishedAtTo;
   }
 
   private void setDeleted(Boolean deleted) {
@@ -387,6 +479,117 @@ public class StudentSearchCriteria {
     if (this.getCourseApplyAtEq() != null
         && (this.getCourseApplyAtFrom() != null || this.getCourseApplyAtTo() != null)) {
       throw new IllegalStateException("courseApplyAt eq と期間条件は併用できません");
+    }
+  }
+
+  public void applyCourseStartAtFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+
+    switch (operator) {
+      case EQ -> {
+        String rawValue = filter.getValue();
+        LocalDate date = LocalDate.parse(rawValue);
+        setCourseStartAtEq(date);
+      }
+      case GTE -> {
+        String rawValue = filter.getValue();
+        LocalDate from = LocalDate.parse(rawValue);
+        setCourseStartAtFrom(from);
+      }
+      case LTE -> {
+        String rawValue = filter.getValue();
+        LocalDate to = LocalDate.parse(rawValue);
+        setCourseStartAtTo(to);
+      }
+      case BETWEEN -> {
+        List<String> rawValues = filter.getValues();
+        List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
+        if (range.size() != 2 || range.get(0).equals(range.get(1))) {
+          throw new IllegalArgumentException("courseStartAt between は 2件の等しくない日付で指定してください");
+        }
+        setCourseStartAtFrom(Collections.min(range));
+        setCourseStartAtTo(Collections.max(range));
+      }
+      default -> throw new IllegalArgumentException("courseStartAt に指定できない operator です: " + operator);
+    }
+
+    if (this.getCourseStartAtEq() != null
+        && (this.getCourseStartAtFrom() != null || this.getCourseStartAtTo() != null)) {
+      throw new IllegalStateException("courseStartAt eq と期間条件は併用できません");
+    }
+  }
+
+  public void applyCoursePlannedEndAtFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+
+    switch (operator) {
+      case EQ -> {
+        String rawValue = filter.getValue();
+        LocalDate date = LocalDate.parse(rawValue);
+        setCoursePlannedEndAtEq(date);
+      }
+      case GTE -> {
+        String rawValue = filter.getValue();
+        LocalDate from = LocalDate.parse(rawValue);
+        setCoursePlannedEndAtFrom(from);
+      }
+      case LTE -> {
+        String rawValue = filter.getValue();
+        LocalDate to = LocalDate.parse(rawValue);
+        setCoursePlannedEndAtTo(to);
+      }
+      case BETWEEN -> {
+        List<String> rawValues = filter.getValues();
+        List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
+        if (range.size() != 2 || range.get(0).equals(range.get(1))) {
+          throw new IllegalArgumentException("coursePlannedEndAt between は 2件の等しくない日付で指定してください");
+        }
+        setCoursePlannedEndAtFrom(Collections.min(range));
+        setCoursePlannedEndAtTo(Collections.max(range));
+      }
+      default -> throw new IllegalArgumentException("coursePlannedEndAt に指定できない operator です: " + operator);
+    }
+
+    if (this.getCoursePlannedEndAtEq() != null
+        && (this.getCoursePlannedEndAtFrom() != null || this.getCoursePlannedEndAtTo() != null)) {
+      throw new IllegalStateException("coursePlannedEndAt eq と期間条件は併用できません");
+    }
+  }
+
+  public void applyCourseFinishedAtFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+
+    switch (operator) {
+      case EQ -> {
+        String rawValue = filter.getValue();
+        LocalDate date = LocalDate.parse(rawValue);
+        setCourseFinishedAtEq(date);
+      }
+      case GTE -> {
+        String rawValue = filter.getValue();
+        LocalDate from = LocalDate.parse(rawValue);
+        setCourseFinishedAtFrom(from);
+      }
+      case LTE -> {
+        String rawValue = filter.getValue();
+        LocalDate to = LocalDate.parse(rawValue);
+        setCourseFinishedAtTo(to);
+      }
+      case BETWEEN -> {
+        List<String> rawValues = filter.getValues();
+        List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
+        if (range.size() != 2 || range.get(0).equals(range.get(1))) {
+          throw new IllegalArgumentException("courseFinishedAt between は 2件の等しくない日付で指定してください");
+        }
+        setCourseFinishedAtFrom(Collections.min(range));
+        setCourseFinishedAtTo(Collections.max(range));
+      }
+      default -> throw new IllegalArgumentException("courseFinishedAt に指定できない operator です: " + operator);
+    }
+
+    if (this.getCourseFinishedAtEq() != null
+        && (this.getCourseFinishedAtFrom() != null || this.getCourseFinishedAtTo() != null)) {
+      throw new IllegalStateException("courseFinishedAt eq と期間条件は併用できません");
     }
   }
 

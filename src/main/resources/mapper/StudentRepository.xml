@@ -92,6 +92,42 @@
         AND sc.course_apply_at &lt;= #{courseApplyAtTo}
       </if>
 
+      <if test="courseStartAtEq != null">
+        AND sc.course_start_at = #{courseStartAtEq}
+      </if>
+
+      <if test="courseStartAtFrom != null">
+        AND sc.course_start_at &gt;= #{courseStartAtFrom}
+      </if>
+
+      <if test="courseStartAtTo != null">
+        AND sc.course_start_at &lt;= #{courseStartAtTo}
+      </if>
+
+      <if test="coursePlannedEndAtEq != null">
+        AND sc.course_planned_end_at = #{coursePlannedEndAtEq}
+      </if>
+
+      <if test="coursePlannedEndAtFrom != null">
+        AND sc.course_planned_end_at &gt;= #{coursePlannedEndAtFrom}
+      </if>
+
+      <if test="coursePlannedEndAtTo != null">
+        AND sc.course_planned_end_at &lt;= #{coursePlannedEndAtTo}
+      </if>
+
+      <if test="courseFinishedAtEq != null">
+        AND sc.course_finished_at = #{courseFinishedAtEq}
+      </if>
+
+      <if test="courseFinishedAtFrom != null">
+        AND sc.course_finished_at &gt;= #{courseFinishedAtFrom}
+      </if>
+
+      <if test="courseFinishedAtTo != null">
+        AND sc.course_finished_at &lt;= #{courseFinishedAtTo}
+      </if>
+
       <if test="isDeleted != null">
         AND s.is_deleted = #{isDeleted}
       </if>
