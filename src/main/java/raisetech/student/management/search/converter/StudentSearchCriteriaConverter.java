@@ -17,6 +17,8 @@ public class StudentSearchCriteriaConverter {
 
       switch (field) {
         case FULL_NAME -> criteria.applyFullNameFilter(filter);
+        case KANA_NAME -> criteria.applyKanaNameFilter(filter);
+        case NICKNAME -> criteria.applyNicknameFilter(filter);
         case COURSE_CODE -> criteria.applyCourseCodeFilter(filter);
         case STATUS_ID -> criteria.applyStatusIdFilter(filter);
         case AGE -> criteria.applyAgeFilter(filter);

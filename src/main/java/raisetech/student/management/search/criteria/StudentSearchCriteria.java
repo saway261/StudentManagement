@@ -23,6 +23,18 @@ public class StudentSearchCriteria {
   /** 氏名 LIKE検索用。例: "田中%", "%田中", "%田中%" */
   private String fullNameLike;
 
+  /** 氏名よみがな 完全一致 */
+  private String kanaNameEq;
+
+  /** 氏名よみがな LIKE検索用*/
+  private String kanaNameLike;
+
+  /** ニックネーム 完全一致 */
+  private String nicknameEq;
+
+  /** ニックネーム LIKE検索用*/
+  private String nicknameLike;
+
   /** コースコード 完全一致 */
   private String courseCodeEq;
 
@@ -73,6 +85,34 @@ public class StudentSearchCriteria {
       throw new IllegalStateException("fullNameLike は既に設定されています。重複指定はできません。");
     }
     this.fullNameLike = fullNameLike;
+  }
+
+  private void setKanaNameEq(String kanaNameEq) {
+    if(this.kanaNameEq != null){
+      throw new IllegalStateException("kanaNameEq は既に設定されています。重複指定はできません。");
+    }
+    this.kanaNameEq = kanaNameEq;
+  }
+
+  private void setKanaNameLike(String kanaNameLike) {
+    if(this.kanaNameLike != null){
+      throw new IllegalStateException("kanaNameLike は既に設定されています。重複指定はできません。");
+    }
+    this.kanaNameLike = kanaNameLike;
+  }
+
+  private void setNicknameEq(String nicknameEq) {
+    if(this.nicknameEq != null){
+      throw new IllegalStateException("nicknameEq は既に設定されています。重複指定はできません。");
+    }
+    this.nicknameEq = nicknameEq;
+  }
+
+  private void setNicknameLike(String nicknameLike) {
+    if(this.nicknameLike != null){
+      throw new IllegalStateException("nicknameLike は既に設定されています。重複指定はできません。");
+    }
+    this.nicknameLike = nicknameLike;
   }
 
   private void setCourseCodeEq(String courseCodeEq) {
@@ -175,6 +215,60 @@ public class StudentSearchCriteria {
         setFullNameLike("%" + text + "%");
       }
       default -> throw new IllegalArgumentException("fullName に指定できない operator です: " + operator);
+    }
+
+    if (this.getFullNameEq() != null && this.getFullNameLike() != null) {
+      throw new IllegalStateException("fullName EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+    }
+  }
+
+  public void applyKanaNameFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setKanaNameEq(text);
+      }
+      case STARTS_WITH -> {
+        setKanaNameLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setKanaNameLike("%" + text);
+      }
+      case CONTAINS -> {
+        setKanaNameLike("%" + text + "%");
+      }
+      default -> throw new IllegalArgumentException("kanaName に指定できない operator です: " + operator);
+    }
+
+    if (this.getKanaNameEq() != null && this.getKanaNameLike() != null) {
+      throw new IllegalStateException("kanaName EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+    }
+  }
+
+  public void applyNicknameFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String text = filter.getValue();
+
+    switch (operator) {
+      case EQ-> {
+        setNicknameEq(text);
+      }
+      case STARTS_WITH -> {
+        setNicknameLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setNicknameLike("%" + text);
+      }
+      case CONTAINS -> {
+        setNicknameLike("%" + text + "%");
+      }
+      default -> throw new IllegalArgumentException("nickname に指定できない operator です: " + operator);
+    }
+
+    if (this.getNicknameEq() != null && this.getNicknameLike() != null) {
+      throw new IllegalStateException("nickname EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
     }
   }
 
