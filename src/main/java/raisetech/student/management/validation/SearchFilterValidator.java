@@ -76,11 +76,6 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
     switch (operator) {
 
       case BETWEEN -> {
-        // value が入っているのはNG
-        if (hasValue) {
-          addError(context, "value", "BETWEENではvalueは使用できません。valuesで2つ指定してください。");
-          isValid = false;
-        }
 
         // values 未指定
         if (!hasValues) {
@@ -103,11 +98,6 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
       }
 
       case IN -> {
-        // value が入っているのはNG
-        if (hasValue) {
-          addError(context, "value", "INではvalueは使用できません。valuesで複数指定してください。");
-          isValid = false;
-        }
 
         // values 未指定
         if (!hasValues) {
@@ -126,13 +116,7 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
       default -> {
         // value 必須
         if (!hasValue) {
-          addError(context, "value", operator + "ではvalueの指定が必須です。");
-          isValid = false;
-        }
-
-        // values は使えない
-        if (hasValues) {
-          addError(context, "values", operator + "ではvaluesは使用できません。");
+          addError(context, "value", operator + "ではvalueの指定が必須です。valuesは使用できません。");
           isValid = false;
         }
       }
