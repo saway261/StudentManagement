@@ -4,94 +4,156 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
-import raisetech.student.management.data.Student;
-import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.SearchableField;
 
 public class SearchFilterValidator implements ConstraintValidator<ValidSearchFilter, SearchFilter> {
 
-  private Map<String, Class<?>> fieldTypeMap;
-
-  @Override
-  public void initialize(ValidSearchFilter constraintAnnotation) {
-    fieldTypeMap = new HashMap<>();
-    // StudentとStudentCourseの全フィールド名を型と共にキャッシュ
-    Stream.of(Student.class, StudentCourse.class)
-        .flatMap(clazz -> Stream.of(clazz.getDeclaredFields()))
-        .forEach(f -> fieldTypeMap.put(f.getName(), f.getType()));
-  }
-
   @Override
   public boolean isValid(SearchFilter filter, ConstraintValidatorContext context) {
-    if (filter == null) return true;
-
-    boolean isValid = true; // フラグを用意
-
-    // 1. フィールド名の存在チェック
-    if (!fieldTypeMap.containsKey(filter.getField())) {
-      isValid = addError(context, "field", "指定されたフィールド名は存在しません。");
+    if (filter == null) {
+      return true;
     }
 
-    // 2. 演算子と値の整合性チェック
-    if (!isValidOperator(filter)) {
-      isValid = addError(context, "operator", "演算子に対して値(value/values)の指定が正しくありません。");
+    boolean isValid = true;
+
+    String field = filter.getField();
+    SearchOperator operator = filter.getOperator();
+
+    // @NotNull 側で拾うので、ここでは深追いしない
+    if (field == null ||field.equals("") || operator == null) {
+      return true;
     }
 
-    // 3. 型の整合性チェック (LocalDate等のパース)
-    Class<?> targetType = fieldTypeMap.get(filter.getField());
-    if (!isTypeConsistent(filter, targetType)) {
-      isValid = addError(context, "value", targetType.getSimpleName() + "型として正しくない形式です。");
+    context.disableDefaultConstraintViolation();
+
+    // 1. 演算子と value / values の整合性
+    if (!validateOperatorAndValue(filter, context)) {
+      isValid = false;
+    }
+
+    // 2. 有効なフィールド名かをチェック
+    if(!SearchableField.existsSearchableFields(field)){
+      addError(
+          context,
+          "field",
+          field + " は無効なフィールド名です。対応している検索フィールド：" + String.join(",", SearchableField.getAllFieldNames())
+      );
+      isValid = false;
+
+      // フィールド名が無効だと型が取得できないため、型整合性のチェックに進まずリターンする
+      return isValid;
+    }
+
+    // 3. 型整合性
+    Class<?> fieldType = SearchableField.getTypeByFieldName(field);
+    if (!isTypeConsistent(filter, fieldType)) {
+      addError(
+          context,
+          "value",
+          fieldType.getSimpleName() + "型として正しくない形式です。"
+      );
+      isValid = false;
     }
 
     return isValid;
   }
 
-  private boolean isValidOperator(SearchFilter filter) {
+  private boolean validateOperatorAndValue(SearchFilter filter, ConstraintValidatorContext context) {
     SearchOperator operator = filter.getOperator();
     String value = filter.getValue();
     List<String> values = filter.getValues();
 
-    if (operator == null) {
-      return true;
-    }
-
-    boolean hasValue = (value != null && !value.isBlank());
-    boolean hasValues = (values != null && !values.isEmpty());
+    boolean hasValue = value != null && !value.isBlank();
+    boolean hasValues = values != null && !values.isEmpty();
     int valuesSize = hasValues ? values.size() : 0;
 
-    return switch (operator) {
-      case SearchOperator.BETWEEN ->
-        // valuesが2つあり、かつそれらが同値でないことを確認
-          !hasValue
-              && valuesSize == 2
-              && !Objects.equals(values.get(0), values.get(1));
-      case SearchOperator.IN -> !hasValue && valuesSize >= 2;
-      default -> hasValue && !hasValues;
-    };
+    boolean isValid = true;
+
+    switch (operator) {
+
+      case BETWEEN -> {
+        // value が入っているのはNG
+        if (hasValue) {
+          addError(context, "value", "BETWEENではvalueは使用できません。valuesで2つ指定してください。");
+          isValid = false;
+        }
+
+        // values 未指定
+        if (!hasValues) {
+          addError(context, "values", "BETWEENではvaluesは2件で指定してください。");
+          isValid = false;
+          break;
+        }
+
+        // 要素数チェック
+        if (valuesSize != 2) {
+          addError(context, "values", "BETWEENではvaluesは2件で指定してください。");
+          isValid = false;
+        }
+
+        // 同値チェック
+        if (valuesSize == 2 && Objects.equals(values.get(0), values.get(1))) {
+          addError(context, "values", "BETWEENでは異なる2つの値を指定してください。");
+          isValid = false;
+        }
+      }
+
+      case IN -> {
+        // value が入っているのはNG
+        if (hasValue) {
+          addError(context, "value", "INではvalueは使用できません。valuesで複数指定してください。");
+          isValid = false;
+        }
+
+        // values 未指定
+        if (!hasValues) {
+          addError(context, "values", "INではvaluesで2件以上指定してください。");
+          isValid = false;
+          break;
+        }
+
+        // 件数チェック
+        if (valuesSize < 2) {
+          addError(context, "values", "INではvaluesで2件以上指定してください。");
+          isValid = false;
+        }
+      }
+
+      default -> {
+        // value 必須
+        if (!hasValue) {
+          addError(context, "value", operator + "ではvalueの指定が必須です。");
+          isValid = false;
+        }
+
+        // values は使えない
+        if (hasValues) {
+          addError(context, "values", operator + "ではvaluesは使用できません。");
+          isValid = false;
+        }
+      }
+    }
+
+    return isValid;
   }
 
-  /**
-   * フィールドの型と入力値（value/values）の整合性をチェックします。
-   */
   private boolean isTypeConsistent(SearchFilter filter, Class<?> type) {
-    // チェック対象の値をすべて集める（null以外）
     List<String> valuesToCheck = new ArrayList<>();
+
     if (filter.getValue() != null && !filter.getValue().isBlank()) {
       valuesToCheck.add(filter.getValue());
     }
+
     if (filter.getValues() != null) {
       filter.getValues().stream()
           .filter(v -> v != null && !v.isBlank())
           .forEach(valuesToCheck::add);
     }
 
-    // 全ての値が指定された型にパースできるか確認
     return valuesToCheck.stream().allMatch(v -> isParsable(v, type));
   }
 
@@ -124,18 +186,16 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
         return input.equalsIgnoreCase("true") || input.equalsIgnoreCase("false");
       }
 
-      return true;
+      return false;
     } catch (Exception e) {
       // パースに失敗した場合は整合性なしと判断
       return false;
     }
   }
 
-  private boolean addError(ConstraintValidatorContext context, String property, String message) {
-    context.disableDefaultConstraintViolation();
+  private void addError(ConstraintValidatorContext context, String property, String message) {
     context.buildConstraintViolationWithTemplate(message)
         .addPropertyNode(property)
         .addConstraintViolation();
-    return false;
   }
 }
