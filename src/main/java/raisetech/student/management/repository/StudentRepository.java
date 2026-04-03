@@ -4,6 +4,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.search.criteria.StudentSearchCriteria;
 
 /**
  * 受講生テーブルと受講生コース情報テーブルに紐づくRepositoryです。
@@ -24,6 +25,13 @@ public interface StudentRepository {
    * @return 受講生
    */
   Student searchStudent(int studentId);
+
+  /**
+   * 詳細検索条件に一致する受講生ID一覧を取得します。
+   * @param criteria 検索条件
+   * @return 受講生ID一覧
+   */
+  List<Integer> searchStudentIdListByCriteria(StudentSearchCriteria criteria);
 
   /**
    * 受講生IDに紐づく受講生コース情報の検索を行います。

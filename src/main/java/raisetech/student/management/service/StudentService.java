@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
@@ -14,6 +15,8 @@ import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.search.criteria.StudentSearchCriteria;
+import raisetech.student.management.search.converter.StudentSearchCriteriaConverter;
 
 
 /**
@@ -26,11 +29,16 @@ public class StudentService {
   private StudentRepository studentRepository;
   private CourseStatusRepository statusRepository;
 
+  private StudentSearchCriteriaConverter converter;
+
   @Autowired
   public StudentService(StudentRepository studentRepository,
-      CourseStatusRepository statusRepository) {
+      CourseStatusRepository statusRepository,
+      StudentSearchCriteriaConverter converter) {
+
     this.studentRepository = studentRepository;
     this.statusRepository = statusRepository;
+    this.converter = converter;
   }
 
   /**
@@ -56,6 +64,16 @@ public class StudentService {
       throw new TargetNotFoundException("studentId","指定したIDの受講生は見つかりませんでした");
     }
     return response;
+  }
+
+  public List<StudentDetail> searchStudentDetailsAdvanced(StudentAdvancedSearchRequest request) {
+    StudentSearchCriteria criteria = converter.toCriteria(request.getFilters());
+
+    List<Integer> studentIdList = studentRepository.searchStudentIdListByCriteria(criteria);
+
+    return studentIdList.stream()
+        .map(this::buildStudentDetail)
+        .collect(Collectors.toList());
   }
 
   /**

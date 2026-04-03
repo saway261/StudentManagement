@@ -13,6 +13,76 @@
     WHERE student_id=#{studentId}
   </select>
 
+  <!-- 詳細検索条件に一致する受講生ID一覧 -->
+  <select id="searchStudentIdListByCriteria"
+    parameterType="raisetech.student.management.search.criteria.StudentSearchCriteria"
+    resultType="Integer">
+    SELECT DISTINCT s.student_id
+    FROM students s
+    LEFT JOIN student_courses sc
+    ON s.student_id = sc.student_id
+    <where>
+      <if test="fullNameEq != null">
+        AND s.full_name = #{fullNameEq}
+      </if>
+
+      <if test="fullNameLike != null">
+        AND s.full_name LIKE #{fullNameLike}
+      </if>
+
+      <if test="courseCodeEq != null">
+        AND sc.course_code = #{courseCodeEq}
+      </if>
+
+      <if test="courseCodeIn != null and courseCodeIn.size() > 0">
+        AND sc.course_code IN
+        <foreach collection="courseCodeIn" item="courseCode" open="(" separator="," close=")">
+          #{courseCode}
+        </foreach>
+      </if>
+
+      <if test="statusIdEq != null">
+        AND sc.status_id = #{statusIdEq}
+      </if>
+
+      <if test="statusIdIn != null and statusIdIn.size() > 0">
+        AND sc.status_id IN
+        <foreach collection="statusIdIn" item="statusId" open="(" separator="," close=")">
+          #{statusId}
+        </foreach>
+      </if>
+
+      <if test="ageEq != null">
+        AND s.age = #{ageEq}
+      </if>
+
+      <if test="ageMin != null">
+        AND s.age &gt;= #{ageMin}
+      </if>
+
+      <if test="ageMax != null">
+        AND s.age &lt;= #{ageMax}
+      </if>
+
+      <if test="courseApplyAtEq != null">
+        AND sc.course_apply_at = #{courseApplyAtEq}
+      </if>
+
+      <if test="courseApplyAtFrom != null">
+        AND sc.course_apply_at &gt;= #{courseApplyAtFrom}
+      </if>
+
+      <if test="courseApplyAtTo != null">
+        AND sc.course_apply_at &lt;= #{courseApplyAtTo}
+      </if>
+
+      <if test="isDeleted != null">
+        AND s.is_deleted = #{isDeleted}
+      </if>
+    </where>
+    ORDER BY s.student_id
+  </select>
+
   <!-- 受講生IDに紐づく受講生コースの検索 -->
   <select id="searchStudentCourses" resultType="raisetech.student.management.data.StudentCourse">
     SELECT * FROM student_courses
