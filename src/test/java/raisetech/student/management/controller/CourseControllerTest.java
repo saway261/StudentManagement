@@ -1,6 +1,7 @@
 package raisetech.student.management.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,7 +69,7 @@ class CourseControllerTest {
         .andExpect(status().isBadRequest());
 
     // Assert
-    Mockito.verify(service, times(0)).registerCourse(any());
+    Mockito.verify(service, never()).registerCourse(any());
 
   }
 
@@ -101,7 +102,7 @@ class CourseControllerTest {
         .andExpect(status().isBadRequest());
 
     // Assert
-    Mockito.verify(service, times(0)).updateCourse(any());
+    Mockito.verify(service, never()).updateCourse(any());
   }
 
   @Test

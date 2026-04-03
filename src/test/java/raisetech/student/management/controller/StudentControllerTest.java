@@ -87,7 +87,7 @@ class StudentControllerTest {
     // Act & Assert
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + studentId)) // 文字列を渡す
         .andExpect(status().isBadRequest()); // 400 BAD_REQUESTが返ること
-    Mockito.verify(service, times(0)).searchStudentDetail(Mockito.anyInt());
+    Mockito.verify(service, never()).searchStudentDetail(Mockito.anyInt());
   }
 
   @Test
@@ -97,7 +97,7 @@ class StudentControllerTest {
 
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + notPositiveStudentId))
         .andExpect(status().isBadRequest());
-    Mockito.verify(service, times(0)).searchStudentDetail(Mockito.anyInt());
+    Mockito.verify(service, never()).searchStudentDetail(Mockito.anyInt());
   }
 
   @Test void 受講生詳細登録成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
@@ -153,7 +153,7 @@ class StudentControllerTest {
         .andExpect(status().isBadRequest());
 
     // Assert
-    Mockito.verify(service, times(0)).registerStudentDetail(any(StudentDetail.class));
+    Mockito.verify(service, never()).registerStudentDetail(any(StudentDetail.class));
   }
 
   @Test
