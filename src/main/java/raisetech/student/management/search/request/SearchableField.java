@@ -9,6 +9,8 @@ import lombok.Getter;
 @Getter
 public enum SearchableField {
   FULL_NAME("fullName", String.class),
+  KANA_NAME("kanaName",String.class),
+  NICKNAME("nickname",String.class),
   COURSE_CODE("courseCode", String.class),
   STATUS_ID("statusId", Integer.class),
   AGE("age", Integer.class),

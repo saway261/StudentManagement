@@ -30,6 +30,22 @@
         AND s.full_name LIKE #{fullNameLike}
       </if>
 
+      <if test="kanaNameEq != null">
+        AND s.kana_name = #{kanaNameEq}
+      </if>
+
+      <if test="kanaNameLike != null">
+        AND s.kana_name LIKE #{kanaNameLike}
+      </if>
+
+      <if test="nicknameEq != null">
+        AND s.nickname = #{nicknameEq}
+      </if>
+
+      <if test="nicknameLike != null">
+        AND s.nickname LIKE #{nicknameLike}
+      </if>
+
       <if test="courseCodeEq != null">
         AND sc.course_code = #{courseCodeEq}
       </if>
