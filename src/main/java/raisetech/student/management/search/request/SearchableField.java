@@ -15,6 +15,9 @@ public enum SearchableField {
   STATUS_ID("statusId", Integer.class),
   AGE("age", Integer.class),
   COURSE_APPLY_AT("courseApplyAt", LocalDate.class),
+  COURSE_START_AT("courseStartAt", LocalDate.class),
+  COURSE_PLANNED_END_AT("coursePlannedEndAt", LocalDate.class),
+  COURSE_FINISHED_AT("courseFinishedAt", LocalDate.class),
   IS_DELETED("isDeleted", Boolean.class);
 
   private final String fieldName;
