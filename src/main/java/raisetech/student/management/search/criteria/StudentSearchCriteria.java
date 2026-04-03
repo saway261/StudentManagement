@@ -1,5 +1,7 @@
 package raisetech.student.management.search.criteria;
 
+import static raisetech.student.management.search.request.SearchOperator.EQ;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -160,16 +162,16 @@ public class StudentSearchCriteria {
     String text = filter.getValue();
 
     switch (operator) {
-      case SearchOperator.EQ-> {
+      case EQ-> {
         setFullNameEq(text);
       }
-      case SearchOperator.STARTS_WITH -> {
+      case STARTS_WITH -> {
         setFullNameLike(text + "%");
       }
-      case SearchOperator.ENDS_WITH -> {
+      case ENDS_WITH -> {
         setFullNameLike("%" + text);
       }
-      case SearchOperator.CONTAINS -> {
+      case CONTAINS -> {
         setFullNameLike("%" + text + "%");
       }
       default -> throw new IllegalArgumentException("fullName に指定できない operator です: " + operator);
@@ -180,11 +182,11 @@ public class StudentSearchCriteria {
     SearchOperator operator = filter.getOperator();
 
     switch (operator) {
-      case SearchOperator.EQ -> {
+      case EQ -> {
         String courseCode = filter.getValue();
         setCourseCodeEq(courseCode);
       }
-      case SearchOperator.IN -> {
+      case IN -> {
         List<String> courseCodes = filter.getValues();
         setCourseCodeIn(courseCodes);
       }
@@ -200,12 +202,12 @@ public class StudentSearchCriteria {
     SearchOperator operator = filter.getOperator();
 
     switch (operator) {
-      case SearchOperator.EQ -> {
+      case EQ -> {
         String rawValue = filter.getValue();
         Integer statusId = Integer.parseInt(rawValue);
         setStatusIdEq(statusId);
       }
-      case SearchOperator.IN -> {
+      case IN -> {
         List<String> rawValues = filter.getValues();
         List<Integer> statusIds = rawValues.stream().map(Integer::parseInt).collect(Collectors.toList());
         setStatusIdIn(statusIds);
@@ -222,22 +224,22 @@ public class StudentSearchCriteria {
     SearchOperator operator = filter.getOperator();
 
     switch (operator) {
-      case SearchOperator.EQ -> {
+      case EQ -> {
         String rawValue = filter.getValue();
         Integer age = Integer.parseInt(rawValue);
         setAgeEq(age);
       }
-      case SearchOperator.GTE -> {
+      case GTE -> {
         String rawValue = filter.getValue();
         Integer ageMin = Integer.parseInt(rawValue);
         setAgeMin(ageMin);
       }
-      case SearchOperator.LTE -> {
+      case LTE -> {
         String rawValue = filter.getValue();
         Integer ageMax = Integer.parseInt(rawValue);
         setAgeMax(ageMax);
       }
-      case SearchOperator.BETWEEN -> {
+      case BETWEEN -> {
         List<String> rawValues = filter.getValues();
         List<Integer> range = rawValues.stream().map(Integer::parseInt).toList();
 
@@ -261,22 +263,22 @@ public class StudentSearchCriteria {
     SearchOperator operator = filter.getOperator();
 
     switch (operator) {
-      case SearchOperator.EQ -> {
+      case EQ -> {
         String rawValue = filter.getValue();
         LocalDate date = LocalDate.parse(rawValue);
         setCourseApplyAtEq(date);
       }
-      case SearchOperator.GTE -> {
+      case GTE -> {
         String rawValue = filter.getValue();
         LocalDate from = LocalDate.parse(rawValue);
         setCourseApplyAtFrom(from);
       }
-      case SearchOperator.LTE -> {
+      case LTE -> {
         String rawValue = filter.getValue();
         LocalDate to = LocalDate.parse(rawValue);
         setCourseApplyAtTo(to);
       }
-      case SearchOperator.BETWEEN -> {
+      case BETWEEN -> {
         List<String> rawValues = filter.getValues();
         List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
         if (range.size() != 2 || range.get(0).equals(range.get(1))) {
@@ -298,7 +300,7 @@ public class StudentSearchCriteria {
     SearchOperator operator = filter.getOperator();
     String value = filter.getValue();
 
-    if (!SearchOperator.EQ.equals(operator)) {
+    if (!EQ.equals(operator)) {
       throw new IllegalArgumentException("isDeleted に指定できる operator は eq のみです");
     }
     Boolean isDeleted = Boolean.parseBoolean(value);
