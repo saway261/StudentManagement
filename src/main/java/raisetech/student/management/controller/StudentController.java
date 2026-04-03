@@ -23,6 +23,7 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.handler.ErrorResponse;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
@@ -56,7 +57,7 @@ public class StudentController {
   }
 
   @Operation(
-      summary = "受講生詳細検索",
+      summary = "受講生詳細ID検索",
       description = "受講生詳細の全件から受講生IDが一致する受講生の詳細を取得します。",
       parameters = {
           @Parameter(in = ParameterIn.PATH,
@@ -91,6 +92,38 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable @Positive int studentId){
     return service.searchStudentDetail(studentId);
+  }
+
+  @Operation(
+      summary = "受講生詳細高度検索",
+      description = "受講生詳細の全件に対してリクエストボディで高度な検索フィルターを設定し、該当する受講生詳細を一覧で取得します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "新規に登録したい受講生詳細",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )),
+          @ApiResponse(
+              responseCode = "400", description = "リクエストボディの形式か値が不正であった時のエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              ))
+      }
+  )
+  @PostMapping("/students/search")
+  public List<StudentDetail> searchStudentsAdvanced(
+      @RequestBody @Validated StudentAdvancedSearchRequest request
+  ) {
+    return service.searchStudentDetailsAdvanced(request);
   }
 
   @Operation(
