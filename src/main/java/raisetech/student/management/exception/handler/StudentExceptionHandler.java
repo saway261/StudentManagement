@@ -1,9 +1,14 @@
 package raisetech.student.management.exception.handler;
 
+import tools.jackson.core.JacksonException;
 import jakarta.validation.ConstraintViolationException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -98,5 +103,39 @@ public class StudentExceptionHandler {
         "invalid status transition", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
 
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException ex){
+
+    String message = ex.getMessage();
+    Throwable cause = ex.getCause();
+
+    // causeがnullなら自動でfalse
+    if(cause instanceof JacksonException jpex){
+      ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+          "json parse error", errorDetailsBuilder.buildErrorDetails(jpex));
+      return ResponseEntity.badRequest().body(errorResponse);
+
+    }else if(message.startsWith("Required request body is missing")){
+
+      Map<String, String> error = new HashMap<>();
+      error.put("field","requestBody");
+      error.put("message","リクエストボディは必須です");
+
+      ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+          "request body is missing", List.of(error));
+      return ResponseEntity.badRequest().body(errorResponse);
+
+    }else{
+
+      Map<String, String> error = new HashMap<>();
+      error.put("message","HTTPリクエストを変換できませんでした");
+
+      ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+          "http message convert error",List.of(error));
+      return ResponseEntity.badRequest().body(errorResponse);
+    }
   }
 }
