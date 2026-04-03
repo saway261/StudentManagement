@@ -46,6 +46,22 @@
         AND s.nickname LIKE #{nicknameLike}
       </if>
 
+      <if test="ageEq != null">
+        AND s.age = #{ageEq}
+      </if>
+
+      <if test="ageMin != null">
+        AND s.age &gt;= #{ageMin}
+      </if>
+
+      <if test="ageMax != null">
+        AND s.age &lt;= #{ageMax}
+      </if>
+
+      <if test="isDeleted != null">
+        AND s.is_deleted = #{isDeleted}
+      </if>
+
       <if test="courseCodeEq != null">
         AND sc.course_code = #{courseCodeEq}
       </if>
@@ -66,18 +82,6 @@
         <foreach collection="statusIdIn" item="statusId" open="(" separator="," close=")">
           #{statusId}
         </foreach>
-      </if>
-
-      <if test="ageEq != null">
-        AND s.age = #{ageEq}
-      </if>
-
-      <if test="ageMin != null">
-        AND s.age &gt;= #{ageMin}
-      </if>
-
-      <if test="ageMax != null">
-        AND s.age &lt;= #{ageMax}
       </if>
 
       <if test="courseApplyAtEq != null">
@@ -128,9 +132,6 @@
         AND sc.course_finished_at &lt;= #{courseFinishedAtTo}
       </if>
 
-      <if test="isDeleted != null">
-        AND s.is_deleted = #{isDeleted}
-      </if>
     </where>
     ORDER BY s.student_id
   </select>

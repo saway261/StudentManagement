@@ -35,6 +35,18 @@ public class StudentSearchCriteria {
   /** ニックネーム LIKE検索用*/
   private String nicknameLike;
 
+  /** 年齢 完全一致 */
+  private Integer ageEq;
+
+  /** 年齢 下限 */
+  private Integer ageMin;
+
+  /** 年齢 上限 */
+  private Integer ageMax;
+
+  /** 削除フラグ */
+  private Boolean isDeleted;
+
   /** コースコード 完全一致 */
   private String courseCodeEq;
 
@@ -46,15 +58,6 @@ public class StudentSearchCriteria {
 
   /** ステータスID IN */
   private List<Integer> statusIdIn;
-
-  /** 年齢 完全一致 */
-  private Integer ageEq;
-
-  /** 年齢 下限 */
-  private Integer ageMin;
-
-  /** 年齢 上限 */
-  private Integer ageMax;
 
   /** 申込日 完全一致 */
   private LocalDate courseApplyAtEq;
@@ -91,11 +94,6 @@ public class StudentSearchCriteria {
 
   /** 受講終了実績日 上限 */
   private LocalDate courseFinishedAtTo;
-
-
-
-  /** 削除フラグ */
-  private Boolean isDeleted;
 
 
   /**====================
@@ -144,6 +142,34 @@ public class StudentSearchCriteria {
     this.nicknameLike = nicknameLike;
   }
 
+  private void setAgeEq(Integer ageEq) {
+    if(this.ageEq != null){
+      throw new IllegalStateException("ageEq は既に設定されています。重複指定はできません。");
+    }
+    this.ageEq = ageEq;
+  }
+
+  private void setAgeMin(Integer ageMin) {
+    if(this.ageMin != null){
+      throw new IllegalStateException("ageMin は既に設定されています。重複指定はできません。");
+    }
+    this.ageMin = ageMin;
+  }
+
+  private void setAgeMax(Integer ageMax) {
+    if(this.ageMax != null){
+      throw new IllegalStateException("ageMax は既に設定されています。重複指定はできません。");
+    }
+    this.ageMax = ageMax;
+  }
+
+  private void setDeleted(Boolean deleted) {
+    if(this.isDeleted != null){
+      throw new IllegalStateException("isDeleted は既に設定されています。重複指定はできません。");
+    }
+    this.isDeleted = deleted;
+  }
+
   private void setCourseCodeEq(String courseCodeEq) {
     if(this.courseCodeEq != null){
       throw new IllegalStateException("courseCodeEq は既に設定されています。重複指定はできません。");
@@ -170,27 +196,6 @@ public class StudentSearchCriteria {
       throw new IllegalStateException("statusIdIn は既に設定されています。重複指定はできません。");
     }
     this.statusIdIn = statusIdIn;
-  }
-
-  private void setAgeEq(Integer ageEq) {
-    if(this.ageEq != null){
-      throw new IllegalStateException("ageEq は既に設定されています。重複指定はできません。");
-    }
-    this.ageEq = ageEq;
-  }
-
-  private void setAgeMin(Integer ageMin) {
-    if(this.ageMin != null){
-      throw new IllegalStateException("ageMin は既に設定されています。重複指定はできません。");
-    }
-    this.ageMin = ageMin;
-  }
-
-  private void setAgeMax(Integer ageMax) {
-    if(this.ageMax != null){
-      throw new IllegalStateException("ageMax は既に設定されています。重複指定はできません。");
-    }
-    this.ageMax = ageMax;
   }
 
   private void setCourseApplyAtEq(LocalDate courseApplyAtEq) {
@@ -277,13 +282,6 @@ public class StudentSearchCriteria {
     this.courseFinishedAtTo = courseFinishedAtTo;
   }
 
-  private void setDeleted(Boolean deleted) {
-    if(this.isDeleted != null){
-      throw new IllegalStateException("isDeleted は既に設定されています。重複指定はできません。");
-    }
-    this.isDeleted = deleted;
-  }
-
   /**====================
    * 検索対象カラムごとの整合性を保ちつつ
    * 値をフィールドにセットするメソッド群
@@ -364,6 +362,56 @@ public class StudentSearchCriteria {
     }
   }
 
+  public void applyAgeFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+
+    switch (operator) {
+      case EQ -> {
+        String rawValue = filter.getValue();
+        Integer age = Integer.parseInt(rawValue);
+        setAgeEq(age);
+      }
+      case GTE -> {
+        String rawValue = filter.getValue();
+        Integer ageMin = Integer.parseInt(rawValue);
+        setAgeMin(ageMin);
+      }
+      case LTE -> {
+        String rawValue = filter.getValue();
+        Integer ageMax = Integer.parseInt(rawValue);
+        setAgeMax(ageMax);
+      }
+      case BETWEEN -> {
+        List<String> rawValues = filter.getValues();
+        List<Integer> range = rawValues.stream().map(Integer::parseInt).toList();
+
+        if(range.size() != 2 || range.get(0).equals(range.get(1))){
+          throw new IllegalArgumentException("age between は 2件の等しくない整数値で指定してください");
+        }
+
+        setAgeMin(Collections.min(range));
+        setAgeMax(Collections.max(range));
+      }
+      default -> throw new IllegalArgumentException("age に指定できない operator です: " + operator);
+    }
+
+    if (this.getAgeEq() != null && (this.getAgeMin() != null || this.getAgeMax() != null)) {
+      throw new IllegalStateException("age eq と age の範囲条件は併用できません");
+    }
+
+  }
+
+  public void applyIsDeletedFilter(SearchFilter filter) {
+    SearchOperator operator = filter.getOperator();
+    String value = filter.getValue();
+
+    if (!EQ.equals(operator)) {
+      throw new IllegalArgumentException("isDeleted に指定できる operator は eq のみです");
+    }
+    Boolean isDeleted = Boolean.parseBoolean(value);
+    setDeleted(isDeleted);
+  }
+
   public void applyCourseCodeFilter(SearchFilter filter) {
     SearchOperator operator = filter.getOperator();
 
@@ -404,45 +452,6 @@ public class StudentSearchCriteria {
     if (this.getStatusIdEq() != null && this.getStatusIdIn() != null) {
       throw new IllegalStateException("statusId eq と in は併用できません");
     }
-  }
-
-  public void applyAgeFilter(SearchFilter filter) {
-    SearchOperator operator = filter.getOperator();
-
-    switch (operator) {
-      case EQ -> {
-        String rawValue = filter.getValue();
-        Integer age = Integer.parseInt(rawValue);
-        setAgeEq(age);
-      }
-      case GTE -> {
-        String rawValue = filter.getValue();
-        Integer ageMin = Integer.parseInt(rawValue);
-        setAgeMin(ageMin);
-      }
-      case LTE -> {
-        String rawValue = filter.getValue();
-        Integer ageMax = Integer.parseInt(rawValue);
-        setAgeMax(ageMax);
-      }
-      case BETWEEN -> {
-        List<String> rawValues = filter.getValues();
-        List<Integer> range = rawValues.stream().map(Integer::parseInt).toList();
-
-        if(range.size() != 2 || range.get(0).equals(range.get(1))){
-          throw new IllegalArgumentException("age between は 2件の等しくない整数値で指定してください");
-        }
-
-        setAgeMin(Collections.min(range));
-        setAgeMax(Collections.max(range));
-      }
-      default -> throw new IllegalArgumentException("age に指定できない operator です: " + operator);
-    }
-
-    if (this.getAgeEq() != null && (this.getAgeMin() != null || this.getAgeMax() != null)) {
-      throw new IllegalStateException("age eq と age の範囲条件は併用できません");
-    }
-
   }
 
   public void applyCourseApplyAtFilter(SearchFilter filter) {
@@ -591,17 +600,6 @@ public class StudentSearchCriteria {
         && (this.getCourseFinishedAtFrom() != null || this.getCourseFinishedAtTo() != null)) {
       throw new IllegalStateException("courseFinishedAt eq と期間条件は併用できません");
     }
-  }
-
-  public void applyIsDeletedFilter(SearchFilter filter) {
-    SearchOperator operator = filter.getOperator();
-    String value = filter.getValue();
-
-    if (!EQ.equals(operator)) {
-      throw new IllegalArgumentException("isDeleted に指定できる operator は eq のみです");
-    }
-    Boolean isDeleted = Boolean.parseBoolean(value);
-    setDeleted(isDeleted);
   }
 
 }
