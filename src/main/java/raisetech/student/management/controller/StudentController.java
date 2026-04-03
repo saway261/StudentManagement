@@ -166,6 +166,15 @@ public class StudentController {
   @Operation(
       summary = "受講生コース追加",
       description = "登録済みの受講生の受講コースを追加します",
+      parameters = {
+          @Parameter(in = ParameterIn.PATH,
+              name = "studentId", required = true,
+              description = "受講生ID",
+              schema = @Schema(
+                  type = "integer",
+                  format = "int32"
+              )
+          )},
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
           description = "新規に追加したい受講生コース情報",
           required = true,
