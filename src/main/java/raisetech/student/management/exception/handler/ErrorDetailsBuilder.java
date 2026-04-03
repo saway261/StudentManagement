@@ -72,9 +72,9 @@ public class ErrorDetailsBuilder {
   }
 
   /**
-   * UpdateTargetNotFoundExceptionを受け取り、エラー発生個所とエラーメッセージをリストで返します。
+   * TargetNotFoundExceptionを受け取り、エラー発生個所とエラーメッセージをリストで返します。
    *
-   * @param ex UpdateTargetNotFoundException
+   * @param ex TargetNotFoundException
    * @return エラー発生個所とエラーメッセージ
    */
   public List<Map<String, String>> buildErrorDetails(TargetNotFoundException ex) {
