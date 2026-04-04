@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.SearchableField;
 
 @Getter
 @EqualsAndHashCode
@@ -132,252 +134,326 @@ public class StudentSearchCriteria {
 
   private void setFullNameEq(String fullNameEq) {
     if(this.fullNameEq != null){
-      throw new IllegalStateException("fullNameEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.FULL_NAME,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.fullNameEq = fullNameEq;
   }
 
   private void setFullNameLike(String fullNameLike) {
     if(this.fullNameLike != null){
-      throw new IllegalStateException("fullNameLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.FULL_NAME,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.fullNameLike = fullNameLike;
   }
 
   private void setKanaNameEq(String kanaNameEq) {
     if(this.kanaNameEq != null){
-      throw new IllegalStateException("kanaNameEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.KANA_NAME,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.kanaNameEq = kanaNameEq;
   }
 
   private void setKanaNameLike(String kanaNameLike) {
     if(this.kanaNameLike != null){
-      throw new IllegalStateException("kanaNameLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.KANA_NAME,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.kanaNameLike = kanaNameLike;
   }
 
   private void setNicknameEq(String nicknameEq) {
     if(this.nicknameEq != null){
-      throw new IllegalStateException("nicknameEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.NICKNAME,SearchOperator.EQ,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.nicknameEq = nicknameEq;
   }
 
   private void setNicknameLike(String nicknameLike) {
     if(this.nicknameLike != null){
-      throw new IllegalStateException("nicknameLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.NICKNAME,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.nicknameLike = nicknameLike;
   }
 
   private void setEmailEq(String emailEq) {
     if(this.emailEq != null){
-      throw new IllegalStateException("emailEq は既に設定されています。重複指定はできません。");
+      if(this.nicknameEq != null){
+        throw new InvalidSearchCriteriaException(
+            SearchableField.EMAIL,
+            "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
+      }
     }
     this.emailEq = emailEq;
   }
 
   private void setEmailLike(String emailLike) {
     if(this.emailLike != null){
-      throw new IllegalStateException("emailLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.EMAIL,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.emailLike = emailLike;
   }
 
   private void setAreaEq(String areaEq) {
     if(this.areaEq != null){
-      throw new IllegalStateException("areaEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.AREA,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.areaEq = areaEq;
   }
 
   private void setAreaLike(String areaLike) {
     if(this.areaLike != null){
-      throw new IllegalStateException("areaLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.AREA,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.areaLike = areaLike;
   }
 
   private void setTelephoneEq(String telephoneEq) {
     if(this.telephoneEq != null){
-      throw new IllegalStateException("telephoneEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.TELEPHONE,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.telephoneEq = telephoneEq;
   }
 
   private void setTelephoneLike(String telephoneLike) {
     if(this.telephoneLike != null){
-      throw new IllegalStateException("telephoneLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.TELEPHONE,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.telephoneLike = telephoneLike;
   }
 
   private void setAgeEq(Integer ageEq) {
     if(this.ageEq != null){
-      throw new IllegalStateException("ageEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.AGE,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.ageEq = ageEq;
   }
 
   private void setAgeMin(Integer ageMin) {
     if(this.ageMin != null){
-      throw new IllegalStateException("ageMin は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.AGE,
+          "このフィールドの下限値は既に設定されています。重複指定はできません。");
     }
     this.ageMin = ageMin;
   }
 
   private void setAgeMax(Integer ageMax) {
     if(this.ageMax != null){
-      throw new IllegalStateException("ageMax は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.AGE,
+          "このフィールドの上限値は既に設定されています。重複指定はできません。");
     }
     this.ageMax = ageMax;
   }
 
   private void setSexEq(String sexEq) {
-    if(this.sexEq != null){
-      throw new IllegalStateException("sexEq は既に設定されています。重複指定はできません。");
+    if(this.ageEq != null){
+      throw new InvalidSearchCriteriaException(
+          SearchableField.SEX,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.sexEq = sexEq;
   }
 
   private void setSexIn(List<String> sexIn) {
     if(this.sexIn != null){
-      throw new IllegalStateException("sexIn は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.SEX,
+          "このフィールドの検索リストが既に設定されています。重複指定はできません。");
     }
     this.sexIn = sexIn;
   }
 
   private void setRemarkEq(String remarkEq) {
-    if(this.remarkEq != null){
-      throw new IllegalStateException("remarkEq は既に設定されています。重複指定はできません。");
+    if(this.ageEq != null){
+      throw new InvalidSearchCriteriaException(
+          SearchableField.REMARK,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.remarkEq = remarkEq;
   }
 
   private void setRemarkLike(String remarkLike) {
     if(this.remarkLike != null){
-      throw new IllegalStateException("remarkLike は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.REMARK,
+          "このフィールドの部分一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.remarkLike = remarkLike;
   }
 
   private void setDeleted(Boolean deleted) {
     if(this.isDeleted != null){
-      throw new IllegalStateException("isDeleted は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.IS_DELETED,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.isDeleted = deleted;
   }
 
   private void setCourseCodeEq(String courseCodeEq) {
     if(this.courseCodeEq != null){
-      throw new IllegalStateException("courseCodeEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_CODE,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.courseCodeEq = courseCodeEq;
   }
 
   private void setCourseCodeIn(List<String> courseCodeIn) {
     if(this.courseCodeIn != null){
-      throw new IllegalStateException("courseCodeIn は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_CODE,
+          "このフィールドの検索リストが既に設定されています。重複指定はできません。");
     }
     this.courseCodeIn = courseCodeIn;
   }
 
   private void setStatusIdEq(Integer statusIdEq) {
     if(this.statusIdEq != null){
-      throw new IllegalStateException("statusIdEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.STATUS_ID,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.statusIdEq = statusIdEq;
   }
 
   private void setStatusIdIn(List<Integer> statusIdIn) {
     if(this.statusIdIn != null){
-      throw new IllegalStateException("statusIdIn は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.STATUS_ID,
+          "このフィールドの検索リストが既に設定されています。重複指定はできません。");
     }
     this.statusIdIn = statusIdIn;
   }
 
   private void setCourseApplyAtEq(LocalDate courseApplyAtEq) {
     if(this.courseApplyAtEq != null){
-      throw new IllegalStateException("courseApplyAtEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_APPLY_AT,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.courseApplyAtEq = courseApplyAtEq;
   }
 
   private void setCourseApplyAtFrom(LocalDate courseApplyAtFrom) {
     if(this.courseApplyAtFrom != null){
-      throw new IllegalStateException("courseApplyAtFrom は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_APPLY_AT,
+          "このフィールドの範囲条件の始端が既に設定されています。重複指定はできません。");
     }
     this.courseApplyAtFrom = courseApplyAtFrom;
   }
 
   private void setCourseApplyAtTo(LocalDate courseApplyAtTo) {
     if(this.courseApplyAtTo != null){
-      throw new IllegalStateException("courseApplyAtTo は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_APPLY_AT,
+          "このフィールドの範囲条件の終端が既に設定されています。重複指定はできません。");
     }
     this.courseApplyAtTo = courseApplyAtTo;
   }
 
   private void setCourseStartAtEq(LocalDate courseStartAtEq) {
     if(this.courseStartAtEq != null){
-      throw new IllegalStateException("courseStartAtEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_START_AT,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.courseStartAtEq = courseStartAtEq;
   }
 
   private void setCourseStartAtFrom(LocalDate courseStartAtFrom) {
     if(this.courseStartAtFrom != null){
-      throw new IllegalStateException("courseStartAtFrom は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_START_AT,
+          "このフィールドの範囲条件の始端が既に設定されています。重複指定はできません。");
     }
     this.courseStartAtFrom = courseStartAtFrom;
   }
 
   private void setCourseStartAtTo(LocalDate courseStartAtTo) {
     if(this.courseStartAtTo != null){
-      throw new IllegalStateException("courseStartAtTo は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_START_AT,
+          "このフィールドの範囲条件の終端が既に設定されています。重複指定はできません。");
     }
     this.courseStartAtTo = courseStartAtTo;
   }
 
   private void setCoursePlannedEndAtEq(LocalDate coursePlannedEndAtEq) {
     if(this.coursePlannedEndAtEq != null){
-      throw new IllegalStateException("coursePlannedEndAtEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_PLANNED_END_AT,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.coursePlannedEndAtEq = coursePlannedEndAtEq;
   }
 
   private void setCoursePlannedEndAtFrom(LocalDate coursePlannedEndAtFrom) {
     if(this.coursePlannedEndAtFrom != null){
-      throw new IllegalStateException("coursePlannedEndAtFrom は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_PLANNED_END_AT,
+          "このフィールドの範囲条件の始端が既に設定されています。重複指定はできません。");
     }
     this.coursePlannedEndAtFrom = coursePlannedEndAtFrom;
   }
 
   private void setCoursePlannedEndAtTo(LocalDate coursePlannedEndAtTo) {
     if(this.coursePlannedEndAtTo != null){
-      throw new IllegalStateException("coursePlannedEndAtTo は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_PLANNED_END_AT,
+          "このフィールドの範囲条件の終端が既に設定されています。重複指定はできません。");
     }
     this.coursePlannedEndAtTo = coursePlannedEndAtTo;
   }
 
   private void setCourseFinishedAtEq(LocalDate courseFinishedAtEq) {
     if(this.courseFinishedAtEq != null){
-      throw new IllegalStateException("courseFinishedAtEq は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_FINISHED_AT,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.courseFinishedAtEq = courseFinishedAtEq;
   }
 
   private void setCourseFinishedAtFrom(LocalDate courseFinishedAtFrom) {
     if(this.courseFinishedAtFrom != null){
-      throw new IllegalStateException("courseFinishedAtFrom は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_FINISHED_AT,
+          "このフィールドの範囲条件の始端が既に設定されています。重複指定はできません。");
     }
     this.courseFinishedAtFrom = courseFinishedAtFrom;
   }
 
   private void setCourseFinishedAtTo(LocalDate courseFinishedAtTo) {
     if(this.courseFinishedAtTo != null){
-      throw new IllegalStateException("courseFinishedAtTo は既に設定されています。重複指定はできません。");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_FINISHED_AT,
+          "このフィールドの範囲条件の終端が既に設定されています。重複指定はできません。");
     }
     this.courseFinishedAtTo = courseFinishedAtTo;
   }
@@ -404,11 +480,12 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setFullNameLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("fullName に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.FULL_NAME, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getFullNameEq() != null && this.getFullNameLike() != null) {
-      throw new IllegalStateException("fullName EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.FULL_NAME,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -429,11 +506,12 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setKanaNameLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("kanaName に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.KANA_NAME, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getKanaNameEq() != null && this.getKanaNameLike() != null) {
-      throw new IllegalStateException("kanaName EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.KANA_NAME,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -454,11 +532,12 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setNicknameLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("nickname に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.NICKNAME, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getNicknameEq() != null && this.getNicknameLike() != null) {
-      throw new IllegalStateException("nickname EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.NICKNAME,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -479,11 +558,12 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setEmailLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("email に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.EMAIL, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getEmailEq() != null && this.getEmailLike() != null) {
-      throw new IllegalStateException("email EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.EMAIL,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -504,11 +584,12 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setAreaLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("area に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.AREA, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getAreaEq() != null && this.getAreaLike() != null) {
-      throw new IllegalStateException("area EQ(完全一致) と STARTS_WITH,ENDS_WITH,CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.AREA,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -526,12 +607,13 @@ public class StudentSearchCriteria {
       case ENDS_WITH -> {
         setTelephoneLike("%" + text);
       }
-      default -> throw new IllegalArgumentException("telephone に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.TELEPHONE, operator, "このフィールドに指定できない演算子です。");
     }
     // 電話番号検索で中間一致を求めるケースが思いつかないためCONTAINSは持たない
 
     if (this.getTelephoneEq() != null && this.getTelephoneLike() != null) {
-      throw new IllegalStateException("telephone EQ(完全一致) と STARTS_WITH,ENDS_WITH(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.TELEPHONE,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -559,17 +641,18 @@ public class StudentSearchCriteria {
         List<Integer> range = rawValues.stream().map(Integer::parseInt).toList();
 
         if(range.size() != 2 || range.get(0).equals(range.get(1))){
-          throw new IllegalArgumentException("age between は 2件の等しくない整数値で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.AGE, operator, "2件の等しくない日付で指定してください");
         }
 
         setAgeMin(Collections.min(range));
         setAgeMax(Collections.max(range));
       }
-      default -> throw new IllegalArgumentException("age に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.AGE, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getAgeEq() != null && (this.getAgeMin() != null || this.getAgeMax() != null)) {
-      throw new IllegalStateException("age eq と age の範囲条件は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.AGE,"完全一致検索と範囲検索は併用できません");
     }
 
   }
@@ -586,11 +669,12 @@ public class StudentSearchCriteria {
         List<String> sexes = filter.getValues();
         setSexIn(sexes);
       }
-      default -> throw new IllegalArgumentException("sex に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.SEX, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getSexEq() != null && this.getSexIn() != null) {
-      throw new IllegalStateException("sex eq と in は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.SEX,"完全一致検索とリスト検索は併用できません");
     }
   }
 
@@ -605,12 +689,13 @@ public class StudentSearchCriteria {
       case CONTAINS -> {
         setRemarkLike("%" + text + "%");
       }
-      default -> throw new IllegalArgumentException("remark に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.REMARK, operator, "このフィールドに指定できない演算子です。");
     }
     // 備考は記載が自由すぎるので、STARTS_WITH, ENDS_WITHのメリットが薄いため持たない。EQは念のため持つ
 
     if (this.getRemarkEq() != null && this.getRemarkLike() != null) {
-      throw new IllegalStateException("remark EQ(完全一致) と CONTAINS(部分一致) は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.REMARK,"完全一致検索と部分一致検索は併用できません");
     }
   }
 
@@ -619,7 +704,8 @@ public class StudentSearchCriteria {
     String value = filter.getValue();
 
     if (!EQ.equals(operator)) {
-      throw new IllegalArgumentException("isDeleted に指定できる operator は eq のみです");
+      throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_PLANNED_END_AT, operator, "このフィールドに指定できない演算子です。");
     }
     Boolean isDeleted = Boolean.parseBoolean(value);
     setDeleted(isDeleted);
@@ -637,11 +723,12 @@ public class StudentSearchCriteria {
         List<String> courseCodes = filter.getValues();
         setCourseCodeIn(courseCodes);
       }
-      default -> throw new IllegalArgumentException("courseCode に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_CODE, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getCourseCodeEq() != null && this.getCourseCodeIn() != null) {
-      throw new IllegalStateException("courseCode eq と in は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.COURSE_CODE,"完全一致検索とリスト検索は併用できません");
     }
   }
 
@@ -659,11 +746,12 @@ public class StudentSearchCriteria {
         List<Integer> statusIds = rawValues.stream().map(Integer::parseInt).collect(Collectors.toList());
         setStatusIdIn(statusIds);
       }
-      default -> throw new IllegalArgumentException("statusId に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.STATUS_ID, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getStatusIdEq() != null && this.getStatusIdIn() != null) {
-      throw new IllegalStateException("statusId eq と in は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.STATUS_ID,"完全一致検索とリスト検索は併用できません");
     }
   }
 
@@ -690,17 +778,18 @@ public class StudentSearchCriteria {
         List<String> rawValues = filter.getValues();
         List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
         if (range.size() != 2 || range.get(0).equals(range.get(1))) {
-          throw new IllegalArgumentException("courseApplyAt between は 2件の等しくない日付で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.COURSE_APPLY_AT, operator, "2件の等しくない日付で指定してください");
         }
         setCourseApplyAtFrom(Collections.min(range));
         setCourseApplyAtTo(Collections.max(range));
       }
-      default -> throw new IllegalArgumentException("courseApplyAt に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_APPLY_AT, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getCourseApplyAtEq() != null
         && (this.getCourseApplyAtFrom() != null || this.getCourseApplyAtTo() != null)) {
-      throw new IllegalStateException("courseApplyAt eq と期間条件は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.COURSE_APPLY_AT,"完全一致検索と範囲検索は併用できません");
     }
   }
 
@@ -727,17 +816,18 @@ public class StudentSearchCriteria {
         List<String> rawValues = filter.getValues();
         List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
         if (range.size() != 2 || range.get(0).equals(range.get(1))) {
-          throw new IllegalArgumentException("courseStartAt between は 2件の等しくない日付で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.COURSE_START_AT, operator, "2件の等しくない日付で指定してください");
         }
         setCourseStartAtFrom(Collections.min(range));
         setCourseStartAtTo(Collections.max(range));
       }
-      default -> throw new IllegalArgumentException("courseStartAt に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_START_AT, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getCourseStartAtEq() != null
         && (this.getCourseStartAtFrom() != null || this.getCourseStartAtTo() != null)) {
-      throw new IllegalStateException("courseStartAt eq と期間条件は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.COURSE_START_AT,"完全一致検索と範囲検索は併用できません");
     }
   }
 
@@ -764,17 +854,18 @@ public class StudentSearchCriteria {
         List<String> rawValues = filter.getValues();
         List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
         if (range.size() != 2 || range.get(0).equals(range.get(1))) {
-          throw new IllegalArgumentException("coursePlannedEndAt between は 2件の等しくない日付で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.COURSE_PLANNED_END_AT, operator, "2件の等しくない日付で指定してください");
         }
         setCoursePlannedEndAtFrom(Collections.min(range));
         setCoursePlannedEndAtTo(Collections.max(range));
       }
-      default -> throw new IllegalArgumentException("coursePlannedEndAt に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_PLANNED_END_AT, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getCoursePlannedEndAtEq() != null
         && (this.getCoursePlannedEndAtFrom() != null || this.getCoursePlannedEndAtTo() != null)) {
-      throw new IllegalStateException("coursePlannedEndAt eq と期間条件は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.COURSE_PLANNED_END_AT,"完全一致検索と範囲検索は併用できません");
     }
   }
 
@@ -801,17 +892,18 @@ public class StudentSearchCriteria {
         List<String> rawValues = filter.getValues();
         List<LocalDate> range = rawValues.stream().map(LocalDate::parse).toList();
         if (range.size() != 2 || range.get(0).equals(range.get(1))) {
-          throw new IllegalArgumentException("courseFinishedAt between は 2件の等しくない日付で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.COURSE_FINISHED_AT, operator, "2件の等しくない日付で指定してください");
         }
         setCourseFinishedAtFrom(Collections.min(range));
         setCourseFinishedAtTo(Collections.max(range));
       }
-      default -> throw new IllegalArgumentException("courseFinishedAt に指定できない operator です: " + operator);
+      default -> throw new InvalidSearchCriteriaException(
+          SearchableField.COURSE_FINISHED_AT, operator, "このフィールドに指定できない演算子です。");
     }
 
     if (this.getCourseFinishedAtEq() != null
         && (this.getCourseFinishedAtFrom() != null || this.getCourseFinishedAtTo() != null)) {
-      throw new IllegalStateException("courseFinishedAt eq と期間条件は併用できません");
+      throw new InvalidSearchCriteriaException(SearchableField.COURSE_FINISHED_AT,"完全一致検索と範囲検索は併用できません");
     }
   }
 
