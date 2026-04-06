@@ -125,24 +125,41 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
     return isValid;
   }
 
+  /**
+   * フィールドの型と入力値（value/values）の整合性をチェックします。
+   * @param filter 検索条件
+   * @param type フィールドの型
+   * @return 入力値がフィールドの求める型に変換可能ならtrue,不可能ならfalse
+   */
   private boolean isTypeConsistent(SearchFilter filter, Class<?> type) {
     List<String> valuesToCheck = new ArrayList<>();
+    SearchOperator operator = filter.getOperator();
 
-    if (filter.getValue() != null && !filter.getValue().isBlank()) {
-      valuesToCheck.add(filter.getValue());
+    // 演算子に基づいて、チェックすべき値だけをピックアップする
+    switch (operator) {
+      case BETWEEN, IN -> {
+        if (filter.getValues() != null) {
+          filter.getValues().stream()
+              .filter(v -> v != null && !v.isBlank())
+              .forEach(valuesToCheck::add);
+        }
+      }
+      default -> {
+        if (filter.getValue() != null && !filter.getValue().isBlank()) {
+          valuesToCheck.add(filter.getValue());
+        }
+      }
     }
 
-    if (filter.getValues() != null) {
-      filter.getValues().stream()
-          .filter(v -> v != null && !v.isBlank())
-          .forEach(valuesToCheck::add);
-    }
-
+    // 空の場合は(必須チェックは別で行っているため)型整合性としてはOKとする
     return valuesToCheck.stream().allMatch(v -> isParsable(v, type));
   }
 
   /**
    * 文字列が指定された型に変換可能か判定します。
+   * @param input 入力値
+   * @param type フィールドが期待する型
+   * @return 変換可能ならtrue,不可能ならfalse
    */
   private boolean isParsable(String input, Class<?> type) {
     try {
@@ -151,7 +168,7 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
         return true;
       }
 
-      // Integer型のチェック (age, statusId, studentIdなど)
+      // Integer型のチェック (age, statusIdなど)
       if (type == Integer.class) {
         Integer.parseInt(input);
         return true;
