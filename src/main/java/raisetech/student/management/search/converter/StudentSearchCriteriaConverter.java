@@ -13,7 +13,7 @@ public class StudentSearchCriteriaConverter {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
 
     for (SearchFilter filter : filters) {
-      SearchableField field = SearchableField.getFromFieldName(filter.getField());
+      SearchableField field = SearchableField.fromFieldName(filter.getField());
 
       switch (field) {
         case FULL_NAME -> criteria.applyFullNameFilter(filter);
