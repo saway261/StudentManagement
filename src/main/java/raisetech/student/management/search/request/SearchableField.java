@@ -3,6 +3,7 @@ package raisetech.student.management.search.request;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Getter;
 
@@ -25,6 +26,13 @@ public enum SearchableField {
   COURSE_PLANNED_END_AT("coursePlannedEndAt", LocalDate.class),
   COURSE_FINISHED_AT("courseFinishedAt", LocalDate.class);
 
+  private static final Map<String, SearchableField> FIELD_MAP =
+      Arrays.stream(values())
+          .collect(Collectors.toUnmodifiableMap(
+              SearchableField::getFieldName,
+              field -> field
+          ));
+
   private final String fieldName;
   private final Class<?> type;
 
@@ -38,9 +46,9 @@ public enum SearchableField {
    * @param inputField 検索フィルターで指定されたフィールド名
    * @return SearchableFieldに存在するならtrue,存在しないならfalse
    */
-  public static boolean existsSearchableFields(String inputField) {
-    return Arrays.stream(values())
-        .anyMatch(field -> field.getFieldName().equals(inputField));
+  public static boolean exists(String inputField) {
+    if (inputField == null) return false;
+    return FIELD_MAP.containsKey(inputField);
   }
 
   /**
@@ -49,11 +57,16 @@ public enum SearchableField {
    * @return 一致するSearchableField
    * @throws IllegalArgumentException 一致するものがない場合
    */
-  public static SearchableField getFromFieldName(String inputField) {
-    return Arrays.stream(values())
-        .filter(field -> field.getFieldName().equals(inputField))
-        .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("無効なフィールド名です: " + inputField));
+  public static SearchableField fromFieldName(String inputField) {
+    if (inputField == null) {
+      throw new IllegalArgumentException("無効なフィールド名です: null");
+    }
+
+    SearchableField field = FIELD_MAP.get(inputField);
+    if (field == null) {
+      throw new IllegalArgumentException("無効なフィールド名です: " + inputField);
+    }
+    return field;
   }
 
   /**
@@ -62,9 +75,8 @@ public enum SearchableField {
    * @param inputField 検索フィルターで指定されたフィールド名
    * @return 指定されたフィールドの型
    */
-  public static Class<?> getTypeByFieldName(String inputField) {
-    // 上記の共通メソッドを呼び出し、見つかったインスタンスから型を取り出す
-    return getFromFieldName(inputField).getType();
+  public static Class<?> typeOf(String inputField) {
+    return fromFieldName(inputField).getType();
   }
 
   /**
@@ -72,8 +84,6 @@ public enum SearchableField {
    * @return fieldNameのリスト
    */
   public static List<String> getAllFieldNames() {
-    return Arrays.stream(values())
-        .map(SearchableField::getFieldName)
-        .collect(Collectors.toList());
+    return FIELD_MAP.keySet().stream().toList();
   }
 }

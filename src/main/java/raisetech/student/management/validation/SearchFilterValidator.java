@@ -35,7 +35,7 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
     }
 
     // 2. 有効なフィールド名かをチェック
-    if(!SearchableField.existsSearchableFields(field)){
+    if(!SearchableField.exists(field)){
       addError(
           context,
           "field",
@@ -48,7 +48,7 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
     }
 
     // 3. 型整合性
-    Class<?> fieldType = SearchableField.getTypeByFieldName(field);
+    Class<?> fieldType = SearchableField.typeOf(field);
     if (!isTypeConsistent(filter, fieldType)) {
       addError(
           context,
