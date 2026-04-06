@@ -5,7 +5,6 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
 import raisetech.student.management.search.request.SearchableField;
@@ -62,6 +61,12 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
     return isValid;
   }
 
+  /**
+   * 演算子に対して適切な value か values を受け取っているかを検証します
+   * @param filter 検索フィルター
+   * @param context コンテキスト（エラー詳細を上書きするために受け取ります）
+   * @return 適切ならtrue, 不適切ならfalse
+   */
   private boolean validateOperatorAndValue(SearchFilter filter, ConstraintValidatorContext context) {
     SearchOperator operator = filter.getOperator();
     String value = filter.getValue();
@@ -87,12 +92,6 @@ public class SearchFilterValidator implements ConstraintValidator<ValidSearchFil
         // 要素数チェック
         if (valuesSize != 2) {
           addError(context, "values", "BETWEENではvaluesは2件で指定してください。");
-          isValid = false;
-        }
-
-        // 同値チェック
-        if (valuesSize == 2 && Objects.equals(values.get(0), values.get(1))) {
-          addError(context, "values", "BETWEENでは異なる2つの値を指定してください。");
           isValid = false;
         }
       }
