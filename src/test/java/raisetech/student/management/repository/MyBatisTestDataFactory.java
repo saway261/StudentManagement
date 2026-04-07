@@ -73,10 +73,10 @@ public class MyBatisTestDataFactory {
                 scId1,
                 2,
                 "AW",
-                3,
+                2,
                 LocalDate.of(2024, 7, 15),
-                LocalDate.of(2024, 7, 20),
-                LocalDate.of(2025, 7, 20),
+                null,
+                null,
                 null
             ),
             new StudentCourse(
@@ -116,11 +116,11 @@ public class MyBatisTestDataFactory {
             scId,
             3,
             "DE",
-            3,
+            4,
             LocalDate.of(2024, 8, 7),
             LocalDate.of(2024, 8, 12),
             LocalDate.of(2025, 2, 12),
-            null
+            LocalDate.of(2025, 2, 10)
         ))
     );
   }
@@ -150,10 +150,10 @@ public class MyBatisTestDataFactory {
                 scId1,
                 4,
                 "WM",
-                3,
+                5,
                 LocalDate.of(2024, 8, 25),
-                LocalDate.of(2024, 8, 30),
-                LocalDate.of(2025, 8, 30),
+                null,
+                null,
                 null
             ),
             new StudentCourse(
@@ -192,10 +192,10 @@ public class MyBatisTestDataFactory {
             scId,
             5,
             "FR",
-            3,
+            1,
             LocalDate.of(2024, 9, 4),
-            LocalDate.of(2024, 9, 9),
-            LocalDate.of(2025, 3, 9),
+            null,
+            null,
             null
         ))
     );
