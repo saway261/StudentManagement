@@ -188,11 +188,9 @@ public class StudentSearchCriteria {
 
   private void setEmailEq(String emailEq) {
     if(this.emailEq != null){
-      if(this.nicknameEq != null){
         throw new InvalidSearchCriteriaException(
-            SearchableField.EMAIL,
-            "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
-      }
+          SearchableField.EMAIL,
+          "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
     }
     this.emailEq = emailEq;
   }
@@ -270,7 +268,7 @@ public class StudentSearchCriteria {
   }
 
   private void setSexEq(String sexEq) {
-    if(this.ageEq != null){
+    if(this.sexEq != null){
       throw new InvalidSearchCriteriaException(
           SearchableField.SEX,
           "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
@@ -288,7 +286,7 @@ public class StudentSearchCriteria {
   }
 
   private void setRemarkEq(String remarkEq) {
-    if(this.ageEq != null){
+    if(this.remarkEq != null){
       throw new InvalidSearchCriteriaException(
           SearchableField.REMARK,
           "このフィールドの完全一致検索条件が既に設定されています。重複指定はできません。");
@@ -705,7 +703,7 @@ public class StudentSearchCriteria {
 
     if (!EQ.equals(operator)) {
       throw new InvalidSearchCriteriaException(
-          SearchableField.COURSE_PLANNED_END_AT, operator, "このフィールドに指定できない演算子です。");
+          SearchableField.IS_DELETED, operator, "このフィールドに指定できない演算子です。");
     }
     Boolean isDeleted = Boolean.parseBoolean(value);
     setDeleted(isDeleted);
