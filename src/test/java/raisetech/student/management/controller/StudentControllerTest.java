@@ -17,9 +17,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.exception.handler.ErrorDetailsBuilder;
 import raisetech.student.management.repository.CourseRepository;
+import raisetech.student.management.search.request.SearchableField;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.testutil.TestDataFactory;
 
@@ -98,6 +100,99 @@ class StudentControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + notPositiveStudentId))
         .andExpect(status().isBadRequest());
     Mockito.verify(service, never()).searchStudentDetail(Mockito.anyInt());
+  }
+
+  @Test
+  void 受講生詳細高度検索成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
+      throws Exception {
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "fullName",
+                            "operator": "EQ",
+                            "value": "田中太郎"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isOk());
+
+    // Assert
+    Mockito.verify(service, times(1)).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Act
+    // HttpMassageNotReadableExceptionが発生して400エラーになることを検証
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_不正な検索フィルタを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Act
+    // @ValidSearchFilterにかかってバリデーションエラーになると400エラーになることを検証
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "unknownField",
+                            "operator": "EQ",
+                            "value": "test"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_サービス層でcriteriaへの変換時に例外が投げられると400エラーが返されること()
+      throws Exception {
+    // Arrange
+    Mockito.when(service.searchStudentDetailsAdvanced(any()))
+        .thenThrow(new InvalidSearchCriteriaException(SearchableField.COURSE_CODE,"許可されていない演算子です"));
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "courseCode",
+                            "operator": "STARTS_WITH",
+                            "value": "JA"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, times(1)).searchStudentDetailsAdvanced(any());
   }
 
   @Test void 受講生詳細登録成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
