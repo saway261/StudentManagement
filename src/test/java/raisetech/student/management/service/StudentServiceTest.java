@@ -25,10 +25,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.search.converter.StudentSearchCriteriaConverter;
+import raisetech.student.management.search.criteria.StudentSearchCriteria;
+import raisetech.student.management.search.request.SearchFilter;
+import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
 import raisetech.student.management.testutil.TestDataFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,6 +45,9 @@ class StudentServiceTest {
 
   @Mock
   private CourseStatusRepository statusRepository;
+
+  @Mock
+  private StudentSearchCriteriaConverter converter;
 
   @InjectMocks
   private StudentService sut;// System Under Test テスト対象システム
@@ -114,6 +123,101 @@ class StudentServiceTest {
     verify(studentRepository, times(1)).searchStudent(studentId);
   }
 
+  @Test
+  void 高度検索成功_converterでcriteriaを生成し検索条件に一致する受講生詳細一覧を返すこと() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "fullName",
+        SearchOperator.EQ,
+        "田中太郎",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    Integer studentId1 = 1;
+    Integer scId1 = 1;
+    Integer studentId2 = 2;
+    Integer scId2 = 2;
+
+    StudentDetail studentDetail1 = TestDataFactory.makeCompletedStudentDetail(studentId1, scId1);
+    StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, scId2);
+
+    // converterがどういうロジックでcriteriaを作るかはこのテストでは関知しないためスタブは空のインスタンスを返す
+    Mockito.when(converter.toCriteria(request.getFilters())).thenReturn(criteria);
+    Mockito.when(studentRepository.searchStudentIdListByCriteria(criteria)).thenReturn(List.of(studentId1, studentId2));
+
+    Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
+    Mockito.when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentDetail1.getStudentCourses());
+    Mockito.when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
+    Mockito.when(studentRepository.searchStudentCourses(studentId2)).thenReturn(studentDetail2.getStudentCourses());
+
+    // Act
+    List<StudentDetail> actual = sut.searchStudentDetailsAdvanced(request);
+
+    // Assert
+    Assertions.assertEquals(List.of(studentDetail1, studentDetail2), actual);
+    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(studentRepository, times(1)).searchStudentIdListByCriteria(criteria);
+    verify(studentRepository, times(1)).searchStudent(studentId1);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId1);
+    verify(studentRepository, times(1)).searchStudent(studentId2);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId2);
+  }
+
+  @Test
+  void 高度検索成功_一致する受講生IDがないとき空リストを返すこと() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "statusId",
+        SearchOperator.EQ,
+        "999",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    Mockito.when(converter.toCriteria(request.getFilters())).thenReturn(criteria);
+    Mockito.when(studentRepository.searchStudentIdListByCriteria(criteria)).thenReturn(List.of());
+
+    // Act
+    List<StudentDetail> actual = sut.searchStudentDetailsAdvanced(request);
+
+    // Assert
+    Assertions.assertEquals(List.of(), actual);
+    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(studentRepository, times(1)).searchStudentIdListByCriteria(criteria);
+    verify(studentRepository, never()).searchStudent(anyInt());
+    verify(studentRepository, never()).searchStudentCourses(anyInt());
+  }
+
+  @Test
+  void 高度検索失敗_converterで例外が発生したらそのまま送出すること() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "fullName",
+        SearchOperator.EQ,
+        "田中太郎",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    Mockito.when(converter.toCriteria(request.getFilters())).thenThrow(InvalidSearchCriteriaException.class);
+
+    // Act & Assert
+    assertThrows(InvalidSearchCriteriaException.class,
+        () -> sut.searchStudentDetailsAdvanced(request));
+    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(studentRepository, never()).searchStudentIdListByCriteria(any(StudentSearchCriteria.class));
+    verify(studentRepository, never()).searchStudent(anyInt());
+    verify(studentRepository, never()).searchStudentCourses(anyInt());
+  }
+
+  /**
+   * registerStudentDetail(StudentDetail studentDetail)の正常系テスト
+   */
   @Test
   void 受講生詳細登録成功_受講生を登録し各受講生コースを初期化してリポジトリに渡していること() {
     // Arrange
