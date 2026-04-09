@@ -3,6 +3,7 @@ package raisetech.student.management.search.criteria;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,6 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 class StudentSearchCriteriaTest {
 
@@ -589,6 +592,42 @@ class StudentSearchCriteriaTest {
     SearchFilter filter = new SearchFilter(fieldName, SearchOperator.CONTAINS, "2026-04", null);
 
     assertThrows(InvalidSearchCriteriaException.class, () -> applyFilter(sut,filter));
+  }
+
+  @Test
+  void StudentSimpleSearchRequestを受け取り適切なフィールドをだけをセットしたcriteriaに変換できること(){
+    StudentSimpleSearchRequest input = new StudentSimpleSearchRequest();
+    input.setAreaContains("東京");
+    input.setStatusId(List.of(1,2));
+
+    StudentSearchCriteria actual = new StudentSearchCriteria(input);
+
+    assertEquals("%東京%", actual.getAreaLike());
+    assertEquals(List.of(1,2), actual.getStatusIdIn());
+
+    // 上記以外のフィールドが全てnullであることを検証
+    Set<String> expectedKeys = Set.of(
+        "area:Like",
+        "statusId:In"
+    );
+
+    GETTER_MAP.forEach((key, getter) -> {
+      // expectedKeysに含まれていないフィールドだけをチェック
+      if (!expectedKeys.contains(key)) {
+        Object value = getter.get(actual);
+        assertNull(value);
+      }
+    });
+  }
+
+  @Test
+  void 空のStudentSimpleSearchRequestを受け取ると全てのフィールドがnullのcriteriaに変換できること(){
+    StudentSearchCriteria actual = new StudentSearchCriteria(new StudentSimpleSearchRequest());
+
+    GETTER_MAP.forEach((key, getter) -> {
+      Object value = getter.get(actual);
+      assertNull(value);
+    });
   }
 
 }

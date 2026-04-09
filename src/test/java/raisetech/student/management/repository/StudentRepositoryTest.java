@@ -25,16 +25,7 @@ class StudentRepositoryTest {
   private StudentRepository sut;
 
   @Test
-  void 受講生IDの全件検索が行えること() {
-    List<Integer> expected = List.of(1,2,3,4,5);
-
-    List<Integer> actual = sut.searchStudentIdList();
-
-    assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
-  }
-
-  @Test
-  void 受講生の単一検索が行えること() {
+  void ID検索成功_受講生の単一検索が行えること() {
     int studentId = 1;
     Student actual = sut.searchStudent(studentId);
 
@@ -42,7 +33,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 存在しない受講生IDを指定したときnullが返ること() {
+  void ID検索失敗_存在しない受講生IDを指定したときnullが返ること() {
     int studentId = 999;
     Student actual = sut.searchStudent(studentId);
 
@@ -50,16 +41,16 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 詳細検索_条件未指定のとき全受講生IDを返すこと() {
+  void 条件検索_条件未指定のとき全受講生IDを返すこと() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 3, 4, 5);
   }
 
   @Test
-  void 詳細検索_fullNameEqで完全一致検索できること() {
+  void 条件検索_fullNameEqで完全一致検索できること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyFullNameFilter(new SearchFilter(
         "fullName",
@@ -68,13 +59,13 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1);
   }
 
   @Test
-  void 詳細検索_fullNameLikeで部分一致検索できること() {
+  void 条件検索_fullNameLikeで部分一致検索できること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyFullNameFilter(new SearchFilter(
         "fullName",
@@ -83,13 +74,13 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(2);
   }
 
   @Test
-  void 詳細検索_courseCodeInで受講コースのIN検索ができること() {
+  void 条件検索_courseCodeInで受講コースのIN検索ができること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyCourseCodeFilter(new SearchFilter(
         "courseCode",
@@ -98,13 +89,13 @@ class StudentRepositoryTest {
         List.of("JA", "DE")
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 3, 4);
   }
 
   @Test
-  void 詳細検索_statusIdEqでステータス一致の受講生を検索できること() {
+  void 条件検索_statusIdEqでステータス一致の受講生を検索できること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyStatusIdFilter(new SearchFilter(
         "statusId",
@@ -113,13 +104,13 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 4);
   }
 
   @Test
-  void 詳細検索_age範囲検索ができること() {
+  void 条件検索_age範囲検索ができること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyAgeFilter(new SearchFilter(
         "age",
@@ -128,13 +119,13 @@ class StudentRepositoryTest {
         List.of("22", "32")
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 3);
   }
 
   @Test
-  void 詳細検索_courseApplyAtの範囲検索ができること() {
+  void 条件検索_courseApplyAtの範囲検索ができること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyCourseApplyAtFilter(new SearchFilter(
         "courseApplyAt",
@@ -143,13 +134,13 @@ class StudentRepositoryTest {
         List.of("2024-07-01", "2024-07-31")
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 4);
   }
 
   @Test
-  void 詳細検索_isDeleted_trueで削除済み受講生のみ取得できること() {
+  void 条件検索_isDeleted_trueで削除済み受講生のみ取得できること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyIsDeletedFilter(new SearchFilter(
         "isDeleted",
@@ -158,13 +149,13 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(5);
   }
 
   @Test
-  void 詳細検索_受講生条件と受講コース条件を併用して検索できること() {
+  void 条件検索_受講生条件と受講コース条件を併用して検索できること() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applySexFilter(new SearchFilter(
         "sex",
@@ -179,13 +170,13 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(2);
   }
 
   @Test
-  void 詳細検索_複数の受講コースが条件一致しても受講生IDは重複しないこと() {
+  void 条件検索_複数の受講コースが条件一致しても受講生IDは重複しないこと() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyStatusIdFilter(new SearchFilter(
         "statusId",
@@ -194,14 +185,14 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).containsExactly(1, 2, 4);
     assertThat(actual).doesNotHaveDuplicates();
   }
 
   @Test
-  void 詳細検索_一致するデータがないとき空リストを返すこと() {
+  void 条件検索_一致するデータがないとき空リストを返すこと() {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
     criteria.applyFullNameFilter(new SearchFilter(
         "fullName",
@@ -210,7 +201,7 @@ class StudentRepositoryTest {
         null
     ));
 
-    List<Integer> actual = sut.searchStudentIdListByCriteria(criteria);
+    List<Integer> actual = sut.findMatchedStudentIds(criteria);
 
     assertThat(actual).isEmpty();
   }
@@ -250,7 +241,7 @@ class StudentRepositoryTest {
     List<Student> expected = new ArrayList<>(existing);
     expected.add(beforeRegister);
 
-    List<Student> actual = sut.searchStudentIdList().stream()
+    List<Student> actual = sut.findMatchedStudentIds(new StudentSearchCriteria()).stream()
         .map(sut::searchStudent)
         .toList();
 

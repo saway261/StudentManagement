@@ -13,6 +13,7 @@ import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
 import raisetech.student.management.search.request.SearchableField;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 @Getter
 @EqualsAndHashCode
@@ -127,6 +128,24 @@ public class StudentSearchCriteria {
   /** 受講終了実績日 上限 */
   private LocalDate courseFinishedAtTo;
 
+  public StudentSearchCriteria(StudentSimpleSearchRequest simplerRequest) {
+    String valueForFullName = simplerRequest.getFullNameContains();
+    this.fullNameLike = valueForFullName == null ? null : "%" + valueForFullName + "%";
+    String valueForKanaName = simplerRequest.getKanaNameContains();
+    this.kanaNameLike = valueForKanaName == null ? null : "%" + valueForKanaName + "%";
+    String valueForArea = simplerRequest.getAreaContains();
+    this.areaLike = valueForArea == null ? null : "%" + valueForArea + "%";
+    this.ageMin = simplerRequest.getAgeMin();
+    this.ageMax = simplerRequest.getAgeMax();
+    this.sexEq = simplerRequest.getSexEq();
+    this.courseCodeEq = simplerRequest.getCourseCode();
+    this.statusIdIn = simplerRequest.getStatusId();
+    this.courseApplyAtFrom = simplerRequest.getApplyFrom();
+    this.courseApplyAtTo = simplerRequest.getApplyTo();
+    this.courseStartAtFrom = simplerRequest.getStartFrom();
+    this.courseStartAtTo = simplerRequest.getStartTo();
+    this.isDeleted = simplerRequest.getIsDeleted();
+  }
 
   /**====================
    * 再代入不可のsetter群

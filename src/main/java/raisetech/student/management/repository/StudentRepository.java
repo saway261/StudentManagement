@@ -14,12 +14,6 @@ import raisetech.student.management.search.criteria.StudentSearchCriteria;
 public interface StudentRepository {
 
   /**
-   * 受講生IDの全件検索を行います。searchStudentメソッド,searchStudentCoursesメソッドと組み合わせて使われる想定です。
-   * @return 受講生ID一覧
-   */
-  List<Integer> searchStudentIdList();
-
-  /**
    * 受講生の検索を行います。
    * @param studentId 受講生ID
    * @return 受講生
@@ -27,11 +21,12 @@ public interface StudentRepository {
   Student searchStudent(int studentId);
 
   /**
-   * 詳細検索条件に一致する受講生ID一覧を取得します。
+   * 検索条件に一致する受講生ID一覧を取得します。
+   * 条件を指定しない場合は全ての受講生ID一覧を取得します。
    * @param criteria 検索条件
-   * @return 受講生ID一覧
+   * @return 条件に一致する受講生ID一覧
    */
-  List<Integer> searchStudentIdListByCriteria(StudentSearchCriteria criteria);
+  List<Integer> findMatchedStudentIds(StudentSearchCriteria criteria);
 
   /**
    * 受講生IDに紐づく受講生コース情報の検索を行います。

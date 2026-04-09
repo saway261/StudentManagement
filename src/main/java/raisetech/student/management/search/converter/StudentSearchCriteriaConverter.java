@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import raisetech.student.management.search.criteria.StudentSearchCriteria;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchableField;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 @Component
 public class StudentSearchCriteriaConverter {
@@ -36,6 +37,10 @@ public class StudentSearchCriteriaConverter {
     }
     
     return criteria;
+  }
+
+  public StudentSearchCriteria toCriteria(StudentSimpleSearchRequest request) {
+    return new StudentSearchCriteria(request);
   }
 
 }
