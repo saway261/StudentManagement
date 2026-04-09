@@ -114,6 +114,20 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生詳細簡易検索失敗_ageMinとageMaxの大小関係が不正なとき400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // バリデーションエラーのレスポンスの検証
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.get("/students")
+            .param("ageMin", "60")
+            .param("ageMax", "20"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsSimple(any(StudentSimpleSearchRequest.class));
+  }
+
+  @Test
   void 受講生詳細ID単一検索成功_存在するstudentIdを指定すると200OKが返りサービスが呼び出されること()
       throws Exception {
     // Arrange
