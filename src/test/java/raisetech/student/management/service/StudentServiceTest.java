@@ -43,9 +43,6 @@ class StudentServiceTest {
   @InjectMocks
   private StudentService sut;// System Under Test テスト対象システム
 
-  /**
-   * searchStudentDetailList()のテスト
-   */
   @Test
   void アクティブ受講生の一覧検索_リポジトリの処理を呼び出していること() {
     // Arrange
@@ -79,9 +76,6 @@ class StudentServiceTest {
     Assertions.assertEquals(expected, actual);
   }
 
-  /**
-   * searchStudentDetail(int studentId)の正常系テスト
-   */
   @Test
   void 受講生単一検索成功_リポジトリの処理を適切に呼び出していること() {
     // Arrange
@@ -105,9 +99,6 @@ class StudentServiceTest {
     Assertions.assertEquals(expected, actual);
   }
 
-  /**
-   * searchStudentDetail(int studentId)の異常系テスト
-   */
   @Test
   void 受講生単一検索失敗_リポジトリのsearchStudentメソッドの返り値がnullのとき例外を投げていること(){
     // Arrange
@@ -123,9 +114,6 @@ class StudentServiceTest {
     verify(studentRepository, times(1)).searchStudent(studentId);
   }
 
-  /**
-   * registerStudentDetail(StudentDetail studentDetail)の正常系テスト
-   */
   @Test
   void 受講生詳細登録成功_受講生を登録し各受講生コースを初期化してリポジトリに渡していること() {
     // Arrange
@@ -173,10 +161,6 @@ class StudentServiceTest {
     Assertions.assertEquals(registeredCourses, result.getStudentCourses());
   }
 
-  /**
-   * registerStudentDetail(StudentDetail studentDetail)の異常系テスト
-   * registerStudentで失敗したらregisterStudentCourseは呼ばれない
-   */
   @Test
   void 受講生詳細登録失敗_受講生登録時に例外が発生したら例外をそのまま送出すること() {
     // Arrange
@@ -196,10 +180,6 @@ class StudentServiceTest {
     verify(studentRepository, never()).registerStudentCourse(any(StudentCourse.class));
   }
 
-  /**
-   * registerStudentDetail(StudentDetail studentDetail)の異常系テスト
-   * registerStudentCourseで1件目のコースは成功、2件目のコースで失敗
-   */
   @Test
   void 受講生詳細登録失敗_受講生コース登録の途中で例外が発生したら例外を送出すること() {
     // Arrange
@@ -223,9 +203,6 @@ class StudentServiceTest {
     verify(studentRepository, times(2)).registerStudentCourse(any(StudentCourse.class));
   }
 
-  /**
-   * registerStudentCourse(StudentCourse studentCourse, int studentId)の正常系テスト
-   */
   @Test
   void 受講生コース新規登録成功_StudentCourseのフィールドを初期化しリポジトリに渡していること() {
     // Arrange
@@ -253,9 +230,6 @@ class StudentServiceTest {
     Assertions.assertEquals(registered, result);
   }
 
-  /**
-   * registerStudentCourse(StudentCourse studentCourse, int studentId)の異常系テスト
-   */
   @Test
   void 受講生コース新規登録失敗_受講生IDが存在し登録処理で例外が発生したら例外をそのまま送出すること() {
     // Arrange
@@ -272,9 +246,6 @@ class StudentServiceTest {
         () -> sut.registerStudentCourse(rawCourse, studentId));
   }
 
-  /**
-   * registerStudentCourse(StudentCourse studentCourse, int studentId)の異常系テスト
-   */
   @Test
   void 受講生コース新規登録失敗_存在しない受講生IDならTargetNotFoundExceptionを投げ登録処理を行わないこと() {
     // Arrange
@@ -291,9 +262,6 @@ class StudentServiceTest {
     verify(studentRepository, never()).registerStudentCourse(any(StudentCourse.class));
   }
 
-  /**
-   * updateStudent(Student student)の正常系テスト
-   */
   @Test
   void 受講生更新成功_リポジトリの処理を呼び出していること(){
     // Arrange
@@ -308,9 +276,6 @@ class StudentServiceTest {
     verify(studentRepository, times(1)).updateStudent(student);
   }
 
-  /**
-   * updateStudent(Student student)の異常系テスト
-   */
   @Test
   void 受講生更新失敗_リポジトリのupdateStudentの返り値が0なら例外をそのまま送出すること(){
     // Arrange
@@ -324,9 +289,6 @@ class StudentServiceTest {
     });
   }
 
-  /**
-   * updateStudentCourse(StudentCourse studentCourse,int studentId)の正常系テスト
-   */
   @ParameterizedTest(name = "[{index}] statusIdを{0}に更新するとき、受講開始日、受講終了日、受講終了実績日に適切な値をセットすること")
   @CsvSource({
       "1,true,true,true",//実際にはcanTransitionで通る組み合わせはない
@@ -376,9 +338,6 @@ class StudentServiceTest {
 
   }
 
-  /**
-   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
-   */
   @Test
   void 受講生コース更新失敗_更新前ステータスが取得できないならTargetNotFoundExceptionを送出してのちの処理を呼ばないこと() {
     // Arrange
@@ -396,9 +355,6 @@ class StudentServiceTest {
     verify(studentRepository, never()).updateStudentCourseStatus(any(StudentCourse.class));
   }
 
-  /**
-   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
-   */
   @Test
   void 受講生コース更新失敗_ステータス遷移が不可能ならInvalidStatusTransitionExceptionを送出しリポジトリの更新処理を呼ばないこと(){
     // Arrange
@@ -417,9 +373,6 @@ class StudentServiceTest {
     verify(studentRepository, never()).updateStudentCourseStatus(any(StudentCourse.class));
   }
 
-  /**
-   * updateStudentCourse(StudentCourse studentCourse,int studentId)の異常系テスト
-   */
   @Test
   void 受講生コース更新失敗_update件数が0ならTargetNotFoundExceptionを送出すること(){
     // Arrange
