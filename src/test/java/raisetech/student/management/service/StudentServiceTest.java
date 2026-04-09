@@ -44,7 +44,7 @@ class StudentServiceTest {
   private StudentService sut;// System Under Test テスト対象システム
 
   @Test
-  void アクティブ受講生の一覧検索_リポジトリの処理を呼び出していること() {
+  void 受講生の一覧検索_リポジトリの処理を呼び出していること() {
     // Arrange
     Integer studentId1 = 1;
     Integer scId1 = 1;

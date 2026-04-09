@@ -31,7 +31,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 受講生の単一検索が行えること() {
+  void ID検索成功_受講生の単一検索が行えること() {
     int studentId = 1;
     Student actual = sut.searchStudent(studentId);
 
@@ -39,7 +39,7 @@ class StudentRepositoryTest {
   }
 
   @Test
-  void 存在しない受講生IDを指定したときnullが返ること() {
+  void ID検索失敗_存在しない受講生IDを指定したときnullが返ること() {
     int studentId = 999;
     Student actual = sut.searchStudent(studentId);
 

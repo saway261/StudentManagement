@@ -56,7 +56,7 @@ public class StudentController {
   }
 
   @Operation(
-      summary = "受講生詳細検索",
+      summary = "受講生詳細ID検索",
       description = "受講生詳細の全件から受講生IDが一致する受講生の詳細を取得します。",
       parameters = {
           @Parameter(in = ParameterIn.PATH,

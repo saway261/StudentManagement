@@ -39,7 +39,7 @@ class StudentControllerTest {
   private CourseRepository courseRepository;
 
   @Test
-  void アクティブ受講生一覧検索_リクエスト時に200OKが返りサービスが呼び出されること() throws Exception {
+  void 受講生一覧検索_リクエスト時に200OKが返りサービスが呼び出されること() throws Exception {
     // Act
     mockMvc.perform(MockMvcRequestBuilders.get("/students"))
         .andExpect(status().isOk());
@@ -49,7 +49,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索成功_存在するstudentIdを指定すると200OKが返りサービスが呼び出されること()
+  void 受講生詳細ID単一検索成功_存在するstudentIdを指定すると200OKが返りサービスが呼び出されること()
       throws Exception {
     // Arrange
     Integer studentId = 1;
@@ -64,7 +64,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_サービスから例外を受け取り404エラーを返していること() throws Exception {
+  void 受講生詳細ID単一検索失敗_サービスから例外を受け取り404エラーを返していること() throws Exception {
     // Arrange
     int studentId = 99;
     Mockito.when(service.searchStudentDetail(studentId))
@@ -79,7 +79,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに数値以外を渡すと400エラーが返されサービスが呼び出されないこと()
+  void 受講生詳細ID単一検索失敗_studentIdに数値以外を渡すと400エラーが返されサービスが呼び出されないこと()
       throws Exception {
     // Arrange
     String studentId = "test";
@@ -91,7 +91,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生詳細単一検索失敗_studentIdに0以下の数値を渡すと400エラーが返されサービスが呼び出されないこと()
+  void 受講生詳細ID単一検索失敗_studentIdに0以下の数値を渡すと400エラーが返されサービスが呼び出されないこと()
       throws Exception {
     int notPositiveStudentId = 0;
 
