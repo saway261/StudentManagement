@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,75 +49,9 @@ public class StudentController {
       summary = "受講生詳細一覧の検索",
       description = """
         受講生詳細を検索条件に応じて一覧取得します。
+        例: /students?fullNameContains=田中&ageMin=20&isDeleted=false
         クエリパラメータを省略した場合は、受講生詳細一覧を全件取得します。
         """,
-      parameters = {
-          @Parameter(
-              name = "fullNameContains",
-              description = "受講生氏名の部分一致条件",
-              schema = @Schema(type = "string", example = "田中")
-          ),
-          @Parameter(
-              name = "kanaNameContains",
-              description = "受講生かな氏名の部分一致条件",
-              schema = @Schema(type = "string", example = "たなか")
-          ),
-          @Parameter(
-              name = "areaLike",
-              description = "居住地の部分一致条件",
-              schema = @Schema(type = "string", example = "東京")
-          ),
-          @Parameter(
-              name = "ageMin",
-              description = "年齢の下限",
-              schema = @Schema(type = "integer", format = "int32", example = "20")
-          ),
-          @Parameter(
-              name = "ageMax",
-              description = "年齢の上限",
-              schema = @Schema(type = "integer", format = "int32", example = "35")
-          ),
-          @Parameter(
-              name = "sexEq",
-              description = "性別の完全一致条件",
-              schema = @Schema(type = "string", example = "女")
-          ),
-          @Parameter(
-              name = "courseCode",
-              description = "コースコードの完全一致条件",
-              schema = @Schema(type = "string", example = "JA")
-          ),
-          @Parameter(
-              name = "statusId",
-              description = "ステータスIDの一致条件。複数指定時はIN検索",
-              array = @ArraySchema(schema = @Schema(type = "integer", format = "int32", example = "1"))
-          ),
-          @Parameter(
-              name = "applyFrom",
-              description = "受講申込日の開始日（以上）",
-              schema = @Schema(type = "string", format = "date", example = "2026-01-01")
-          ),
-          @Parameter(
-              name = "applyTo",
-              description = "受講申込日の終了日（以下）",
-              schema = @Schema(type = "string", format = "date", example = "2026-03-31")
-          ),
-          @Parameter(
-              name = "startFrom",
-              description = "受講開始日の開始日（以上）",
-              schema = @Schema(type = "string", format = "date", example = "2026-02-01")
-          ),
-          @Parameter(
-              name = "startTo",
-              description = "受講開始日の終了日（以下）",
-              schema = @Schema(type = "string", format = "date", example = "2026-04-30")
-          ),
-          @Parameter(
-              name = "isDeleted",
-              description = "削除フラグの一致条件",
-              schema = @Schema(type = "boolean", example = "false")
-          )
-      },
       responses = {
           @ApiResponse(
               responseCode = "200",
@@ -138,7 +73,7 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetail> searchStudentsSimple(
-      @ModelAttribute StudentSimpleSearchRequest request
+      @ParameterObject @ModelAttribute StudentSimpleSearchRequest request
   ) {
     return service.searchStudentDetailsSimple(request);
   }
@@ -188,7 +123,7 @@ public class StudentController {
           description = "新規に登録したい受講生詳細",
           required = true,
           content = @Content(
-              schema = @Schema(implementation = StudentDetail.class)
+              schema = @Schema(implementation = StudentAdvancedSearchRequest.class)
           )
       ),
       responses = {
