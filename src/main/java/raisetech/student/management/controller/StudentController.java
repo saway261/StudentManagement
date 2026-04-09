@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +24,8 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.handler.ErrorResponse;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
@@ -43,16 +46,101 @@ public class StudentController {
 
   @Operation(
       summary = "受講生詳細一覧の検索",
-      description = "受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません",
-      responses = {@ApiResponse(
-          content = @Content(mediaType = "application/json",
-              array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+      description = """
+        受講生詳細を検索条件に応じて一覧取得します。
+        クエリパラメータを省略した場合は、受講生詳細一覧を全件取得します。
+        """,
+      parameters = {
+          @Parameter(
+              name = "fullNameContains",
+              description = "受講生氏名の部分一致条件",
+              schema = @Schema(type = "string", example = "田中")
+          ),
+          @Parameter(
+              name = "kanaNameContains",
+              description = "受講生かな氏名の部分一致条件",
+              schema = @Schema(type = "string", example = "たなか")
+          ),
+          @Parameter(
+              name = "areaLike",
+              description = "居住地の部分一致条件",
+              schema = @Schema(type = "string", example = "東京")
+          ),
+          @Parameter(
+              name = "ageMin",
+              description = "年齢の下限",
+              schema = @Schema(type = "integer", format = "int32", example = "20")
+          ),
+          @Parameter(
+              name = "ageMax",
+              description = "年齢の上限",
+              schema = @Schema(type = "integer", format = "int32", example = "35")
+          ),
+          @Parameter(
+              name = "sexEq",
+              description = "性別の完全一致条件",
+              schema = @Schema(type = "string", example = "女")
+          ),
+          @Parameter(
+              name = "courseCode",
+              description = "コースコードの完全一致条件",
+              schema = @Schema(type = "string", example = "JA")
+          ),
+          @Parameter(
+              name = "statusId",
+              description = "ステータスIDの一致条件。複数指定時はIN検索",
+              array = @ArraySchema(schema = @Schema(type = "integer", format = "int32", example = "1"))
+          ),
+          @Parameter(
+              name = "applyFrom",
+              description = "受講申込日の開始日（以上）",
+              schema = @Schema(type = "string", format = "date", example = "2026-01-01")
+          ),
+          @Parameter(
+              name = "applyTo",
+              description = "受講申込日の終了日（以下）",
+              schema = @Schema(type = "string", format = "date", example = "2026-03-31")
+          ),
+          @Parameter(
+              name = "startFrom",
+              description = "受講開始日の開始日（以上）",
+              schema = @Schema(type = "string", format = "date", example = "2026-02-01")
+          ),
+          @Parameter(
+              name = "startTo",
+              description = "受講開始日の終了日（以下）",
+              schema = @Schema(type = "string", format = "date", example = "2026-04-30")
+          ),
+          @Parameter(
+              name = "isDeleted",
+              description = "削除フラグの一致条件",
+              schema = @Schema(type = "boolean", example = "false")
           )
-      )}
+      },
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "検索成功",
+              content = @Content(
+                  mediaType = "application/json",
+                  array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400",
+              description = "クエリパラメータの形式が不正であったときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              )
+          )
+      }
   )
   @GetMapping("/students")
-  public List<StudentDetail> getStudentList(){
-    return service.searchStudentDetailList();
+  public List<StudentDetail> searchStudentsSimple(
+      @ModelAttribute StudentSimpleSearchRequest request
+  ) {
+    return service.searchStudentDetailsSimple(request);
   }
 
   @Operation(
@@ -91,6 +179,38 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable @Positive int studentId){
     return service.searchStudentDetail(studentId);
+  }
+
+  @Operation(
+      summary = "受講生詳細高度検索",
+      description = "受講生詳細の全件に対してリクエストボディで高度な検索フィルターを設定し、該当する受講生詳細を一覧で取得します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "新規に登録したい受講生詳細",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentDetail.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )),
+          @ApiResponse(
+              responseCode = "400", description = "リクエストボディの形式か値が不正であった時のエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              ))
+      }
+  )
+  @PostMapping("/students/search")
+  public List<StudentDetail> searchStudentsAdvanced(
+      @RequestBody @Validated StudentAdvancedSearchRequest request
+  ) {
+    return service.searchStudentDetailsAdvanced(request);
   }
 
   @Operation(

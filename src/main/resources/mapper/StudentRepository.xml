@@ -2,19 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- 受講生IDの全件検索 -->
-  <select id="searchStudentIdList" resultType="Integer">
-  SELECT student_id FROM students
-  </select>
-
  <!-- 受講生の単一検索 -->
   <select id="searchStudent" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students
     WHERE student_id=#{studentId}
   </select>
 
-  <!-- 詳細検索条件に一致する受講生ID一覧 -->
-  <select id="searchStudentIdListByCriteria"
+  <!-- 検索条件に一致する受講生ID一覧 -->
+  <select id="findMatchedStudentIds"
     parameterType="raisetech.student.management.search.criteria.StudentSearchCriteria"
     resultType="Integer">
     SELECT DISTINCT s.student_id

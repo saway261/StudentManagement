@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -16,6 +17,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import raisetech.student.management.search.criteria.StudentSearchCriteria;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 class StudentSearchCriteriaConverterTest {
 
@@ -26,7 +28,7 @@ class StudentSearchCriteriaConverterTest {
     sut = new StudentSearchCriteriaConverter();
   }
 
-  // Conveterでの正常系テストは、fieldごとのapply*Filter呼び出しルーティングが正常にできているかを検証する。
+  // Converterでの正常系テストは、fieldごとのapply*Filter呼び出しルーティングが正常にできているかを検証する。
 
   @Test
   void fullName_EQをfullNameEqに変換できること() {
@@ -209,4 +211,39 @@ class StudentSearchCriteriaConverterTest {
     assertThrows(IllegalArgumentException.class, () -> sut.toCriteria(filters));
   }
 
+  @Test
+  void 空のSearchFilterリストを受け取ったとき空のcriteriaを返すこと(){
+    List<SearchFilter> filters = new ArrayList<>();
+
+    StudentSearchCriteria expected = new StudentSearchCriteria();
+    StudentSearchCriteria actual = sut.toCriteria(filters);
+
+    assertEquals(expected, actual);
+  }
+
+  @Test
+  void StudentSimpleSearchRequestをcriteriaに変換できること(){
+    StudentSimpleSearchRequest input = new StudentSimpleSearchRequest();
+    input.setFullNameContains("佐藤");
+    input.setAgeMax(40);
+    input.setSexEq("女");
+    input.setApplyFrom(LocalDate.of(2025,1,1));
+
+    StudentSearchCriteria actual = sut.toCriteria(input);
+
+    assertEquals("%佐藤%", actual.getFullNameLike());
+    assertEquals(40, actual.getAgeMax());
+    assertEquals("女", actual.getSexEq());
+    assertEquals(LocalDate.of(2025,1,1), actual.getCourseApplyAtFrom());
+  }
+
+  @Test
+  void 空のStudentSimpleSearchRequestを空のcriteriaに変換できること(){
+    StudentSearchCriteria actual = sut.toCriteria(new StudentSimpleSearchRequest());
+
+    StudentSearchCriteria expected = new StudentSearchCriteria();
+
+    assertEquals(expected,actual);
+
+  }
 }
