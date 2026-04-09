@@ -32,7 +32,7 @@ public class StudentExceptionHandler {
       MethodArgumentNotValidException ex) {
 
     ErrorResponse errorResponse =
-        new ErrorResponse(HttpStatus.BAD_REQUEST, "validation error",
+        new ErrorResponse(HttpStatus.BAD_REQUEST, "payload validation error",
             errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
   }
@@ -48,7 +48,7 @@ public class StudentExceptionHandler {
       MethodArgumentTypeMismatchException ex) {
 
     ErrorResponse errorResponse =
-        new ErrorResponse(HttpStatus.BAD_REQUEST, "validation error",
+        new ErrorResponse(HttpStatus.BAD_REQUEST, "type mismatch error",
             errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
   }
@@ -64,7 +64,7 @@ public class StudentExceptionHandler {
       ConstraintViolationException ex) {
 
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
-        "validation error", errorDetailsBuilder.buildErrorDetails(ex));
+        "parameter validation error", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
   }
 
