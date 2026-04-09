@@ -73,7 +73,7 @@ public class StudentController {
   )
   @GetMapping("/students")
   public List<StudentDetail> searchStudentsSimple(
-      @ParameterObject @ModelAttribute StudentSimpleSearchRequest request
+      @ParameterObject @ModelAttribute @Validated StudentSimpleSearchRequest request
   ) {
     return service.searchStudentDetailsSimple(request);
   }
