@@ -624,10 +624,12 @@ public class StudentSearchCriteria {
       case ENDS_WITH -> {
         setTelephoneLike("%" + text);
       }
+      case CONTAINS -> {
+        setTelephoneLike("%" + text + "%");
+      }
       default -> throw new InvalidSearchCriteriaException(
           SearchableField.TELEPHONE, operator, "このフィールドに指定できない演算子です。");
     }
-    // 電話番号検索で中間一致を求めるケースが思いつかないためCONTAINSは持たない
 
     if (this.getTelephoneEq() != null && this.getTelephoneLike() != null) {
       throw new InvalidSearchCriteriaException(SearchableField.TELEPHONE,"完全一致検索と部分一致検索は併用できません");
@@ -703,13 +705,18 @@ public class StudentSearchCriteria {
       case EQ-> {
         setRemarkEq(text);
       }
+      case STARTS_WITH -> {
+        setRemarkLike(text + "%");
+      }
+      case ENDS_WITH -> {
+        setRemarkLike("%" + text);
+      }
       case CONTAINS -> {
         setRemarkLike("%" + text + "%");
       }
       default -> throw new InvalidSearchCriteriaException(
           SearchableField.REMARK, operator, "このフィールドに指定できない演算子です。");
     }
-    // 備考は記載が自由すぎるので、STARTS_WITH, ENDS_WITHのメリットが薄いため持たない。EQは念のため持つ
 
     if (this.getRemarkEq() != null && this.getRemarkLike() != null) {
       throw new InvalidSearchCriteriaException(SearchableField.REMARK,"完全一致検索と部分一致検索は併用できません");
