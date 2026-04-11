@@ -73,7 +73,7 @@ public class StudentService {
    * @return 条件に一致する受講生詳細の一覧
    */
   public List<StudentDetail> searchStudentDetailsAdvanced(StudentAdvancedSearchRequest request) {
-    StudentSearchCriteria criteria = converter.toCriteria(request.getFilters());
+    StudentSearchCriteria criteria = converter.toCriteria(request);
     return searchStudentDetails(criteria);
   }
 

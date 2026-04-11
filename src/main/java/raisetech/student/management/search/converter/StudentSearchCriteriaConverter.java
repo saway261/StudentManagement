@@ -5,13 +5,15 @@ import org.springframework.stereotype.Component;
 import raisetech.student.management.search.criteria.StudentSearchCriteria;
 import raisetech.student.management.search.request.SearchFilter;
 import raisetech.student.management.search.request.SearchableField;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
 import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 @Component
 public class StudentSearchCriteriaConverter {
 
-  public StudentSearchCriteria toCriteria(List<SearchFilter> filters) {
+  public StudentSearchCriteria toCriteria(StudentAdvancedSearchRequest request) {
     StudentSearchCriteria criteria = new StudentSearchCriteria();
+    List<SearchFilter> filters = request.getFilters();
 
     for (SearchFilter filter : filters) {
       SearchableField field = SearchableField.fromFieldName(filter.getField());

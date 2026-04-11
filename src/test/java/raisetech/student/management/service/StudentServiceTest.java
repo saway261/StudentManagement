@@ -170,7 +170,7 @@ class StudentServiceTest {
     StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, scId2);
 
     // converterがどういうロジックでcriteriaを作るかはこのテストでは関知しないためスタブは空のインスタンスを返す
-    Mockito.when(converter.toCriteria(request.getFilters())).thenReturn(criteria);
+    Mockito.when(converter.toCriteria(request)).thenReturn(criteria);
     Mockito.when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of(studentId1, studentId2));
 
     Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
@@ -183,7 +183,7 @@ class StudentServiceTest {
 
     // Assert
     Assertions.assertEquals(List.of(studentDetail1, studentDetail2), actual);
-    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(converter, times(1)).toCriteria(request);
     verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
     verify(studentRepository, times(1)).searchStudent(studentId1);
     verify(studentRepository, times(1)).searchStudentCourses(studentId1);
@@ -204,7 +204,7 @@ class StudentServiceTest {
 
     StudentSearchCriteria criteria = new StudentSearchCriteria();
 
-    Mockito.when(converter.toCriteria(request.getFilters())).thenReturn(criteria);
+    Mockito.when(converter.toCriteria(request)).thenReturn(criteria);
     Mockito.when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of());
 
     // Act
@@ -212,7 +212,7 @@ class StudentServiceTest {
 
     // Assert
     Assertions.assertEquals(List.of(), actual);
-    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(converter, times(1)).toCriteria(request);
     verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
     verify(studentRepository, never()).searchStudent(anyInt());
     verify(studentRepository, never()).searchStudentCourses(anyInt());
@@ -229,12 +229,12 @@ class StudentServiceTest {
     );
     StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
 
-    Mockito.when(converter.toCriteria(request.getFilters())).thenThrow(InvalidSearchCriteriaException.class);
+    Mockito.when(converter.toCriteria(request)).thenThrow(InvalidSearchCriteriaException.class);
 
     // Act & Assert
     assertThrows(InvalidSearchCriteriaException.class,
         () -> sut.searchStudentDetailsAdvanced(request));
-    verify(converter, times(1)).toCriteria(request.getFilters());
+    verify(converter, times(1)).toCriteria(request);
     verify(studentRepository, never()).findMatchedStudentIds(any(StudentSearchCriteria.class));
     verify(studentRepository, never()).searchStudent(anyInt());
     verify(studentRepository, never()).searchStudentCourses(anyInt());
