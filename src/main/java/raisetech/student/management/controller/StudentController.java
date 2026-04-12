@@ -46,7 +46,7 @@ public class StudentController {
   }
 
   @Operation(
-      summary = "受講生詳細一覧の検索",
+      summary = "受講生詳細簡易検索",
       description = """
         受講生詳細を検索条件に応じて一覧取得します。
         例: /students?fullNameContains=田中&ageMin=20&isDeleted=false
