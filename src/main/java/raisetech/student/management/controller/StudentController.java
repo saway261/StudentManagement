@@ -120,7 +120,7 @@ public class StudentController {
       summary = "受講生詳細高度検索",
       description = "受講生詳細の全件に対してリクエストボディで高度な検索フィルターを設定し、該当する受講生詳細を一覧で取得します。",
       requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          description = "新規に登録したい受講生詳細",
+          description = "検索フィルターのリスト",
           required = true,
           content = @Content(
               schema = @Schema(implementation = StudentAdvancedSearchRequest.class)

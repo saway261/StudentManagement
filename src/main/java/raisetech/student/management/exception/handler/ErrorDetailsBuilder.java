@@ -149,10 +149,10 @@ public class ErrorDetailsBuilder {
   }
 
   /**
-   * InvalidSearchCriteriaExceptionを受け取り、整合性違反が発生した検索フィールドとエラーの詳細を返します。
+   * InvalidSearchCriteriaExceptionを受け取り、整合性違反が発生した検索対象フィールドとエラーの詳細を返します。
    *
    * @param ex InvalidSearchCriteriaException
-   * @return 遷移前と遷移後のステータスIDとエラーメッセージ
+   * @return 整合性違反が発生した検索対象フィールドとエラーの内容（関連があれば渡された演算子も含める）
    */
   public List<Map<String, String>> buildErrorDetails(InvalidSearchCriteriaException ex) {
     List<Map<String, String>> errors = new ArrayList<>();
