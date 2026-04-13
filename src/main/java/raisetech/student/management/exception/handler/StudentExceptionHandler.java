@@ -152,7 +152,7 @@ public class StudentExceptionHandler {
       InvalidSearchCriteriaException ex) {
 
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
-        "invalid status transition", errorDetailsBuilder.buildErrorDetails(ex));
+        "invalid search criteria", errorDetailsBuilder.buildErrorDetails(ex));
     return ResponseEntity.badRequest().body(errorResponse);
 
   }
