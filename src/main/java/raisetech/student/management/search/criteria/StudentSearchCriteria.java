@@ -660,7 +660,7 @@ public class StudentSearchCriteria {
         List<Integer> range = rawValues.stream().map(Integer::parseInt).toList();
 
         if(range.size() != 2 || range.get(0).equals(range.get(1))){
-          throw new InvalidSearchCriteriaException(SearchableField.AGE, operator, "2件の等しくない日付で指定してください");
+          throw new InvalidSearchCriteriaException(SearchableField.AGE, operator, "2件の等しくない数値で指定してください");
         }
 
         setAgeMin(Collections.min(range));
