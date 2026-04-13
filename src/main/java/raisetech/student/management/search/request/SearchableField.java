@@ -80,10 +80,12 @@ public enum SearchableField {
   }
 
   /**
-   * すべてのfieldNameをリストで取得します。
-   * @return fieldNameのリスト
+   * すべてのfieldNameを定義順にリストで取得します。
+   * @return fieldNameの定義順リスト
    */
   public static List<String> getAllFieldNames() {
-    return FIELD_MAP.keySet().stream().toList();
+    return Arrays.stream(values())
+        .map(SearchableField::getFieldName)
+        .toList();
   }
 }
