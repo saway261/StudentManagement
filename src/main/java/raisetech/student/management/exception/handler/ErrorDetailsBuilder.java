@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import tools.jackson.core.JacksonException;
@@ -142,6 +143,27 @@ public class ErrorDetailsBuilder {
         error.put("details", "JSONの解析に失敗しました。");
       }
     }
+    errors.add(error);
+
+    return errors;
+  }
+
+  /**
+   * InvalidSearchCriteriaExceptionを受け取り、整合性違反が発生した検索対象フィールドとエラーの詳細を返します。
+   *
+   * @param ex InvalidSearchCriteriaException
+   * @return 整合性違反が発生した検索対象フィールドとエラーの内容（関連があれば渡された演算子も含める）
+   */
+  public List<Map<String, String>> buildErrorDetails(InvalidSearchCriteriaException ex) {
+    List<Map<String, String>> errors = new ArrayList<>();
+
+    Map<String, String> error = new HashMap<>();
+    error.put("field", ex.getField().getFieldName());
+
+    if(ex.getOperator() != null){
+      error.put("operator",ex.getOperator().toString());
+    }
+    error.put("message", ex.getMessage());
     errors.add(error);
 
     return errors;

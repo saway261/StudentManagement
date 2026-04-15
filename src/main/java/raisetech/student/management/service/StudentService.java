@@ -3,7 +3,6 @@ package raisetech.student.management.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,10 @@ import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.search.converter.StudentSearchCriteriaConverter;
+import raisetech.student.management.search.criteria.StudentSearchCriteria;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 
 
 /**
@@ -26,23 +29,28 @@ public class StudentService {
   private StudentRepository studentRepository;
   private CourseStatusRepository statusRepository;
 
+  private StudentSearchCriteriaConverter converter;
+
   @Autowired
   public StudentService(StudentRepository studentRepository,
-      CourseStatusRepository statusRepository) {
+      CourseStatusRepository statusRepository,
+      StudentSearchCriteriaConverter converter) {
+
     this.studentRepository = studentRepository;
     this.statusRepository = statusRepository;
+    this.converter = converter;
   }
 
   /**
-   * 受講生詳細の一覧検索を行います。
-   * @return 受講生詳細の一覧
+   * クエリパラメータで指定された条件に基づき、受講生詳細の簡易検索を行います。
+   * 条件が指定されない場合は全件を取得します。
+   *
+   * @param request 簡易検索の条件を保持するリクエストオブジェクト
+   * @return 条件に一致する受講生詳細の一覧
    */
-  public List<StudentDetail> searchStudentDetailList(){
-    List<Integer> studentIdList = studentRepository.searchStudentIdList();
-
-    return studentIdList.stream()
-        .map(studentId -> buildStudentDetail(studentId))
-        .collect(Collectors.toList());
+  public List<StudentDetail> searchStudentDetailsSimple(StudentSimpleSearchRequest request) {
+    StudentSearchCriteria criteria = converter.toCriteria(request);
+    return searchStudentDetails(criteria);
   }
 
   /**
@@ -56,6 +64,17 @@ public class StudentService {
       throw new TargetNotFoundException("studentId","指定したIDの受講生は見つかりませんでした");
     }
     return response;
+  }
+
+  /**
+   * リクエストボディで指定された検索フィルターに基づき、受講生詳細の高度検索を行います。
+   *
+   * @param request 検索フィルターのリストを保持するリクエストオブジェクト
+   * @return 条件に一致する受講生詳細の一覧
+   */
+  public List<StudentDetail> searchStudentDetailsAdvanced(StudentAdvancedSearchRequest request) {
+    StudentSearchCriteria criteria = converter.toCriteria(request);
+    return searchStudentDetails(criteria);
   }
 
   /**
@@ -184,6 +203,21 @@ public class StudentService {
         toStatusId == 3 ? now.plusYears(1) : null,
         toStatusId == 4 ? now : null
     );
+  }
+
+  /**
+   * 検索条件（StudentSearchCriteria）に基づき、受講生IDを検索し、
+   * 各受講生IDに対応する受講生詳細情報を組み立てて返却します。
+   *
+   * @param criteria 検索条件を保持するオブジェクト
+   * @return 条件に一致する受講生詳細の一覧
+   */
+  private List<StudentDetail> searchStudentDetails(StudentSearchCriteria criteria) {
+    List<Integer> studentIdList = studentRepository.findMatchedStudentIds(criteria);
+
+    return studentIdList.stream()
+        .map(this::buildStudentDetail)
+        .toList();
   }
 
   /**

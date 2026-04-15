@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +25,8 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
 import raisetech.student.management.exception.handler.ErrorResponse;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.validation.CreateGroup;
 import raisetech.student.management.validation.UpdateGroup;
@@ -42,17 +46,36 @@ public class StudentController {
   }
 
   @Operation(
-      summary = "受講生詳細一覧の検索",
-      description = "受講生詳細の一覧を検索します。全件検索を行うので、条件指定はしません",
-      responses = {@ApiResponse(
-          content = @Content(mediaType = "application/json",
-              array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+      summary = "受講生詳細簡易検索",
+      description = """
+        受講生詳細を検索条件に応じて一覧取得します。
+        例: /students?fullNameContains=田中&ageMin=20&isDeleted=false
+        クエリパラメータを省略した場合は、受講生詳細一覧を全件取得します。
+        """,
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "検索成功",
+              content = @Content(
+                  mediaType = "application/json",
+                  array = @ArraySchema(schema = @Schema(implementation = StudentDetail.class))
+              )
+          ),
+          @ApiResponse(
+              responseCode = "400",
+              description = "クエリパラメータの形式が不正であったときのエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              )
           )
-      )}
+      }
   )
   @GetMapping("/students")
-  public List<StudentDetail> getStudentList(){
-    return service.searchStudentDetailList();
+  public List<StudentDetail> searchStudentsSimple(
+      @ParameterObject @ModelAttribute @Validated StudentSimpleSearchRequest request
+  ) {
+    return service.searchStudentDetailsSimple(request);
   }
 
   @Operation(
@@ -91,6 +114,38 @@ public class StudentController {
   @GetMapping("/students/{studentId}")
   public StudentDetail getStudent(@PathVariable @Positive int studentId){
     return service.searchStudentDetail(studentId);
+  }
+
+  @Operation(
+      summary = "受講生詳細高度検索",
+      description = "受講生詳細の全件に対してリクエストボディで高度な検索フィルターを設定し、該当する受講生詳細を一覧で取得します。",
+      requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "検索フィルターのリスト",
+          required = true,
+          content = @Content(
+              schema = @Schema(implementation = StudentAdvancedSearchRequest.class)
+          )
+      ),
+      responses = {
+          @ApiResponse(
+              responseCode = "200", description = "ok",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = StudentDetail.class)
+              )),
+          @ApiResponse(
+              responseCode = "400", description = "リクエストボディの形式か値が不正であった時のエラー",
+              content = @Content(
+                  mediaType = "application/json",
+                  schema = @Schema(implementation = ErrorResponse.class)
+              ))
+      }
+  )
+  @PostMapping("/students/search")
+  public List<StudentDetail> searchStudentsAdvanced(
+      @RequestBody @Validated StudentAdvancedSearchRequest request
+  ) {
+    return service.searchStudentDetailsAdvanced(request);
   }
 
   @Operation(

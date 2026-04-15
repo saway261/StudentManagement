@@ -2,15 +2,176 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="raisetech.student.management.repository.StudentRepository">
 
-  <!-- 受講生IDの全件検索 -->
-  <select id="searchStudentIdList" resultType="Integer">
-  SELECT student_id FROM students
-  </select>
-
  <!-- 受講生の単一検索 -->
   <select id="searchStudent" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students
     WHERE student_id=#{studentId}
+  </select>
+
+  <!-- 検索条件に一致する受講生ID一覧 -->
+  <select id="findMatchedStudentIds"
+    parameterType="raisetech.student.management.search.criteria.StudentSearchCriteria"
+    resultType="Integer">
+    SELECT DISTINCT s.student_id
+    FROM students s
+    LEFT JOIN student_courses sc
+    ON s.student_id = sc.student_id
+    <where>
+      <if test="fullNameEq != null">
+        AND s.full_name = #{fullNameEq}
+      </if>
+
+      <if test="fullNameLike != null">
+        AND s.full_name LIKE #{fullNameLike}
+      </if>
+
+      <if test="kanaNameEq != null">
+        AND s.kana_name = #{kanaNameEq}
+      </if>
+
+      <if test="kanaNameLike != null">
+        AND s.kana_name LIKE #{kanaNameLike}
+      </if>
+
+      <if test="nicknameEq != null">
+        AND s.nickname = #{nicknameEq}
+      </if>
+
+      <if test="nicknameLike != null">
+        AND s.nickname LIKE #{nicknameLike}
+      </if>
+
+      <if test="ageEq != null">
+        AND s.age = #{ageEq}
+      </if>
+
+      <if test="ageMin != null">
+        AND s.age &gt;= #{ageMin}
+      </if>
+
+      <if test="ageMax != null">
+        AND s.age &lt;= #{ageMax}
+      </if>
+
+      <if test="isDeleted != null">
+        AND s.is_deleted = #{isDeleted}
+      </if>
+
+      <if test="emailEq != null">
+        AND s.email = #{emailEq}
+      </if>
+
+      <if test="emailLike != null">
+        AND s.email LIKE #{emailLike}
+      </if>
+
+      <if test="areaEq != null">
+        AND s.area = #{areaEq}
+      </if>
+
+      <if test="areaLike != null">
+        AND s.area LIKE #{areaLike}
+      </if>
+
+      <if test="telephoneEq != null">
+        AND s.telephone = #{telephoneEq}
+      </if>
+
+      <if test="telephoneLike != null">
+        AND s.telephone LIKE #{telephoneLike}
+      </if>
+
+      <if test="courseCodeEq != null">
+        AND sc.course_code = #{courseCodeEq}
+      </if>
+
+      <if test="courseCodeIn != null and courseCodeIn.size() > 0">
+        AND sc.course_code IN
+        <foreach collection="courseCodeIn" item="courseCode" open="(" separator="," close=")">
+          #{courseCode}
+        </foreach>
+      </if>
+
+      <if test="statusIdEq != null">
+        AND sc.status_id = #{statusIdEq}
+      </if>
+
+      <if test="statusIdIn != null and statusIdIn.size() > 0">
+        AND sc.status_id IN
+        <foreach collection="statusIdIn" item="statusId" open="(" separator="," close=")">
+          #{statusId}
+        </foreach>
+      </if>
+
+      <if test="sexEq != null">
+        AND s.sex = #{sexEq}
+      </if>
+
+      <if test="sexIn != null and sexIn.size() > 0">
+        AND s.sex IN
+        <foreach collection="sexIn" item="sex" open="(" separator="," close=")">
+          #{sex}
+        </foreach>
+      </if>
+
+      <if test="remarkEq != null">
+        AND s.remark = #{remarkEq}
+      </if>
+
+      <if test="remarkLike != null">
+        AND s.remark LIKE #{remarkLike}
+      </if>
+
+      <if test="courseApplyAtEq != null">
+        AND sc.course_apply_at = #{courseApplyAtEq}
+      </if>
+
+      <if test="courseApplyAtFrom != null">
+        AND sc.course_apply_at &gt;= #{courseApplyAtFrom}
+      </if>
+
+      <if test="courseApplyAtTo != null">
+        AND sc.course_apply_at &lt;= #{courseApplyAtTo}
+      </if>
+
+      <if test="courseStartAtEq != null">
+        AND sc.course_start_at = #{courseStartAtEq}
+      </if>
+
+      <if test="courseStartAtFrom != null">
+        AND sc.course_start_at &gt;= #{courseStartAtFrom}
+      </if>
+
+      <if test="courseStartAtTo != null">
+        AND sc.course_start_at &lt;= #{courseStartAtTo}
+      </if>
+
+      <if test="coursePlannedEndAtEq != null">
+        AND sc.course_planned_end_at = #{coursePlannedEndAtEq}
+      </if>
+
+      <if test="coursePlannedEndAtFrom != null">
+        AND sc.course_planned_end_at &gt;= #{coursePlannedEndAtFrom}
+      </if>
+
+      <if test="coursePlannedEndAtTo != null">
+        AND sc.course_planned_end_at &lt;= #{coursePlannedEndAtTo}
+      </if>
+
+      <if test="courseFinishedAtEq != null">
+        AND sc.course_finished_at = #{courseFinishedAtEq}
+      </if>
+
+      <if test="courseFinishedAtFrom != null">
+        AND sc.course_finished_at &gt;= #{courseFinishedAtFrom}
+      </if>
+
+      <if test="courseFinishedAtTo != null">
+        AND sc.course_finished_at &lt;= #{courseFinishedAtTo}
+      </if>
+
+    </where>
+    ORDER BY s.student_id
   </select>
 
   <!-- 受講生IDに紐づく受講生コースの検索 -->

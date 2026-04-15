@@ -1,6 +1,5 @@
 package raisetech.student.management.exception.handler;
 
-import tools.jackson.core.JacksonException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
+import tools.jackson.core.JacksonException;
 
 @RestControllerAdvice
 public class StudentExceptionHandler {
@@ -137,5 +138,22 @@ public class StudentExceptionHandler {
           "http message convert error",List.of(error));
       return ResponseEntity.badRequest().body(errorResponse);
     }
+  }
+
+  /**
+   * 検索フィルターとして指定した条件の整合性がとれない場合にサービス層（コンバータ）から送出されます。
+   * 例）フィールドに対して相応しくない演算子が指定されたとき、フィールドに対して重複した条件が指定されたとき
+   *
+   * @param ex InvalidSearchCriteriaException
+   * @return HTTPステータス(BAD_REQUEST), エラー詳細
+   */
+  @ExceptionHandler(InvalidSearchCriteriaException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidSearchCriteriaException(
+      InvalidSearchCriteriaException ex) {
+
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+        "invalid search criteria", errorDetailsBuilder.buildErrorDetails(ex));
+    return ResponseEntity.badRequest().body(errorResponse);
+
   }
 }

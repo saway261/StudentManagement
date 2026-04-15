@@ -25,10 +25,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.InvalidStatusTransitionException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.repository.CourseStatusRepository;
 import raisetech.student.management.repository.StudentRepository;
+import raisetech.student.management.search.converter.StudentSearchCriteriaConverter;
+import raisetech.student.management.search.criteria.StudentSearchCriteria;
+import raisetech.student.management.search.request.SearchFilter;
+import raisetech.student.management.search.request.SearchOperator;
+import raisetech.student.management.search.request.StudentAdvancedSearchRequest;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 import raisetech.student.management.testutil.TestDataFactory;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,12 +47,18 @@ class StudentServiceTest {
   @Mock
   private CourseStatusRepository statusRepository;
 
+  @Mock
+  private StudentSearchCriteriaConverter converter;
+
   @InjectMocks
   private StudentService sut;// System Under Test テスト対象システム
 
   @Test
-  void 受講生の一覧検索_リポジトリの処理を呼び出していること() {
+  void 簡易検索成功_条件未指定なら空のcriteriaで検索し一致する受講生詳細一覧を返すこと() {
     // Arrange
+    StudentSimpleSearchRequest request = new StudentSimpleSearchRequest();
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
     Integer studentId1 = 1;
     Integer scId1 = 1;
     Integer studentId2 = 2;
@@ -53,28 +66,49 @@ class StudentServiceTest {
 
     StudentDetail studentDetail1 = TestDataFactory.makeCompletedStudentDetail(studentId1, scId1);
     StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, scId2);
-    List<StudentDetail> expected = List.of(studentDetail1,studentDetail2);
 
-    List<Integer> studentIdList = List.of(studentId1,studentId2);
-    List<StudentCourse> studentCourses1 = studentDetail1.getStudentCourses();
-    List<StudentCourse> studentCourses2 = studentDetail2.getStudentCourses();
-
-    // スタブ
-    Mockito.when(studentRepository.searchStudentIdList()).thenReturn(studentIdList);
-    Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
-    Mockito.when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
-    Mockito.when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentCourses1);
-    Mockito.when(studentRepository.searchStudentCourses(studentId2)).thenReturn(studentCourses2);
+    when(converter.toCriteria(request)).thenReturn(criteria);
+    when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of(studentId1, studentId2));
+    when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
+    when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentDetail1.getStudentCourses());
+    when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
+    when(studentRepository.searchStudentCourses(studentId2)).thenReturn(studentDetail2.getStudentCourses());
 
     // Act
-    List<StudentDetail> actual = sut.searchStudentDetailList();
+    List<StudentDetail> actual = sut.searchStudentDetailsSimple(request);
 
     // Assert
-    verify(studentRepository, times(1)).searchStudentIdList();
-    verify(studentRepository, times(studentIdList.size())).searchStudent(Mockito.anyInt());
-    verify(studentRepository, times(studentIdList.size())).searchStudentCourses(Mockito.anyInt());
-    Assertions.assertEquals(expected, actual);
+    Assertions.assertEquals(List.of(studentDetail1, studentDetail2), actual);
+    verify(converter, times(1)).toCriteria(request);
+    verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
+    verify(studentRepository, times(1)).searchStudent(studentId1);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId1);
+    verify(studentRepository, times(1)).searchStudent(studentId2);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId2);
   }
+
+  @Test
+  void 簡易検索成功_一致する受講生IDがないとき空リストを返すこと() {
+    // Arrange
+    StudentSimpleSearchRequest request = new StudentSimpleSearchRequest();
+    request.setFullNameContains("存在しない氏名");
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    when(converter.toCriteria(request)).thenReturn(criteria);
+    when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of());
+
+    // Act
+    List<StudentDetail> actual = sut.searchStudentDetailsSimple(request);
+
+    // Assert
+    Assertions.assertEquals(List.of(), actual);
+    verify(converter, times(1)).toCriteria(request);
+    verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
+    verify(studentRepository, never()).searchStudent(anyInt());
+    verify(studentRepository, never()).searchStudentCourses(anyInt());
+  }
+
+  // 簡易検索はconverterで例外を投げないので高度検索のように例外をそのまま送出するテストはしない
 
   @Test
   void 受講生単一検索成功_リポジトリの処理を適切に呼び出していること() {
@@ -114,6 +148,101 @@ class StudentServiceTest {
     verify(studentRepository, times(1)).searchStudent(studentId);
   }
 
+  @Test
+  void 高度検索成功_converterでcriteriaを生成し検索条件に一致する受講生詳細一覧を返すこと() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "fullName",
+        SearchOperator.EQ,
+        "田中太郎",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    Integer studentId1 = 1;
+    Integer scId1 = 1;
+    Integer studentId2 = 2;
+    Integer scId2 = 2;
+
+    StudentDetail studentDetail1 = TestDataFactory.makeCompletedStudentDetail(studentId1, scId1);
+    StudentDetail studentDetail2 = TestDataFactory.makeCompletedStudentDetail(studentId2, scId2);
+
+    // converterがどういうロジックでcriteriaを作るかはこのテストでは関知しないためスタブは空のインスタンスを返す
+    Mockito.when(converter.toCriteria(request)).thenReturn(criteria);
+    Mockito.when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of(studentId1, studentId2));
+
+    Mockito.when(studentRepository.searchStudent(studentId1)).thenReturn(studentDetail1.getStudent());
+    Mockito.when(studentRepository.searchStudentCourses(studentId1)).thenReturn(studentDetail1.getStudentCourses());
+    Mockito.when(studentRepository.searchStudent(studentId2)).thenReturn(studentDetail2.getStudent());
+    Mockito.when(studentRepository.searchStudentCourses(studentId2)).thenReturn(studentDetail2.getStudentCourses());
+
+    // Act
+    List<StudentDetail> actual = sut.searchStudentDetailsAdvanced(request);
+
+    // Assert
+    Assertions.assertEquals(List.of(studentDetail1, studentDetail2), actual);
+    verify(converter, times(1)).toCriteria(request);
+    verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
+    verify(studentRepository, times(1)).searchStudent(studentId1);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId1);
+    verify(studentRepository, times(1)).searchStudent(studentId2);
+    verify(studentRepository, times(1)).searchStudentCourses(studentId2);
+  }
+
+  @Test
+  void 高度検索成功_一致する受講生IDがないとき空リストを返すこと() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "statusId",
+        SearchOperator.EQ,
+        "999",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    StudentSearchCriteria criteria = new StudentSearchCriteria();
+
+    Mockito.when(converter.toCriteria(request)).thenReturn(criteria);
+    Mockito.when(studentRepository.findMatchedStudentIds(criteria)).thenReturn(List.of());
+
+    // Act
+    List<StudentDetail> actual = sut.searchStudentDetailsAdvanced(request);
+
+    // Assert
+    Assertions.assertEquals(List.of(), actual);
+    verify(converter, times(1)).toCriteria(request);
+    verify(studentRepository, times(1)).findMatchedStudentIds(criteria);
+    verify(studentRepository, never()).searchStudent(anyInt());
+    verify(studentRepository, never()).searchStudentCourses(anyInt());
+  }
+
+  @Test
+  void 高度検索失敗_converterで例外が発生したらそのまま送出すること() {
+    // Arrange
+    SearchFilter filter = new SearchFilter(
+        "fullName",
+        SearchOperator.EQ,
+        "田中太郎",
+        null
+    );
+    StudentAdvancedSearchRequest request = new StudentAdvancedSearchRequest(List.of(filter));
+
+    Mockito.when(converter.toCriteria(request)).thenThrow(InvalidSearchCriteriaException.class);
+
+    // Act & Assert
+    assertThrows(InvalidSearchCriteriaException.class,
+        () -> sut.searchStudentDetailsAdvanced(request));
+    verify(converter, times(1)).toCriteria(request);
+    verify(studentRepository, never()).findMatchedStudentIds(any(StudentSearchCriteria.class));
+    verify(studentRepository, never()).searchStudent(anyInt());
+    verify(studentRepository, never()).searchStudentCourses(anyInt());
+  }
+
+  /**
+   * registerStudentDetail(StudentDetail studentDetail)の正常系テスト
+   */
   @Test
   void 受講生詳細登録成功_受講生を登録し各受講生コースを初期化してリポジトリに渡していること() {
     // Arrange

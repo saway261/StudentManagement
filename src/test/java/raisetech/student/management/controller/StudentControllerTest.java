@@ -6,7 +6,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -17,9 +21,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import raisetech.student.management.data.Student;
 import raisetech.student.management.data.StudentCourse;
 import raisetech.student.management.data.domain.StudentDetail;
+import raisetech.student.management.exception.InvalidSearchCriteriaException;
 import raisetech.student.management.exception.TargetNotFoundException;
 import raisetech.student.management.exception.handler.ErrorDetailsBuilder;
 import raisetech.student.management.repository.CourseRepository;
+import raisetech.student.management.search.request.SearchableField;
+import raisetech.student.management.search.request.StudentSimpleSearchRequest;
 import raisetech.student.management.service.StudentService;
 import raisetech.student.management.testutil.TestDataFactory;
 
@@ -39,13 +46,85 @@ class StudentControllerTest {
   private CourseRepository courseRepository;
 
   @Test
-  void 受講生一覧検索_リクエスト時に200OKが返りサービスが呼び出されること() throws Exception {
+  void 受講生詳細簡易検索成功_条件未指定で200OKが返り空のリクエストがサービスに渡されること() throws Exception {
     // Act
     mockMvc.perform(MockMvcRequestBuilders.get("/students"))
         .andExpect(status().isOk());
 
     // Assert
-    Mockito.verify(service, times(1)).searchStudentDetailList();
+    ArgumentCaptor<StudentSimpleSearchRequest> captor =
+        ArgumentCaptor.forClass(StudentSimpleSearchRequest.class);
+    Mockito.verify(service, times(1)).searchStudentDetailsSimple(captor.capture());
+
+    StudentSimpleSearchRequest actual = captor.getValue();
+    Assertions.assertNull(actual.getFullNameContains());
+    Assertions.assertNull(actual.getKanaNameContains());
+    Assertions.assertNull(actual.getAreaContains());
+    Assertions.assertNull(actual.getAgeMin());
+    Assertions.assertNull(actual.getAgeMax());
+    Assertions.assertNull(actual.getSexEq());
+    Assertions.assertNull(actual.getCourseCode());
+    Assertions.assertNull(actual.getStatusId());
+    Assertions.assertNull(actual.getApplyFrom());
+    Assertions.assertNull(actual.getApplyTo());
+    Assertions.assertNull(actual.getStartFrom());
+    Assertions.assertNull(actual.getStartTo());
+    Assertions.assertNull(actual.getIsDeleted());
+  }
+
+  @Test
+  void 受講生詳細簡易検索成功_クエリパラメータがリクエストオブジェクトにバインドされサービスに渡されること()
+      throws Exception {
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.get("/students")
+            .param("fullNameContains", "田中")
+            .param("kanaNameContains", "たなか")
+            .param("areaContains", "東京")
+            .param("ageMin", "30")
+            .param("ageMax", "40")
+            .param("sexEq", "女")
+            .param("courseCode", "JA")
+            .param("statusId", "1", "3")
+            .param("applyFrom", "2026-01-01")
+            .param("applyTo", "2026-03-31")
+            .param("startFrom", "2026-02-01")
+            .param("startTo", "2026-04-30")
+            .param("isDeleted", "true"))
+        .andExpect(status().isOk());
+
+    // Assert
+    ArgumentCaptor<StudentSimpleSearchRequest> captor =
+        ArgumentCaptor.forClass(StudentSimpleSearchRequest.class);
+    Mockito.verify(service, times(1)).searchStudentDetailsSimple(captor.capture());
+
+    StudentSimpleSearchRequest actual = captor.getValue();
+    Assertions.assertEquals("田中", actual.getFullNameContains());
+    Assertions.assertEquals("たなか", actual.getKanaNameContains());
+    Assertions.assertEquals("東京", actual.getAreaContains());
+    Assertions.assertEquals(30, actual.getAgeMin());
+    Assertions.assertEquals(40, actual.getAgeMax());
+    Assertions.assertEquals("女", actual.getSexEq());
+    Assertions.assertEquals("JA", actual.getCourseCode());
+    Assertions.assertEquals(List.of(1, 3), actual.getStatusId());
+    Assertions.assertEquals(LocalDate.of(2026, 1, 1), actual.getApplyFrom());
+    Assertions.assertEquals(LocalDate.of(2026, 3, 31), actual.getApplyTo());
+    Assertions.assertEquals(LocalDate.of(2026, 2, 1), actual.getStartFrom());
+    Assertions.assertEquals(LocalDate.of(2026, 4, 30), actual.getStartTo());
+    Assertions.assertTrue(actual.getIsDeleted());
+  }
+
+  @Test
+  void 受講生詳細簡易検索失敗_ageMinとageMaxの大小関係が不正なとき400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // バリデーションエラーのレスポンスの検証
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.get("/students")
+            .param("ageMin", "60")
+            .param("ageMax", "20"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsSimple(any(StudentSimpleSearchRequest.class));
   }
 
   @Test
@@ -98,6 +177,99 @@ class StudentControllerTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/students/" + notPositiveStudentId))
         .andExpect(status().isBadRequest());
     Mockito.verify(service, never()).searchStudentDetail(Mockito.anyInt());
+  }
+
+  @Test
+  void 受講生詳細高度検索成功_妥当なJSONリクエストで200OKが返りサービスが呼び出されること()
+      throws Exception {
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "fullName",
+                            "operator": "EQ",
+                            "value": "田中太郎"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isOk());
+
+    // Assert
+    Mockito.verify(service, times(1)).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_不正なJSONリクエストを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Act
+    // HttpMassageNotReadableExceptionが発生して400エラーになることを検証
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("{}"))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_不正な検索フィルタを受け取ると400エラーが返されサービスが呼び出されないこと()
+      throws Exception {
+    // Act
+    // @ValidSearchFilterにかかってバリデーションエラーになると400エラーになることを検証
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "unknownField",
+                            "operator": "EQ",
+                            "value": "test"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, never()).searchStudentDetailsAdvanced(any());
+  }
+
+  @Test
+  void 受講生詳細高度検索失敗_サービス層でcriteriaへの変換時に例外が投げられると400エラーが返されること()
+      throws Exception {
+    // Arrange
+    Mockito.when(service.searchStudentDetailsAdvanced(any()))
+        .thenThrow(new InvalidSearchCriteriaException(SearchableField.COURSE_CODE,"許可されていない演算子です"));
+    // Act
+    mockMvc.perform(MockMvcRequestBuilders.post("/students/search")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(
+                """
+                {
+                    "filters": [
+                        {
+                            "field": "courseCode",
+                            "operator": "STARTS_WITH",
+                            "value": "JA"
+                        }
+                    ]
+                }
+                """
+            ))
+        .andExpect(status().isBadRequest());
+
+    // Assert
+    Mockito.verify(service, times(1)).searchStudentDetailsAdvanced(any());
   }
 
   @Test void 受講生詳細登録成功_妥当なJSONリクエストで201Createdが返りサービスが呼び出されること() throws Exception {
